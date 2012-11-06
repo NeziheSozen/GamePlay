@@ -20,6 +20,19 @@ namespace gameplay
     {
     }
 
+    Material* DAEMaterialEncoder::getMaterial(std::string materialId)
+    {
+        std::list<Material*>::iterator it;
+        for (it = materials.begin(); it != materials.end(); ++it)
+        {
+            if((*it)->getMaterialId().compare(materialId) == 0)
+            {
+                return (*it);
+            }
+        }
+        return NULL;
+    }
+
     void DAEMaterialEncoder::processMaterial(const EncoderArguments& arguments, domCOLLADA* dom)
     {
         this->dom = dom;

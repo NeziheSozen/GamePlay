@@ -6,6 +6,7 @@
 #include "DAESceneEncoder.h"
 #include "DAEOptimizer.h"
 #include "DAEMaterialEncoder.h"
+#include "Material.h"
 //#define ENCODER_PRINT_TIME 1
 
 namespace gameplay
@@ -277,6 +278,15 @@ void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments&
         return;
     }
     
+    // create material
+    if(arguments.materialOutputEnabled())
+    {
+        begin();
+        _materialEncoder = new DAEMaterialEncoder();
+        _materialEncoder->processMaterial(arguments, _dom);
+        end("create material");
+    }
+
     // Run collada conditioners
     begin();
     triangulate(_collada);
@@ -365,16 +375,7 @@ void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments&
             LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
         }
         end("save binary");
-    }
-    
-    // create material
-    if(arguments.materialOutputEnabled())
-    {
-        begin();
-        DAEMaterialEncoder *m = new DAEMaterialEncoder();
-        m->processMaterial(arguments, _dom);
-        end("create material");
-    }
+    }   
 
     // Cleanup
     if (file)
@@ -1736,6 +1737,19 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
         //string materialName = triangles->getMaterial() == NULL ? _T("") : triangles->getMaterial();
         //if (materialName.size() > 0)
         ///    subset->material = ParseMaterial(bindMaterial, materialName);
+        std::string materialName = triangles->getMaterial();
+        if (materialName.size() > 0)
+        {
+            Material* material = _materialEncoder->getMaterial(materialName);
+            if(material)
+            {
+                subset->setMaterial(material);
+                LOG(1,"material: %s\n", materialName.c_str());
+            }else
+            {
+                LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
+            }
+        }
 
         //const domInputLocalOffset_Array& inputArray = triangles->getInput_array();
         const domListOfUInts& polyInts = triangles->getP()->getValue();

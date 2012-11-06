@@ -23,6 +23,7 @@
 
 namespace gameplay
 {
+class DAEMaterialEncoder;
 
 /**
  * Class for binary encoding a Collada (DAE) file.
@@ -204,6 +205,8 @@ private:
     std::vector<std::string> _tempGroupAnimationIds;
 
     clock_t _begin;
+
+    DAEMaterialEncoder* _materialEncoder;
 };
 
 }

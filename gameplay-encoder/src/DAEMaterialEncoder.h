@@ -23,7 +23,9 @@ namespace gameplay
         virtual ~DAEMaterialEncoder(void);
         
         void processMaterial(const EncoderArguments& arguments, domCOLLADA* dom);
-        
+
+        Material* getMaterial(std::string materialId);
+
     private:
         enum DAEMaterial {
             EMISSION,
@@ -42,7 +44,7 @@ namespace gameplay
         bool getFloat4Param(xsNCName Reference, domFloat4 &f4);
         bool getFloatParam(xsNCName Reference, domFloat &f) const;
         bool processTexture(domCommon_color_or_texture_type_complexType::domTexture *tex, Effect &effect);
-        
+
     private:
         domInstance_effectRef currentInstance_effect;
         domEffect *currentEffect;

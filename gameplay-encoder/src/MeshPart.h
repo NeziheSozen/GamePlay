@@ -7,6 +7,7 @@
 
 namespace gameplay
 {
+class Material;
 
 class MeshPart : public Object
 {
@@ -62,6 +63,16 @@ public:
      */
     unsigned int getIndex(unsigned int i) const;
 
+    /*
+     * Sets the referenced Material
+     */
+    void setMaterial(Material* material);
+
+    /*
+     * Returns the referenced Material
+     */
+    Material* getMaterial();
+
 private:
 
     /**
@@ -90,6 +101,7 @@ private:
     unsigned int _primitiveType;
     IndexFormat _indexFormat;
     std::vector<unsigned int> _indices;
+    Material* _material;
 };
 
 }
