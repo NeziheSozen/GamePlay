@@ -189,7 +189,10 @@ private:
      * @return The VertexUsage or -1 if the string was not recognized.
      */
     static int getVertexUsageType(const std::string& semantic);
-    
+
+    void loadMaterialMapping(domGeometry* geometry,
+                             const domBind_materialRef bindMaterialRef,
+                             Mesh* mesh);
 private:
     
     DAE* _collada;        // Collada datastore in memory to read from.

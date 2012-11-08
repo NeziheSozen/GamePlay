@@ -115,6 +115,7 @@ public:
      */
     void renameAnimations(std::vector<std::string>& animationIds, const char* newId);
 
+    std::list<Node*> getNodeList();
 private:
 
     /**

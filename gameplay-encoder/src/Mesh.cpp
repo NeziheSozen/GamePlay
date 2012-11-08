@@ -1,6 +1,7 @@
 #include "Base.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Material.h"
 
 namespace gameplay
 {
@@ -218,6 +219,25 @@ void Mesh::computeBounds()
 
     // Convert squared distance to distance for radius
     bounds.radius = sqrt(bounds.radius);
+}
+
+void Mesh::addInstanceMaterial(std::string symbol, Material& material)
+{
+    _materialLookupTable.insert(std::pair<std::string,Material&>(symbol, material));
+}
+
+void Mesh::getMaterial(Material& material, std::string symbol)
+{
+    std::map<std::string, Material&>::iterator it;
+    it = _materialLookupTable.find(symbol);
+    if (it != _materialLookupTable.end())
+    {
+        material = it->second;
+    }
+    else
+    {
+        LOG(1,"Symbol not found: %s\n", symbol.c_str());
+    }
 }
 
 }

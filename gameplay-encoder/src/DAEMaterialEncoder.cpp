@@ -22,6 +22,7 @@ namespace gameplay
 
     Material* DAEMaterialEncoder::getMaterial(std::string materialId)
     {
+        // TODO: optimize search because complexity O(n) is too high
         std::list<Material*>::iterator it;
         for (it = materials.begin(); it != materials.end(); ++it)
         {

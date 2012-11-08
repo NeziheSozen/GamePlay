@@ -292,6 +292,11 @@ Node* GPBFile::getNode(const char* id)
     return NULL;
 }
 
+std::list<Node*> GPBFile::getNodeList()
+{
+    return _nodes;
+}
+
 Animations* GPBFile::getAnimations()
 {
     return &_animations;

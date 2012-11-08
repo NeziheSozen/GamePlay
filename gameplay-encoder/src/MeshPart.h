@@ -66,12 +66,12 @@ public:
     /*
      * Sets the referenced Material
      */
-    void setMaterial(Material* material);
+    void setMaterialSymbolName(std::string materialSymbolName);
 
     /*
      * Returns the referenced Material
      */
-    Material* getMaterial();
+    std::string getMaterialSymbolName();
 
 private:
 
@@ -101,7 +101,7 @@ private:
     unsigned int _primitiveType;
     IndexFormat _indexFormat;
     std::vector<unsigned int> _indices;
-    Material* _material;
+    std::string _materialSymbolName;
 };
 
 }

@@ -7,7 +7,7 @@ namespace gameplay
 MeshPart::MeshPart(void) :
     _primitiveType(TRIANGLES),
     _indexFormat(INDEX16),
-    _material(NULL)
+    _materialSymbolName(std::string(""))
 {
 }
 
@@ -111,13 +111,14 @@ void MeshPart::updateIndexFormat(unsigned int newIndex)
         _indexFormat = INDEX16;
     }
 }
-void MeshPart::setMaterial(Material* material)
+
+void MeshPart::setMaterialSymbolName(std::string materialSymbolName)
 {
-    _material = material;
+    _materialSymbolName = materialSymbolName;
 }
 
-Material* MeshPart::getMaterial()
+std::string MeshPart::getMaterialSymbolName()
 {
-    return _material;
+    return _materialSymbolName;
 }
 }

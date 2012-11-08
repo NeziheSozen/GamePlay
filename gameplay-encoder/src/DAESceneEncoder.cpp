@@ -7,6 +7,7 @@
 #include "DAEOptimizer.h"
 #include "DAEMaterialEncoder.h"
 #include "Material.h"
+#include "SceneFile.h"
 //#define ENCODER_PRINT_TIME 1
 
 namespace gameplay
@@ -375,7 +376,14 @@ void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments&
             LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
         }
         end("save binary");
-    }   
+    }
+
+    // TODO: create scenefile
+    SceneFile* sceneFile = new SceneFile(_gamePlayFile);
+    std::string filepathScene = arguments.getOutputFilePath();
+    filepathScene = filepathScene.substr(0, filepath.find_last_of('.') + 1) + "scene";
+    FILE* _file = fopen(filepathScene.c_str(), "w");
+    sceneFile->writeFile(_file);
 
     // Cleanup
     if (file)
@@ -1005,6 +1013,45 @@ void DAESceneEncoder::loadLightInstance(const domNode* n, Node* node)
     }
 }
 
+void DAESceneEncoder::loadMaterialMapping(domGeometry* geometry,
+                                          const domBind_materialRef bindMaterialRef,
+                                          Mesh* mesh)
+{
+    if (bindMaterialRef)
+    {
+        if(bindMaterialRef->getTechnique_common())
+        {
+            const domInstance_material_Array& materialArray = bindMaterialRef->getTechnique_common()->getInstance_material_array();
+            size_t materialArrayCount = materialArray.getCount();
+            for (size_t j = 0; j < materialArrayCount; j++)
+            {
+                const domInstance_materialRef& materialInstanceRef = materialArray.get(j);
+                xsAnyURI materialURI = materialInstanceRef->getTarget();
+                xsNCName symbolNCName = materialInstanceRef->getSymbol();
+
+                domMaterial* material = daeSafeCast<domMaterial>(materialURI.getElement());
+                if (material) {
+                    std::string materialName = std::string(material->getId());
+                    std::string symbolName = std::string(symbolNCName);
+                    if (materialName.size() > 0)
+                    {
+                        Material* material = _materialEncoder->getMaterial(materialName);
+                        if(material)
+                        {
+                            mesh->addInstanceMaterial(symbolName, *material);
+                            LOG(1,"geometry: %s symbolName: %s material: %s\n", geometry->getId(), symbolName.c_str(), materialName.c_str());
+                        }else
+                        {
+                            LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
+                        }
+                    }
+                }
+                // LOG(1,"materialID: %s, geometryID: %s\n", material->getId(), geometry->getId());
+            }
+        }
+    }
+}
+
 void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
 {
     // Does this node have any geometry instances?
@@ -1030,7 +1077,25 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
         {
             LOG(1, "Failed to resolve geometry url: %s\n", geometryURI.getURI());
         }
+
+        // Store Symbol-Material Mapping
+        Mesh* mesh = node->getModel()->getMesh();
+        const domBind_materialRef bindMaterialRef = geometryInstanceRef->getBind_material();
+        loadMaterialMapping(geometry, bindMaterialRef, mesh);
     }
+
+    // TODO: Check materials within instance_controller
+// Does this node have any controller instances?
+//    const domInstance_controller_Array& instanceController = n->getInstance_controller_array();
+//    size_t instanceControllerCount = instanceGeometries.getCount();
+//    for (size_t i = 0; i < instanceControllerCount; i++)
+//    {
+//        // Get the controller object
+//        const domInstance_controllerRef controllerInstanceRef = instanceController.get(i);
+//        const domBind_materialRef bindMaterialRef = controllerInstanceRef->getBind_material();
+//
+//        domGeometry* geometry = daeSafeCast<domGeometry>(geometryURI.getElement());
+//    }
 }
 
 void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
@@ -1737,18 +1802,11 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
         //string materialName = triangles->getMaterial() == NULL ? _T("") : triangles->getMaterial();
         //if (materialName.size() > 0)
         ///    subset->material = ParseMaterial(bindMaterial, materialName);
-        std::string materialName = triangles->getMaterial();
-        if (materialName.size() > 0)
+
+        std::string materialSymbolName = triangles->getMaterial() == NULL ? std::string("") : triangles->getMaterial();
+        if (materialSymbolName.size() > 0)
         {
-            Material* material = _materialEncoder->getMaterial(materialName);
-            if(material)
-            {
-                subset->setMaterial(material);
-                LOG(1,"material: %s\n", materialName.c_str());
-            }else
-            {
-                LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
-            }
+            subset->setMaterialSymbolName(materialSymbolName);
         }
 
         //const domInputLocalOffset_Array& inputArray = triangles->getInput_array();

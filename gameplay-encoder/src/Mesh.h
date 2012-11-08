@@ -11,6 +11,7 @@ namespace gameplay
 {
 
 class Model;
+class Material;
 
 class Mesh : public Object
 {
@@ -62,6 +63,9 @@ public:
 
     void computeBounds();
 
+    void addInstanceMaterial(std::string symbol, Material& material);
+    void getMaterial(Material& material, std::string symbol);
+
     Model* model;
     std::vector<Vertex> vertices;
     std::vector<MeshPart*> parts;
@@ -70,7 +74,7 @@ public:
 
 private:
     std::vector<VertexElement> _vertexFormat;
-
+    std::map<std::string, Material&> _materialLookupTable;
 };
 
 }
