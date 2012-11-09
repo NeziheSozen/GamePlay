@@ -16,6 +16,7 @@ SceneFile::~SceneFile(void)
 void SceneFile::writeFile(FILE* file){
     fprintf(file, "scene\n");
     fprintf(file, "{\n");
+    fprintf(file, "    path = res/scene.gpb\n\n");
 
     std::list<Node*> nodes = _gpbFile.getNodeList();
     
@@ -25,11 +26,16 @@ void SceneFile::writeFile(FILE* file){
         if(model)
         {
             Mesh* mesh = model->getMesh();
+            MeshSkin* skin = model->getSkin();
+            if (skin)
+            {
+                mesh = skin->getMesh();
+            }
+
             if (mesh)
             {
                 fprintf(file, "    node %s\n", (*i)->getId().c_str());
                 fprintf(file, "    {\n");
-                
                 
                 // for each MeshPart
                 int count = 0;
@@ -37,15 +43,23 @@ void SceneFile::writeFile(FILE* file){
                 {
                     std::string symbolname = (*i)->getMaterialSymbolName();
                     Material material;
+
                     mesh->getMaterial(material, symbolname);
+
                     fprintf(file, "        material");
                     if (mesh->parts.size() > 1)
                     {
-                        fprintf(file, "[%d] = ", count);
+                        if(!material.getMaterialId().empty())
+                        {
+                            fprintf(file, "[%d] = ", count);
+                        }
                     }
                     else
                     {
-                        fprintf(file, " = ");
+                        if(!material.getMaterialId().empty())
+                        {
+                            fprintf(file, " = ");
+                        }
                     }
                     
                     fprintf(file, "res/scene.material#%s\n", material.getMaterialId().c_str());
@@ -54,7 +68,7 @@ void SceneFile::writeFile(FILE* file){
                     
 //                    LOG(1,"symbol: %s material: %s\n", symbolname.c_str(), material.getMaterialId().c_str());
                 }
-                fprintf(file, "    }\n");
+                fprintf(file, "    }\n\n");
             }
         }
         else

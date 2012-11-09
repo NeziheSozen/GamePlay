@@ -1013,9 +1013,8 @@ void DAESceneEncoder::loadLightInstance(const domNode* n, Node* node)
     }
 }
 
-void DAESceneEncoder::loadMaterialMapping(domGeometry* geometry,
-                                          const domBind_materialRef bindMaterialRef,
-                                          Mesh* mesh)
+void DAESceneEncoder::loadMaterialMapping(const domBind_materialRef bindMaterialRef,
+                                          Model* model, bool isMesh)
 {
     if (bindMaterialRef)
     {
@@ -1038,15 +1037,20 @@ void DAESceneEncoder::loadMaterialMapping(domGeometry* geometry,
                         Material* material = _materialEncoder->getMaterial(materialName);
                         if(material)
                         {
-                            mesh->addInstanceMaterial(symbolName, *material);
-                            LOG(1,"geometry: %s symbolName: %s material: %s\n", geometry->getId(), symbolName.c_str(), materialName.c_str());
+                            if (isMesh)
+                            {
+                                model->getMesh()->addInstanceMaterial(symbolName, *material);
+                            }
+                            else
+                            {
+                                model->getSkin()->getMesh()->addInstanceMaterial(symbolName, *material);
+                            }
                         }else
                         {
                             LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
                         }
                     }
                 }
-                // LOG(1,"materialID: %s, geometryID: %s\n", material->getId(), geometry->getId());
             }
         }
     }
@@ -1079,9 +1083,8 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
         }
 
         // Store Symbol-Material Mapping
-        Mesh* mesh = node->getModel()->getMesh();
         const domBind_materialRef bindMaterialRef = geometryInstanceRef->getBind_material();
-        loadMaterialMapping(geometry, bindMaterialRef, mesh);
+        loadMaterialMapping(bindMaterialRef, node->getModel(), true);
     }
 
     // TODO: Check materials within instance_controller
@@ -1136,12 +1139,16 @@ void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
                         node->setModel(model);
                     }
                 }
+                // create Material-Mapping
+                const domBind_materialRef bindMaterialRef = instanceControllerRef->getBind_material();
+                loadMaterialMapping(bindMaterialRef, model, false);
             }
         }
         else
         {
             // warning
         }
+
         _jointLookupTable.clear();
         _jointInverseBindPoseMatrices.clear();
     }

@@ -444,4 +444,9 @@ void MeshSkin::computeBounds()
     }
 }
 
+Mesh* MeshSkin::getMesh()
+{
+    return _mesh;
+}
+
 }

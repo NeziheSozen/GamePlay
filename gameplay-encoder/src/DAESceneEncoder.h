@@ -190,9 +190,8 @@ private:
      */
     static int getVertexUsageType(const std::string& semantic);
 
-    void loadMaterialMapping(domGeometry* geometry,
-                             const domBind_materialRef bindMaterialRef,
-                             Mesh* mesh);
+    void loadMaterialMapping(const domBind_materialRef bindMaterialRef,
+                             Model* model, bool isMesh);
 private:
     
     DAE* _collada;        // Collada datastore in memory to read from.

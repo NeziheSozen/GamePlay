@@ -59,6 +59,7 @@ public:
 
     void computeBounds();
 
+    Mesh* getMesh();
 private:
 
     Mesh* _mesh;
