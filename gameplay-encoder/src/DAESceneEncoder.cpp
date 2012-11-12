@@ -258,7 +258,7 @@ void DAESceneEncoder::createTrianglesFromPolylist(domMesh* domMesh, domPolylist*
     triangles->setCount(trianglesProcessed);
 }
 
-void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments& arguments)
+void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& arguments)
 {
     _begin = clock();
     const char* nodeId = arguments.getNodeId();
@@ -280,7 +280,7 @@ void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments&
     }
     
     // create material
-    if(arguments.materialOutputEnabled())
+    if(arguments.materialOutputEnabled() || arguments.sceneOutputEnabled())
     {
         begin();
         _materialEncoder = new DAEMaterialEncoder();
@@ -378,12 +378,14 @@ void DAESceneEncoder::write(const std::string& filepath, const EncoderArguments&
         end("save binary");
     }
 
-    // TODO: create scenefile
-    SceneFile* sceneFile = new SceneFile(_gamePlayFile);
-    std::string filepathScene = arguments.getOutputFilePath();
-    filepathScene = filepathScene.substr(0, filepath.find_last_of('.') + 1) + "scene";
-    FILE* _file = fopen(filepathScene.c_str(), "w");
-    sceneFile->writeFile(_file);
+    // create scenefile
+    if (arguments.sceneOutputEnabled())
+    {
+        SceneFile* sceneFile = new SceneFile(_gamePlayFile);
+        std::string filepathScene = arguments.getSceneOutputPath();
+        FILE* _file = fopen(filepathScene.c_str(), "w");
+        sceneFile->writeFile(_file);
+    }
 
     // Cleanup
     if (file)

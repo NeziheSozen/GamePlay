@@ -47,7 +47,7 @@ public:
     /**
      * Writes out encoded Collada 1.4 file.
      */
-    void write(const std::string& filepath, const EncoderArguments& arguments);
+    void write(const std::string& filepath, EncoderArguments& arguments);
 
 private:
 

@@ -65,19 +65,23 @@ namespace gameplay
             }
         }
         
-        // get filepath:
-        std::string filepath = EncoderArguments::getInstance()->getOutputFilePath();
-        filepath = filepath.substr(0, filepath.find_last_of('.') + 1) + "material";
-        FILE* _file = fopen(filepath.c_str(), "w");
-        if (!_file)
+        // write file only if material output enabled
+        // it is possible that the user wants to get the scene-file only
+        if(arguments.materialOutputEnabled())
         {
-            return;
-        }
-        
-        std::list<Material*>::iterator it;
-        for (it = materials.begin(); it != materials.end(); ++it)
-        {
-            (*it)->writeText(_file);
+            // get filepath:
+            std::string filepath = EncoderArguments::getInstance()->getMaterialOutputPath();
+            FILE* _file = fopen(filepath.c_str(), "w");
+            if (!_file)
+            {
+                return;
+            }
+
+            std::list<Material*>::iterator it;
+            for (it = materials.begin(); it != materials.end(); ++it)
+            {
+                (*it)->writeText(_file);
+            }
         }
     }
     

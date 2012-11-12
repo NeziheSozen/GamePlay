@@ -71,10 +71,10 @@ void SceneFile::writeFile(FILE* file){
                 fprintf(file, "    }\n\n");
             }
         }
-        else
-        {
-            LOG(1,"no Material: %s\n", (*i)->getId().c_str());
-        }
+//        else
+//        {
+//            LOG(1,"no Material: %s\n", (*i)->getId().c_str());
+//        }
     }
     
     fprintf(file, "}\n");

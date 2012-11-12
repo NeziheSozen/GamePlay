@@ -22,7 +22,8 @@ EncoderArguments::EncoderArguments(size_t argc, const char** argv) :
     _textOutput(false),
     _daeOutput(false),
     _optimizeAnimations(false),
-    _materialOutput(false)
+    _materialOutput(false),
+    _sceneOutput(false)
 {
     __instance = this;
 
@@ -120,9 +121,27 @@ const std::string& EncoderArguments::getDAEOutputPath() const
 {
     return _daeOutputPath;
 }
-const std::string& EncoderArguments::getMaterialOutputPath() const
+
+std::string EncoderArguments::getMaterialOutputPath()
 {
+    if(_materialOutputPath.empty())
+    {
+        std::string filepath = getOutputFilePath();
+        filepath = filepath.substr(0, filepath.find_last_of('.') + 1) + "material";
+        _materialOutputPath = std::string(filepath);
+    }
     return _materialOutputPath;
+}
+
+std::string EncoderArguments::getSceneOutputPath()
+{
+    if(_sceneOutputPath.empty())
+    {
+        std::string filepath = getOutputFilePath();
+        filepath = filepath.substr(0, filepath.find_last_of('.') + 1) + "scene";
+        _sceneOutputPath = std::string(filepath);
+    }
+    return _sceneOutputPath;
 }
 
 const std::vector<std::string>& EncoderArguments::getGroupAnimationNodeId() const
@@ -161,6 +180,12 @@ bool EncoderArguments::materialOutputEnabled() const
 {
     return _materialOutput;
 }
+
+bool EncoderArguments::sceneOutputEnabled() const
+{
+    return _sceneOutput;
+}
+
 bool EncoderArguments::parseErrorOccured() const
 {
     return _parseError;
@@ -404,30 +429,56 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
         _fontPreview = true;
         break;
     case 's':
-        // Font Size
-
-        // old format was -s##
-        if (str.length() > 2)
+        if (str.compare("-scene") == 0)
         {
-            char n = str[2];
-            if (n > '0' && n <= '9')
+            _sceneOutput = true;
+            // read one string, make sure not to go out of bounds
+            if ((*index + 1) < options.size())
             {
-                const char* number = str.c_str() + 2;
-                _fontSize = atoi(number);
-                break;
+                size_t* tmpIndex = index;
+                tmpIndex++;
+                std::string path = options[*tmpIndex];
+                if (!endsWith(path.c_str(), ".dae") && path[0] != '-')
+                {
+                    _sceneOutputPath = path;
+                }
+                else
+                {
+                    _sceneOutputPath = std::string("");
+                }
+            }
+            else
+            {
+                _sceneOutputPath = std::string("");
             }
         }
 
-        (*index)++;
-        if (*index < options.size())
+        // Font Size
+        if (str.compare("-s") == 0)
         {
-            _fontSize = atoi(options[*index].c_str());
-        }
-        else
-        {
-            LOG(1, "Error: missing arguemnt for -%c.\n", str[1]);
-            _parseError = true;
-            return;
+            // old format was -s##
+            if (str.length() > 2)
+            {
+                char n = str[2];
+                if (n > '0' && n <= '9')
+                {
+                    const char* number = str.c_str() + 2;
+                    _fontSize = atoi(number);
+                    break;
+                }
+            }
+
+            (*index)++;
+            if (*index < options.size())
+            {
+                _fontSize = atoi(options[*index].c_str());
+            }
+            else
+            {
+                LOG(1, "Error: missing arguemnt for -%c.\n", str[1]);
+                _parseError = true;
+                return;
+            }
         }
         break;
     case 't':
@@ -447,16 +498,26 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
     case 'm':
         if (str.compare("-m") == 0 || str.compare("-material") == 0)
         {
-//            // read one string, make sure not to go out of bounds
-//            if ((*index + 1) >= options.size())
-//            {
-//                fprintf(stderr, "Error: -m requires 1 argument.\n");
-//                _parseError = true;
-//                return;
-//            }
-//            (*index)++;
-//            _materialOutputPath = options[*index];
             _materialOutput = true;
+            // read one string, make sure not to go out of bounds
+            if ((*index + 1) < options.size())
+            {
+                size_t* tmpIndex = index;
+                tmpIndex++;
+                std::string path = options[*tmpIndex];
+                if (!endsWith(path.c_str(), ".dae") && path[0] != '-')
+                {
+                    _materialOutputPath = path;
+                }
+                else
+                {
+                    _materialOutputPath = std::string("");
+                }
+            }
+            else
+            {
+                _materialOutputPath = std::string("");
+            }
         }
         break;
     default:
