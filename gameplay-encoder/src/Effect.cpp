@@ -55,25 +55,29 @@ void Effect::writeBinary(FILE* file)
 
 void Effect::writeText(FILE* file)
 {
-    fprintf(file, "\t\t\tu_ambientColor = %f, %f, %f, %f\n",
-            this->ambientColor.x,
-            this->ambientColor.y,
-            this->ambientColor.z,
-            this->ambientColor.w);
-    // TODO: u_lightDirection
-    // light color is a fix value at the moment
-    fprintf(file, "\t\t\tu_lightColor = %f, %f, %f, %f\n",
-            this->lightColor.x,
-            this->lightColor.y,
-            this->lightColor.z,
-            this->lightColor.w);
-    fprintf(file, "\t\t\tu_specularExponent = %f\n", this->specularExponent);
-    fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
     std::string unlit = "";
     if(!this->hasLighting)
     {
-       unlit = "-unlit";
+        unlit = "-unlit";
     }
+    else
+    {
+        fprintf(file, "\t\t\tu_ambientColor = %f, %f, %f, %f\n",
+                this->ambientColor.x,
+                this->ambientColor.y,
+                this->ambientColor.z,
+                this->ambientColor.w);
+        // TODO: u_lightDirection
+        // light color is a fix value at the moment
+        fprintf(file, "\t\t\tu_lightColor = %f, %f, %f, %f\n",
+                this->lightColor.x,
+                this->lightColor.y,
+                this->lightColor.z,
+                this->lightColor.w);
+        fprintf(file, "\t\t\tu_specularExponent = %f\n", this->specularExponent);
+        fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
+    }
+
     if(this->hasTexture)
     {
         fprintf(file, "\t\t\tvertexShader = res/shaders/textured%s.vert\n", unlit.c_str());
@@ -84,8 +88,11 @@ void Effect::writeText(FILE* file)
         fprintf(file, "\t\t\t\tpath = %s\n", this->texFilename.c_str());
         fprintf(file, "\t\t\t\twrapS = %s\n", wrapStr[this->wrapS].c_str());
         fprintf(file, "\t\t\t\twrapT = %s\n", wrapStr[this->wrapT].c_str());
-        fprintf(file, "\t\t\t\tminFilter = %s\n", filterStr[this->minFilter].c_str());
-        fprintf(file, "\t\t\t\tmagFilter = %s\n", filterStr[this->magFilter].c_str());
+        // TODO: set proper mipmap-values
+        // fprintf(file, "\t\t\t\tminFilter = %s\n", filterStr[this->minFilter].c_str());
+        // fprintf(file, "\t\t\t\tmagFilter = %s\n", filterStr[this->magFilter].c_str());
+        fprintf(file, "\t\t\t\tminFilter = LINEAR\n");
+        fprintf(file, "\t\t\t\tmagFilter = LINEAR\n");
         fprintf(file, "\t\t\t\tmipmap = false\n");
         fprintf(file, "\t\t\t}\n\n");
     }
@@ -101,14 +108,7 @@ void Effect::writeText(FILE* file)
     }
     fprintf(file, "\t\t\trenderState\n");
     fprintf(file, "\t\t\t{\n");
-    if(this->alpha < 1.0f)
-    {
-        fprintf(file, "\t\t\t\tcullFace = false\n");
-        }
-    else
-    {
-        fprintf(file, "\t\t\t\tcullFace = true\n");
-    }
+    fprintf(file, "\t\t\t\tcullFace = false\n");
     fprintf(file, "\t\t\t\tdepthTest = true\n");
     fprintf(file, "\t\t\t}\n");
 }
@@ -156,7 +156,7 @@ void Effect::setMagFilter(Filter magFilter)
 void Effect::setTextureFilename(std::string path)
 {
     int x = path.find_last_of('/');
-    this->texFilename = "res/" + path.substr(path.find_last_of('/') + 1);
+    this->texFilename = "res/model/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
 }
 
@@ -173,5 +173,10 @@ void Effect::setLighting(bool hasLighting)
 void Effect::setLightColor(Vector4 color)
 {
     this->lightColor = color;
+}
+
+bool Effect::isUnlit()
+{
+    return this->hasLighting;
 }
 }

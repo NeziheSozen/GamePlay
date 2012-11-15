@@ -5,6 +5,7 @@
 
 #include "FBXSceneEncoder.h"
 #include "EncoderArguments.h"
+#include "SceneFile.h"
 
 using namespace gameplay;
 
@@ -193,7 +194,7 @@ FBXSceneEncoder::~FBXSceneEncoder()
 {
 }
 
-void FBXSceneEncoder::write(const std::string& filepath, const EncoderArguments& arguments)
+void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& arguments)
 {
     FbxManager* sdkManager = FbxManager::Create();
     FbxIOSettings *ios = FbxIOSettings::Create(sdkManager, IOSROOT);
@@ -235,6 +236,34 @@ void FBXSceneEncoder::write(const std::string& filepath, const EncoderArguments&
         _gamePlayFile.groupMeshSkinAnimations();
     }
     
+    // write file only if material output enabled
+    // it is possible that the user wants to get the scene-file only
+    if(arguments.materialOutputEnabled())
+    {
+        // get filepath:
+        std::string filepath = EncoderArguments::getInstance()->getMaterialOutputPath();
+        FILE* _file = fopen(filepath.c_str(), "w");
+        if (!_file)
+        {
+            return;
+        }
+
+        std::list<Material*>::iterator it;
+        for (it = _materials.begin(); it != _materials.end(); ++it)
+        {
+            (*it)->writeText(_file);
+        }
+    }
+
+    // TODO create scenefile
+    if (arguments.sceneOutputEnabled())
+    {
+        SceneFile* sceneFile = new SceneFile(_gamePlayFile);
+        std::string filepathScene = arguments.getSceneOutputPath();
+        FILE* _file = fopen(filepathScene.c_str(), "w");
+        sceneFile->writeFile(_file);
+    }
+
     std::string outputFilePath = arguments.getOutputFilePath();
 
     if (arguments.textOutputEnabled())
@@ -879,6 +908,140 @@ void FBXSceneEncoder::loadSkin(FbxMesh* fbxMesh, Model* model)
     }
 }
 
+void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMaterial* fbxMaterial)
+{
+    char uniqueId[70];
+    sprintf(uniqueId, "%llu", fbxMaterial->GetUniqueID());
+    std::string materialId = std::string(uniqueId);
+
+    Material* mat = new Material();
+
+    mat->setMaterialId(materialId);
+    meshPart->setMaterialSymbolName(materialId);
+    mesh->addInstanceMaterial(materialId, *mat);
+
+    FbxPropertyT<FbxDouble3> lKFbxDouble3;
+    FbxPropertyT<FbxDouble> lKFbxDouble1;
+    FbxColor theColor;
+
+    if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
+    {
+        // We found a Phong material.  Display its properties.
+        // Display the Ambient Color
+        lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Ambient;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+        // LOG(1, "            Ambient: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        mat->getEffect().setAmbient(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+        // Display the Diffuse Color
+        FbxProperty lProperty = ((FbxSurfacePhong *) fbxMaterial)->FindProperty(FbxSurfaceMaterial::sDiffuse);
+        if(lProperty.IsValid())
+        {
+            int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
+            if(lTextureCount > 0)
+            {
+                for(int j=0; j < lTextureCount; ++j)
+                {
+                    FbxFileTexture* lfileTexture = lProperty.GetSrcObject<FbxFileTexture>(j);
+                    // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
+                    std::string path = std::string(lfileTexture->GetFileName());
+                    std::string ext = path.substr(path.find_last_of('.') + 1);
+                    if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                    {
+                        LOG(1, "Encoder can't handle jpg's. Please provide png's.");
+                    }else
+                    {
+                        mat->getEffect().setTextureFilename(path);
+                    }
+                }
+            }
+        }
+        lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Diffuse;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+        //LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+        // Display the Specular Color (unique to Phong materials)
+        lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Specular;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+//        LOG(1, "            Specular: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        mat->getEffect().setSpecular(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+        // TODO: Display the Emissive Color
+        lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Emissive;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+//        LOG(1, "            Emissive: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+
+        //Opacity is Transparency factor now
+        lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->TransparencyFactor;
+//        LOG(1, "            Opacity: %f\n", 1.0-lKFbxDouble1.Get());
+        mat->getEffect().setAlpha(lKFbxDouble1.Get());
+
+        // Display the Shininess
+        lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->Shininess;
+//        LOG(1, "            Shininess: %f\n", lKFbxDouble1.Get());
+        mat->getEffect().setShininess(lKFbxDouble1.Get());
+
+        // TODO: Display the Reflectivity
+        lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->ReflectionFactor;
+//        LOG(1, "            Reflectivity: %f\n", lKFbxDouble1.Get());
+    }
+    else if(fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId) )
+    {
+        // We found a Lambert material. Display its properties.
+        // Display the Ambient Color
+        lKFbxDouble3=((FbxSurfaceLambert *)fbxMaterial)->Ambient;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+//        LOG(1, "            Ambient: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        mat->getEffect().setAmbient(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+        // Display the Diffuse Color
+        FbxProperty lProperty = ((FbxSurfaceLambert *) fbxMaterial)->FindProperty(FbxSurfaceMaterial::sDiffuse);
+        if(lProperty.IsValid())
+        {
+            int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
+            if(lTextureCount > 0)
+            {
+                for(int j=0; j < lTextureCount; ++j)
+                {
+                    FbxFileTexture* lfileTexture = lProperty.GetSrcObject<FbxFileTexture>(j);
+                    // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
+                    std::string path = std::string(lfileTexture->GetFileName());
+                    std::string ext = path.substr(path.find_last_of('.') + 1);
+                    if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                    {
+                        LOG(1, "Encoder can't handle jpg's. Please provide png's.");
+                    }else
+                    {
+                        mat->getEffect().setTextureFilename(path);
+                    }
+                }
+            }
+        }
+
+        // Display the Diffuse Color
+        lKFbxDouble3 =((FbxSurfaceLambert *)fbxMaterial)->Diffuse;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+//        LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+        // TODO: Display the Emissive
+        lKFbxDouble3 =((FbxSurfaceLambert *)fbxMaterial)->Emissive;
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+//        LOG(1, "            Emissive: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+
+        // Display the Opacity
+        lKFbxDouble1 =((FbxSurfaceLambert *)fbxMaterial)->TransparencyFactor;
+        LOG(1, "            Opacity: %f\n", 1.0-lKFbxDouble1.Get());
+        mat->getEffect().setAlpha(lKFbxDouble1.Get());
+    }
+    else {
+        LOG(1, "*********** No Material\n");
+    }
+
+    _materials.push_back(mat);
+}
+
 Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
 {
     // Check if this mesh has already been loaded.
@@ -902,9 +1065,13 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
     std::vector<MeshPart*> meshParts;
     const int materialCount = fbxMesh->GetNode()->GetMaterialCount();
     int meshPartSize = (materialCount > 0) ? materialCount : 1;
-    for (int i = 0; i < meshPartSize; ++i)
+    FbxNode* fbxNode = fbxMesh->GetNode();
+    for (int i = 0; i < meshPartSize; i++)
     {
-        meshParts.push_back(new MeshPart());
+        MeshPart* meshPart = new MeshPart();
+        meshParts.push_back(meshPart);
+        FbxSurfaceMaterial* material = fbxNode->GetMaterial(i);
+        loadMaterial(mesh, meshPart, material);
     }
 
     // Find the blend weights and blend indices if this mesh is skinned.

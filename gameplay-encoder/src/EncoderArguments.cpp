@@ -438,7 +438,7 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
                 size_t* tmpIndex = index;
                 tmpIndex++;
                 std::string path = options[*tmpIndex];
-                if (!endsWith(path.c_str(), ".dae") && path[0] != '-')
+                if ((!endsWith(path.c_str(), ".dae")  || !endsWith(path.c_str(), ".fbx")) && path[0] != '-')
                 {
                     _sceneOutputPath = path;
                 }
@@ -505,7 +505,7 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
                 size_t* tmpIndex = index;
                 tmpIndex++;
                 std::string path = options[*tmpIndex];
-                if (!endsWith(path.c_str(), ".dae") && path[0] != '-')
+                if ((!endsWith(path.c_str(), ".dae") || !endsWith(path.c_str(), ".fbx")) && path[0] != '-')
                 {
                     _materialOutputPath = path;
                 }

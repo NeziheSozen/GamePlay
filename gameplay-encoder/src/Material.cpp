@@ -38,8 +38,11 @@ void Material::writeText(FILE* file)
     fprintf(file, "\t\tpass\n");
     fprintf(file, "\t\t{\n");
     fprintf(file, "\t\t\tu_worldViewProjectionMatrix = WORLD_VIEW_PROJECTION_MATRIX\n");
-    fprintf(file, "\t\t\tu_inverseTransposeWorldViewMatrix = INVERSE_TRANSPOSE_WORLD_VIEW_MATRIX\n");
-    fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+    if(this->_effect->isUnlit())
+    {
+        fprintf(file, "\t\t\tu_inverseTransposeWorldViewMatrix = INVERSE_TRANSPOSE_WORLD_VIEW_MATRIX\n");
+        fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+    }
     this->_effect->writeText(file);
     fprintf(file, "\t\t}\n");
     fprintf(file, "\t}\n");

@@ -93,7 +93,9 @@ namespace gameplay
         {
             const domLibrary_lightsRef& libLights = lightsLib.get(i);
             const domLight_Array& lightArray = libLights->getLight_array();
-            material->getEffect().setLighting(lightArray.getCount() > 0);
+            // TODO: implement lighting - currently only unlit materials supported
+            // material->getEffect().setLighting(lightArray.getCount() > 0);
+            material->getEffect().setLighting(false);
         }
         
         // efects

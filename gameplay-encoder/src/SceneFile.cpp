@@ -16,7 +16,7 @@ SceneFile::~SceneFile(void)
 void SceneFile::writeFile(FILE* file){
     fprintf(file, "scene\n");
     fprintf(file, "{\n");
-    fprintf(file, "    path = res/scene.gpb\n\n");
+    fprintf(file, "    path = res/model/scene.gpb\n\n");
 
     std::list<Node*> nodes = _gpbFile.getNodeList();
     
@@ -62,7 +62,7 @@ void SceneFile::writeFile(FILE* file){
                         }
                     }
                     
-                    fprintf(file, "res/scene.material#%s\n", material.getMaterialId().c_str());
+                    fprintf(file, "res/model/scene.material#%s\n", material.getMaterialId().c_str());
                     count++;
                     
                     

@@ -58,7 +58,7 @@ public:
     /**
      * Writes out encoded FBX file.
      */
-    void write(const std::string& filepath, const EncoderArguments& arguments);
+    void write(const std::string& filepath, EncoderArguments& arguments);
 
 private:
 
@@ -143,6 +143,8 @@ private:
      */
     Node* loadNode(FbxNode* fbxNode);
     
+    void loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMaterial* fbxMaterial);
+
     /**
      * Loads the FbxMesh and returns a GamePlay mesh.
      * If the fbxMesh has already been loaded then the same instance of mesh will be returned.
@@ -213,6 +215,11 @@ private:
      * Indicates if the animations for mesh skins should be grouped before writing out the GPB file.
      */
     bool _autoGroupAnimations;
+
+    /**
+     *  list of all material-objects that were created from the model
+     */
+    std::list<Material*> _materials;
 };
 
 #endif

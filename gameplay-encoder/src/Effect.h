@@ -61,6 +61,7 @@ public:
     void setLighting(bool hasLighting);
     void setLightColor(Vector4 color);
 
+    bool isUnlit();
 public:
     static const std::string wrapStr[2];
     static const std::string filterStr[6];
