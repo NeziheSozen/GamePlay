@@ -8,6 +8,7 @@
 #include "DAEMaterialEncoder.h"
 #include "Material.h"
 #include "SceneFile.h"
+#include "MaterialEnhancer.h"
 //#define ENCODER_PRINT_TIME 1
 
 namespace gameplay
@@ -279,12 +280,12 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         return;
     }
     
+    _materialEncoder = new DAEMaterialEncoder();
     // create material
     if(arguments.materialOutputEnabled() || arguments.sceneOutputEnabled())
     {
         begin();
-        _materialEncoder = new DAEMaterialEncoder();
-        _materialEncoder->processMaterial(arguments, _dom);
+        _materialEncoder->processMaterial(_dom);
         end("create material");
     }
 
@@ -385,6 +386,18 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         std::string filepathScene = arguments.getSceneOutputPath();
         FILE* _file = fopen(filepathScene.c_str(), "w");
         sceneFile->writeFile(_file);
+    }
+
+    if(arguments.materialOutputEnabled())
+    {
+        begin();
+        MaterialEnhancer* me = new MaterialEnhancer();
+        me->setLightInMaterial(_gamePlayFile);
+        end("set light in material");
+
+        begin();
+        _materialEncoder->writeMaterialFile();
+        end("write material-file");
     }
 
     // Cleanup
@@ -1016,7 +1029,7 @@ void DAESceneEncoder::loadLightInstance(const domNode* n, Node* node)
 }
 
 void DAESceneEncoder::loadMaterialMapping(const domBind_materialRef bindMaterialRef,
-                                          Model* model, bool isMesh)
+                                          Model* model, bool isSkin)
 {
     if (bindMaterialRef)
     {
@@ -1039,13 +1052,13 @@ void DAESceneEncoder::loadMaterialMapping(const domBind_materialRef bindMaterial
                         Material* material = _materialEncoder->getMaterial(materialName);
                         if(material)
                         {
-                            if (isMesh)
+                            if (!isSkin)
                             {
-                                model->getMesh()->addInstanceMaterial(symbolName, *material);
+                                model->getMesh()->addInstanceMaterial(symbolName, material);
                             }
                             else
                             {
-                                model->getSkin()->getMesh()->addInstanceMaterial(symbolName, *material);
+                                model->getSkin()->getMesh()->addInstanceMaterial(symbolName, material);
                             }
                         }else
                         {
@@ -1086,7 +1099,7 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
 
         // Store Symbol-Material Mapping
         const domBind_materialRef bindMaterialRef = geometryInstanceRef->getBind_material();
-        loadMaterialMapping(bindMaterialRef, node->getModel(), true);
+        loadMaterialMapping(bindMaterialRef, node->getModel(), false);
     }
 
     // TODO: Check materials within instance_controller
@@ -1143,7 +1156,7 @@ void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
                 }
                 // create Material-Mapping
                 const domBind_materialRef bindMaterialRef = instanceControllerRef->getBind_material();
-                loadMaterialMapping(bindMaterialRef, model, false);
+                loadMaterialMapping(bindMaterialRef, model, true);
             }
         }
         else

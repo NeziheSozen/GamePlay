@@ -221,18 +221,18 @@ void Mesh::computeBounds()
     bounds.radius = sqrt(bounds.radius);
 }
 
-void Mesh::addInstanceMaterial(std::string symbol, Material& material)
+void Mesh::addInstanceMaterial(std::string symbol, Material* material)
 {
-    _materialLookupTable.insert(std::pair<std::string,Material&>(symbol, material));
+    _materialLookupTable.insert(std::pair<std::string,Material*>(symbol, material));
 }
 
-void Mesh::getMaterial(Material& material, std::string symbol)
+Material* Mesh::getMaterial(std::string symbol)
 {
-    std::map<std::string, Material&>::iterator it;
+    std::map<std::string, Material*>::iterator it;
     it = _materialLookupTable.find(symbol);
     if (it != _materialLookupTable.end())
     {
-        material = it->second;
+        return it->second;
     }
     else
     {

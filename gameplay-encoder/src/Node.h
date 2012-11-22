@@ -169,6 +169,9 @@ public:
      */
     bool hasLight() const;
     
+    void setNextSibling(Node* node);
+    void setPreviousSibling(Node* node);
+
 private:
 
     Matrix _transform;

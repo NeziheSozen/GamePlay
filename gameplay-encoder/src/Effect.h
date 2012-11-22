@@ -5,7 +5,9 @@
 
 namespace gameplay
 {
-
+class Light;
+class Scene;
+class Node;
 class Effect : public Object
 {
 public:
@@ -45,8 +47,9 @@ public:
     virtual const char* getElementName(void) const;
 
     virtual void writeBinary(FILE* file);
-
     virtual void writeText(FILE* file);
+
+    void writeEffect(FILE* file, Light* light = NULL);
 
     void setAmbient(Vector4 color);
     void setDiffuse(Vector4 color);
@@ -58,10 +61,6 @@ public:
     void setMagFilter(Filter magFilter);
     void setTextureFilename(std::string path);
     void setAlpha(float alpha);
-    void setLighting(bool hasLighting);
-    void setLightColor(Vector4 color);
-
-    bool isUnlit();
 public:
     static const std::string wrapStr[2];
     static const std::string filterStr[6];
@@ -69,7 +68,6 @@ private:
     Vector4 ambientColor;
     Vector4 diffuseColor;
     Vector4 specularColor;
-    Vector4 lightColor;
     float specularExponent;
     Wrap wrapS;
     Wrap wrapT;
@@ -78,7 +76,6 @@ private:
     std::string texFilename;
     bool hasTexture;
     float alpha;
-    bool hasLighting;
     std::string _vertexShader;
     std::string _fragmentShader;
 };

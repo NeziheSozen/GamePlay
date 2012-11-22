@@ -42,27 +42,25 @@ void SceneFile::writeFile(FILE* file){
                 for (std::vector<MeshPart*>::iterator i = mesh->parts.begin(); i != mesh->parts.end(); ++i)
                 {
                     std::string symbolname = (*i)->getMaterialSymbolName();
-                    Material material;
-
-                    mesh->getMaterial(material, symbolname);
+                    Material* material = mesh->getMaterial(symbolname);
 
                     fprintf(file, "        material");
                     if (mesh->parts.size() > 1)
                     {
-                        if(!material.getMaterialId().empty())
+                        if(!material->getMaterialId().empty())
                         {
                             fprintf(file, "[%d] = ", count);
                         }
                     }
                     else
                     {
-                        if(!material.getMaterialId().empty())
+                        if(!material->getMaterialId().empty())
                         {
                             fprintf(file, " = ");
                         }
                     }
                     
-                    fprintf(file, "res/model/scene.material#%s\n", material.getMaterialId().c_str());
+                    fprintf(file, "res/model/scene.material#%s\n", material->getMaterialId().c_str());
                     count++;
                     
                     

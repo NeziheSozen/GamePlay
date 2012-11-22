@@ -6,6 +6,7 @@
 #include "FBXSceneEncoder.h"
 #include "EncoderArguments.h"
 #include "SceneFile.h"
+#include "MaterialEnhancer.h"
 
 using namespace gameplay;
 
@@ -240,6 +241,10 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     // it is possible that the user wants to get the scene-file only
     if(arguments.materialOutputEnabled())
     {
+        // connect light to material
+        MaterialEnhancer* me = new MaterialEnhancer();
+        me->setLightInMaterial(_gamePlayFile);
+
         // get filepath:
         std::string filepath = EncoderArguments::getInstance()->getMaterialOutputPath();
         FILE* _file = fopen(filepath.c_str(), "w");
@@ -915,10 +920,9 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     std::string materialId = std::string(uniqueId);
 
     Material* mat = new Material();
-
     mat->setMaterialId(materialId);
     meshPart->setMaterialSymbolName(materialId);
-    mesh->addInstanceMaterial(materialId, *mat);
+    mesh->addInstanceMaterial(materialId, mat);
 
     FbxPropertyT<FbxDouble3> lKFbxDouble3;
     FbxPropertyT<FbxDouble> lKFbxDouble1;

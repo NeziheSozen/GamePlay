@@ -326,4 +326,13 @@ bool Node::hasLight() const
     return _light != NULL;
 }
 
+void Node::setNextSibling(Node* node)
+{
+    _nextSibling = node;
+}
+void Node::setPreviousSibling(Node* node)
+{
+    _previousSibling = node;
+}
+
 }

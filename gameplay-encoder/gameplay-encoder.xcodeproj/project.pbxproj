@@ -63,6 +63,8 @@
 		5BCD0643152CFC3C0071FAB5 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCD0642152CFC3C0071FAB5 /* libpng.a */; };
 		5FA636B41647BF8A002AAEA5 /* DAEMaterialEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FA636B21647BF8A002AAEA5 /* DAEMaterialEncoder.cpp */; };
 		EBC5ADEE16496113008934C2 /* SceneFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBC5ADEC16496112008934C2 /* SceneFile.cpp */; };
+		EBD7D2641653AD9000DFA450 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBD7D2631653AD9000DFA450 /* libfbxsdk-2013.3-static.a */; };
+		EBD7D2A7165BD64000DFA450 /* MaterialEnhancer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBD7D2A5165BD63F00DFA450 /* MaterialEnhancer.cpp */; };
 		F18DCD0615D554B800DB35DB /* Heightmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F18DCD0315D554B800DB35DB /* Heightmap.cpp */; };
 /* End PBXBuildFile section */
 
@@ -185,6 +187,9 @@
 		5FA636B31647BF8A002AAEA5 /* DAEMaterialEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DAEMaterialEncoder.h; path = src/DAEMaterialEncoder.h; sourceTree = SOURCE_ROOT; };
 		EBC5ADEC16496112008934C2 /* SceneFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneFile.cpp; path = src/SceneFile.cpp; sourceTree = SOURCE_ROOT; };
 		EBC5ADED16496113008934C2 /* SceneFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneFile.h; path = src/SceneFile.h; sourceTree = SOURCE_ROOT; };
+		EBD7D2631653AD9000DFA450 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "/Applications/Autodesk/FBX SDK/2013.3/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<absolute>"; };
+		EBD7D2A5165BD63F00DFA450 /* MaterialEnhancer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialEnhancer.cpp; path = src/MaterialEnhancer.cpp; sourceTree = SOURCE_ROOT; };
+		EBD7D2A6165BD64000DFA450 /* MaterialEnhancer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialEnhancer.h; path = src/MaterialEnhancer.h; sourceTree = SOURCE_ROOT; };
 		F18DCD0315D554B800DB35DB /* Heightmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Heightmap.cpp; path = src/Heightmap.cpp; sourceTree = SOURCE_ROOT; };
 		F18DCD0415D554B800DB35DB /* Heightmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Heightmap.h; path = src/Heightmap.h; sourceTree = SOURCE_ROOT; };
 		F18DCD0515D554B800DB35DB /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Thread.h; path = src/Thread.h; sourceTree = SOURCE_ROOT; };
@@ -195,6 +200,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBD7D2641653AD9000DFA450 /* libfbxsdk-2013.3-static.a in Frameworks */,
 				42D277591472EFA700D867A4 /* libpcre.a in Frameworks */,
 				42D2775A1472EFA700D867A4 /* libpcrecpp.a in Frameworks */,
 				42C8EE351472B60100E43619 /* libfreetype.a in Frameworks */,
@@ -291,6 +297,8 @@
 				42C8EDDD14724CD700E43619 /* main.cpp */,
 				42C8EDDE14724CD700E43619 /* Material.cpp */,
 				42C8EDDF14724CD700E43619 /* Material.h */,
+				EBD7D2A5165BD63F00DFA450 /* MaterialEnhancer.cpp */,
+				EBD7D2A6165BD64000DFA450 /* MaterialEnhancer.h */,
 				42C8EDE014724CD700E43619 /* MaterialParameter.cpp */,
 				42C8EDE114724CD700E43619 /* MaterialParameter.h */,
 				42C8EDE214724CD700E43619 /* Matrix.cpp */,
@@ -347,6 +355,7 @@
 		427D4F44147DC9080076760E /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				EBD7D2631653AD9000DFA450 /* libfbxsdk-2013.3-static.a */,
 				5BCD0642152CFC3C0071FAB5 /* libpng.a */,
 				42D277571472EFA700D867A4 /* libpcre.a */,
 				42D277581472EFA700D867A4 /* libpcrecpp.a */,
@@ -456,6 +465,7 @@
 				F18DCD0615D554B800DB35DB /* Heightmap.cpp in Sources */,
 				5FA636B41647BF8A002AAEA5 /* DAEMaterialEncoder.cpp in Sources */,
 				EBC5ADEE16496113008934C2 /* SceneFile.cpp in Sources */,
+				EBD7D2A7165BD64000DFA450 /* MaterialEnhancer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,6 +487,7 @@
 					NO_BOOST,
 					NO_ZAE,
 					"DEBUG=1",
+					USE_FBX,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -489,6 +500,8 @@
 					"../external-deps/collada-dom/include",
 					"../external-deps/collada-dom/include/1.4",
 					"../external-deps/libpng/include",
+					/Applications/Autodesk/FBX,
+					"SDK/2013.3/include/**",
 				);
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -496,7 +509,7 @@
 				OTHER_TEST_FLAGS = "";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ./external-deps/libpng/include";
+				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ./external-deps/libpng/include /Applications/Autodesk/FBX SDK/2013.3/include/**";
 				WARNING_CFLAGS = "";
 			};
 			name = Debug;
@@ -514,6 +527,7 @@
 					DOM_INCLUDE_LIBXML,
 					NO_BOOST,
 					NO_ZAE,
+					USE_FBX,
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -525,13 +539,15 @@
 					"../external-deps/collada-dom/include",
 					"../external-deps/collada-dom/include/1.4",
 					"../external-deps/libpng/include",
+					/Applications/Autodesk/FBX,
+					"SDK/2013.3/include/**",
 				);
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_TEST_FLAGS = "";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ./external-deps/libpng/include";
+				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ./external-deps/libpng/include /Applications/Autodesk/FBX SDK/2013.3/include/**";
 				WARNING_CFLAGS = "";
 			};
 			name = Release;
@@ -553,6 +569,7 @@
 					"../external-deps/collada-dom/include",
 					"../external-deps/collada-dom/include/1.4",
 					"../external-deps/libpng/include",
+					"\"/Applications/Autodesk/FBX SDK/2013.3/include\"/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -561,10 +578,11 @@
 					"\"$(SRCROOT)/../external-deps/pcre/lib/macosx\"",
 					"\"$(SRCROOT)/../external-deps/libpng/lib/macosx\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SYSTEM_APPS_DIR)/Autodesk/FBX SDK/2013.3/lib/gcc4/ub\"",
 				);
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype2/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ../external-deps/libpng/include";
+				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype2/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ../external-deps/libpng/include \"/Applications/Autodesk/FBX SDK/2013.3/include\"/**";
 			};
 			name = Debug;
 		};
@@ -585,6 +603,7 @@
 					"../external-deps/collada-dom/include",
 					"../external-deps/collada-dom/include/1.4",
 					"../external-deps/libpng/include",
+					"\"/Applications/Autodesk/FBX SDK/2013.3/include\"/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -593,10 +612,11 @@
 					"\"$(SRCROOT)/../external-deps/pcre/lib/macosx\"",
 					"\"$(SRCROOT)/../external-deps/libpng/lib/macosx\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SYSTEM_APPS_DIR)/Autodesk/FBX SDK/2013.3/lib/gcc4/ub\"",
 				);
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype2/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ../external-deps/libpng/include";
+				USER_HEADER_SEARCH_PATHS = "../external-deps/freetype2/include ../external-deps/collada-dom/include ../external-deps/collada-dom/include/1.4 ../external-deps/libpng/include \"/Applications/Autodesk/FBX SDK/2013.3/include\"/**";
 			};
 			name = Release;
 		};

@@ -190,8 +190,16 @@ private:
      */
     static int getVertexUsageType(const std::string& semantic);
 
+    /**
+     * stores the Material and it's symbolname in a hashmap in the Mesh-Object,
+     * since a Mesh can have one or more MeshParts.
+     *
+     * @param bindMaterialRef - the material-reference of the DOM from DAE
+     * @param model - the Mesh(es) of this Model will be processed
+     * @param isSkin - true if a Skin is concerned, otherwise false
+     */
     void loadMaterialMapping(const domBind_materialRef bindMaterialRef,
-                             Model* model, bool isMesh);
+                             Model* model, bool isSkin);
 private:
     
     DAE* _collada;        // Collada datastore in memory to read from.

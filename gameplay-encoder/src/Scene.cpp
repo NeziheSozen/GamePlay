@@ -79,6 +79,11 @@ Node* Scene::getFirstCameraNode() const
     return NULL;
 }
 
+std::list<Node*> Scene::getSceneNodes()
+{
+    return _nodes;
+}
+
 void Scene::calcAmbientColor()
 {
     float values[3] = {0.0f, 0.0f, 0.0f};
@@ -97,6 +102,11 @@ void Scene::setAmbientColor(float red, float green, float blue)
     _ambientColor[0] = red;
     _ambientColor[1] = green;
     _ambientColor[2] = blue;
+}
+
+Vector3 Scene::getAmbientColor()
+{
+    return Vector3(_ambientColor[0], _ambientColor[1], _ambientColor[2]);
 }
 
 void Scene::calcAmbientColor(const Node* node, float* values) const

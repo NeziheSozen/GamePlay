@@ -1,5 +1,8 @@
 #include "Base.h"
 #include "Effect.h"
+#include "Light.h"
+#include "Scene.h"
+#include "Node.h"
 
 namespace gameplay
 {
@@ -18,7 +21,6 @@ namespace gameplay
         ambientColor(Vector4(.2f, .2f, .2f, 1.0f)),
         diffuseColor(Vector4(.8f, .8f, .8f, 1.0f)),
         specularColor(Vector4(.0f, .0f, .0f, .0f)),
-        lightColor(Vector4(.8f, .8f, .8f, 1.0f)),
         specularExponent(.0f),
         wrapS(REPEAT),
         wrapT(REPEAT),
@@ -26,8 +28,7 @@ namespace gameplay
         magFilter(LINEAR),
         texFilename(""),
         hasTexture(false),
-        alpha(1.0f),
-        hasLighting(false)
+        alpha(1.0f)
 {
 
 }
@@ -55,27 +56,49 @@ void Effect::writeBinary(FILE* file)
 
 void Effect::writeText(FILE* file)
 {
+}
+
+void Effect::writeEffect(FILE* file, Light* light)
+{
     std::string unlit = "";
-    if(!this->hasLighting)
+    if(light == NULL)
     {
         unlit = "-unlit";
     }
     else
     {
-        fprintf(file, "\t\t\tu_ambientColor = %f, %f, %f, %f\n",
-                this->ambientColor.x,
-                this->ambientColor.y,
-                this->ambientColor.z,
-                this->ambientColor.w);
-        // TODO: u_lightDirection
-        // light color is a fix value at the moment
-        fprintf(file, "\t\t\tu_lightColor = %f, %f, %f, %f\n",
-                this->lightColor.x,
-                this->lightColor.y,
-                this->lightColor.z,
-                this->lightColor.w);
-        fprintf(file, "\t\t\tu_specularExponent = %f\n", this->specularExponent);
-        fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
+        fprintf(file, "\t\t\tdefines = SPECULAR");
+        unsigned char lt = light->getLightType();
+        if (lt == Light::PointLight)
+        {
+            fprintf(file, ";POINT_LIGHT");
+        }
+        else if (lt == Light::SpotLight)
+        {
+            fprintf(file, ";SPOT_LIGHT");
+        }
+//        else
+//        {
+//            // Light::DirectionalLight (already defined in shader)
+//        }
+
+//        // this will be set in the sceneviewer
+//        fprintf(file, "\n\t\t\tu_ambientColor = %f, %f, %f, %f\n",
+//                this->ambientColor.x,
+//                this->ambientColor.y,
+//                this->ambientColor.z,
+//                this->ambientColor.w);
+//
+//        if (!light->isAmbient())
+//        {
+//            fprintf(file, "\t\t\tu_lightColor = %f, %f, %f\n",
+//                    light->getRed(),
+//                    light->getGreen(),
+//                    light->getBlue());
+//        }
+
+        fprintf(file, "\n\t\t\tu_specularExponent = %f\n", this->specularExponent);
+        // fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
     }
 
     if(this->hasTexture)
@@ -163,20 +186,5 @@ void Effect::setTextureFilename(std::string path)
 void Effect::setAlpha(float alpha)
 {
     this->alpha = alpha;
-}
-
-void Effect::setLighting(bool hasLighting)
-{
-    this->hasLighting = hasLighting;
-}
-
-void Effect::setLightColor(Vector4 color)
-{
-    this->lightColor = color;
-}
-
-bool Effect::isUnlit()
-{
-    return this->hasLighting;
 }
 }

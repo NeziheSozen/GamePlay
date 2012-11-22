@@ -7,7 +7,9 @@
 
 namespace gameplay
 {
-
+class Light;
+class Scene;
+class Node;
 class Material : public Object
 {
 public:
@@ -29,10 +31,13 @@ public:
     Effect& getEffect() const;
     void setMaterialId(std::string materialId);
     std::string getMaterialId();
+    void setLight(Light* light);
+    Light* getLight();
 private:
     std::list<MaterialParameter> _parameters;
     Effect* _effect;
     std::string materialId;
+    Light* _light;
 };
 
 }

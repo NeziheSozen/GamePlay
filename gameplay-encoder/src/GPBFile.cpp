@@ -43,7 +43,7 @@ static void getNodeAncestors(Node* node, std::list<Node*>& ancestors);
 
 
 GPBFile::GPBFile(void)
-    : _file(NULL), _animationsAdded(false)
+    : _file(NULL), _animationsAdded(false), _scene(NULL)
 {
     __instance = this;
 }
@@ -152,6 +152,7 @@ void GPBFile::add(Object* obj)
 
 void GPBFile::addScene(Scene* scene)
 {
+    _scene = scene;
     addToRefTable(scene);
     _objects.push_back(scene);
 }
@@ -216,6 +217,11 @@ void GPBFile::addToRefTable(Object* obj)
             }
         }
     }
+}
+
+Scene* GPBFile::getScene()
+{
+    return _scene;
 }
 
 Object* GPBFile::getFromRefTable(const std::string& id)

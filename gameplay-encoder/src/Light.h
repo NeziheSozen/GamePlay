@@ -58,6 +58,13 @@ public:
         AmbientLight = 255
     };
 
+    /*
+     * Returns the LightType of this object
+     *
+     * @return The LightType as an unsigned char
+     */
+    unsigned char getLightType();
+
 private:
 
     static float computeRange(float constantAttenuation, float linearAttenuation, float quadraticAttenuation);

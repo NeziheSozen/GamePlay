@@ -63,8 +63,8 @@ public:
 
     void computeBounds();
 
-    void addInstanceMaterial(std::string symbol, Material& material);
-    void getMaterial(Material& material, std::string symbol);
+    void addInstanceMaterial(std::string symbol, Material* material);
+    Material* getMaterial(std::string symbol);
 
     Model* model;
     std::vector<Vertex> vertices;
@@ -74,7 +74,7 @@ public:
 
 private:
     std::vector<VertexElement> _vertexFormat;
-    std::map<std::string, Material&> _materialLookupTable;
+    std::map<std::string, Material*> _materialLookupTable;
 };
 
 }

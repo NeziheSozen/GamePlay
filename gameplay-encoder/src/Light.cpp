@@ -228,4 +228,8 @@ void Light::setFalloffExponent(float value)
     }
 }
 
+unsigned char Light::getLightType()
+{
+    return _lightType;
+}
 }

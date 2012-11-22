@@ -55,6 +55,9 @@ public:
      */
     void setAmbientColor(float red, float green, float blue);
 
+    Vector3 getAmbientColor();
+
+    std::list<Node*> getSceneNodes();
 private:
 
     /**

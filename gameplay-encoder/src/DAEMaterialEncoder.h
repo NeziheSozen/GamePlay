@@ -21,10 +21,26 @@ namespace gameplay
          * Destructor.
          */
         virtual ~DAEMaterialEncoder(void);
-        
-        void processMaterial(const EncoderArguments& arguments, domCOLLADA* dom);
 
+        /*
+         * Creates all material objects
+         *
+         * @param dom - the DAE-Data Object Model
+         */
+        void processMaterial(domCOLLADA* dom);
+
+        /*
+         * Returns the Material with a given id
+         *
+         * @param The id of the wanted Material
+         * @return The Material Object that is related to the param materialId, if it doen't exist NULL will be returned
+         */
         Material* getMaterial(std::string materialId);
+
+        /*
+         * Writes the Material File
+         */
+        void writeMaterialFile();
 
     private:
         enum DAEMaterial {

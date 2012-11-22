@@ -116,6 +116,8 @@ public:
     void renameAnimations(std::vector<std::string>& animationIds, const char* newId);
 
     std::list<Node*> getNodeList();
+
+    Scene* getScene();
 private:
 
     /**
@@ -160,6 +162,7 @@ private:
     bool _animationsAdded;
 
     ReferenceTable _refTable;
+    Scene* _scene;
 };
 
 }

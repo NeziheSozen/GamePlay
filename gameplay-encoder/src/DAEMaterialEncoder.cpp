@@ -34,7 +34,7 @@ namespace gameplay
         return NULL;
     }
 
-    void DAEMaterialEncoder::processMaterial(const EncoderArguments& arguments, domCOLLADA* dom)
+    void DAEMaterialEncoder::processMaterial(domCOLLADA* dom)
     {
         this->dom = dom;
         // all about the material:
@@ -64,39 +64,45 @@ namespace gameplay
                 }
             }
         }
-        
-        // write file only if material output enabled
-        // it is possible that the user wants to get the scene-file only
-        if(arguments.materialOutputEnabled())
-        {
-            // get filepath:
-            std::string filepath = EncoderArguments::getInstance()->getMaterialOutputPath();
-            FILE* _file = fopen(filepath.c_str(), "w");
-            if (!_file)
-            {
-                return;
-            }
+    }
 
-            std::list<Material*>::iterator it;
-            for (it = materials.begin(); it != materials.end(); ++it)
-            {
-                (*it)->writeText(_file);
-            }
+    void DAEMaterialEncoder::writeMaterialFile()
+    {
+        // get filepath:
+        std::string filepath = EncoderArguments::getInstance()->getMaterialOutputPath();
+        FILE* _file = fopen(filepath.c_str(), "w");
+        if (!_file)
+        {
+            return;
+        }
+        
+        std::list<Material*>::iterator it;
+        for (it = materials.begin(); it != materials.end(); ++it)
+        {
+            (*it)->writeText(_file);
         }
     }
     
     void DAEMaterialEncoder::processEffect(domEffect *effect, Material *material)
     {
         // check if there is light
-        domLibrary_lights_Array &lightsLib = this->dom->getLibrary_lights_array();
-        for (size_t i = 0; i < lightsLib.getCount(); i++)
-        {
-            const domLibrary_lightsRef& libLights = lightsLib.get(i);
-            const domLight_Array& lightArray = libLights->getLight_array();
-            // TODO: implement lighting - currently only unlit materials supported
-            // material->getEffect().setLighting(lightArray.getCount() > 0);
-            material->getEffect().setLighting(false);
-        }
+//        domLibrary_lights_Array &lightsLib = this->dom->getLibrary_lights_array();
+//        for (size_t i = 0; i < lightsLib.getCount(); i++)
+//        {
+//            const domLibrary_lightsRef& libLights = lightsLib.get(i);
+//            const domLight_Array& lightArray = libLights->getLight_array();
+////            for (size_t j = 0; j < lightArray.getCount(); j++)
+////            {
+////                const domLightRef& light = lightArray.get(j);
+////                const domTechniqueRef& tecCommon = light->getTechnique_common();
+////                if(tecCommon)
+////                {
+////                    //tecCommon->get
+////                    domLight
+////                    light->getTechnique_common()->get
+////                }
+////            }
+//        }
         
         // efects
         for ( size_t i = 0; i < effect->getFx_profile_abstract_array().getCount(); i++ )
