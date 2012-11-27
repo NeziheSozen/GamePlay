@@ -350,7 +350,16 @@ namespace gameplay
             }
             if (fop && fop->getFloat())
             {
-                effect.setShininess(fop->getFloat()->getValue());
+                float shininess = fop->getFloat()->getValue();
+                if(shininess < 1.0)
+                {
+                    shininess *= 128.0;
+                }
+                else if(shininess > 128.0)
+                {
+                    shininess = 128.0;
+                }
+                effect.setShininess(shininess);
                 retVal = true;
             }
         }

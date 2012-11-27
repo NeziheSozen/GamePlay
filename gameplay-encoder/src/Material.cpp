@@ -43,7 +43,14 @@ void Material::writeText(FILE* file)
     if(_light != NULL)
     {
         fprintf(file, "\t\t\tu_inverseTransposeWorldViewMatrix = INVERSE_TRANSPOSE_WORLD_VIEW_MATRIX\n");
-        fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+        if (_light->getLightType() != Light::PointLight)
+        {
+            fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+        }
+//        else if (_light->getLightType() != Light::SpotLight)
+//        {
+//            fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+//        }
     }
     _effect->writeEffect(file, _light);
     fprintf(file, "\t\t}\n");

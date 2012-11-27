@@ -984,7 +984,16 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         // Display the Shininess
         lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->Shininess;
 //        LOG(1, "            Shininess: %f\n", lKFbxDouble1.Get());
-        mat->getEffect().setShininess(lKFbxDouble1.Get());
+        float shininess = lKFbxDouble1.Get();
+        if(shininess < 1.0)
+        {
+            shininess *= 128.0;
+        }
+        else if(shininess > 128.0)
+        {
+            shininess = 128.0;
+        }
+        mat->getEffect().setShininess(shininess);
 
         // TODO: Display the Reflectivity
         lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->ReflectionFactor;
