@@ -56,6 +56,12 @@
             ReferencedContainer = "container:gameplay-encoder.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-m -scene /Users/mobilizy/Documents/_tmp/out/scene.dae"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
