@@ -950,12 +950,18 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
                     std::string path = std::string(lfileTexture->GetFileName());
                     std::string ext = path.substr(path.find_last_of('.') + 1);
-                    if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                     {
-                        LOG(1, "Encoder can't handle jpg's. Please provide png's.");
-                    }else
+                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                    }
+                    else
                     {
                         mat->getEffect().setTextureFilename(path);
+                        mat->getEffect().setTextureFilePath(path, EncoderArguments::getInstance()->getOutputDirPath());
+                        if (EncoderArguments::getInstance()->textureOutputEnabled())
+                        {
+                            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+                        }
                     }
                 }
             }
@@ -1021,12 +1027,18 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
                     std::string path = std::string(lfileTexture->GetFileName());
                     std::string ext = path.substr(path.find_last_of('.') + 1);
-                    if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                     {
-                        LOG(1, "Encoder can't handle jpg's. Please provide png's.");
-                    }else
+                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                    }
+                    else
                     {
                         mat->getEffect().setTextureFilename(path);
+                        mat->getEffect().setTextureFilePath(path, EncoderArguments::getInstance()->getOutputDirPath());
+                        if (EncoderArguments::getInstance()->textureOutputEnabled())
+                        {
+                            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+                        }
                     }
                 }
             }

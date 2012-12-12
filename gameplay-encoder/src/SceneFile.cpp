@@ -1,5 +1,6 @@
 #include "Base.h"
 #include "SceneFile.h"
+#include "EncoderArguments.h"
 
 namespace gameplay
 {
@@ -14,12 +15,18 @@ SceneFile::~SceneFile(void)
 }
 
 void SceneFile::writeFile(FILE* file){
+    std::string filename = EncoderArguments::getInstance()->getOutputFilePath();
+    filename = filename.substr(filename.find_last_of('/') + 1, filename.length());
+
+    std::string materialName = EncoderArguments::getInstance()->getMaterialOutputPath();
+    materialName = materialName.substr(materialName.find_last_of('/') + 1, materialName.length());
+
     fprintf(file, "scene\n");
     fprintf(file, "{\n");
-    fprintf(file, "    path = res/model/scene.gpb\n\n");
+    fprintf(file, "    path = res/model/%s\n\n", filename.c_str());
 
     std::list<Node*> nodes = _gpbFile.getNodeList();
-    
+
     for (std::list<Node*>::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
     {
         Model* model = (*i)->getModel();
@@ -59,11 +66,10 @@ void SceneFile::writeFile(FILE* file){
                             fprintf(file, " = ");
                         }
                     }
-                    
-                    fprintf(file, "res/model/scene.material#%s\n", material->getMaterialId().c_str());
+
+                    fprintf(file, "res/model/%s#%s\n", materialName.c_str(),material->getMaterialId().c_str());
                     count++;
-                    
-                    
+
 //                    LOG(1,"symbol: %s material: %s\n", symbolname.c_str(), material.getMaterialId().c_str());
                 }
                 fprintf(file, "    }\n\n");

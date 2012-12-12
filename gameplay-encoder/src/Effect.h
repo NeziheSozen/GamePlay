@@ -61,9 +61,18 @@ public:
     void setMagFilter(Filter magFilter);
     void setTextureFilename(std::string path);
     void setAlpha(float alpha);
+
+    void setTextureFilePath(std::string path, std::string gpbOutputPath);
+    std::string getTextureFilePath();
+    void setTexDestinationPath(std::string texDestinationPath);
+
 public:
     static const std::string wrapStr[2];
     static const std::string filterStr[6];
+
+private:
+    void copyTexture();
+
 private:
     Vector4 ambientColor;
     Vector4 diffuseColor;
@@ -78,6 +87,8 @@ private:
     float alpha;
     std::string _vertexShader;
     std::string _fragmentShader;
+    std::string texAbsPath;
+    std::string texDestinationPath;
 };
 
 }

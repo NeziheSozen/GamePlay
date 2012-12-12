@@ -554,16 +554,21 @@ namespace gameplay
                         if(img->getInit_from() && img->getInit_from()->hasValue())
                         {
                             std::string path = img->getInit_from()->getValue().str();
+                            std::string filePath = img->getInit_from()->getValue().originalStr();
                             std::string ext = path.substr(path.find_last_of('.') + 1);
-                            if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                            if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                             {
                                 // TODO: use encoder-logging
-                                cout << "Gameplay3d can't handle jpg's, please use png's and export your dae-file again" << endl;
+                                cout << "Gameplay3d can handle only png's. Please use png's and export your dae-file again" << endl;
                                 return false;
                             }
                             
                             effect.setTextureFilename(path);
-                            
+                            effect.setTextureFilePath(filePath, EncoderArguments::getInstance()->getOutputDirPath());
+                            if (EncoderArguments::getInstance()->textureOutputEnabled())
+                            {
+                                effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+                            }
                             isTexFilenameSet = true;
                         }
                     }
@@ -587,22 +592,30 @@ namespace gameplay
                 std::string path =  dImg->getInit_from()->getValue().pathDir()+
                 dImg->getInit_from()->getValue().pathFile();
                 
+                std::string filePath = dImg->getInit_from()->getValue().originalStr();
+                
                 // remove space encodings
                 path = cdom::uriToNativePath(path);
+                
                 if(path.empty())
                 {
                     return false;
                 }
 
                 std::string ext = path.substr(path.find_last_of('.') + 1);
-                if(ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+                if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                 {
                     // TODO: use encoder-logging
-                    cout << "Gameplay3d can't handle jpg's, please use png's and export your dae-file again" << endl;
+                    cout << "Gameplay3d can handle only png's. Please use png's and export your dae-file again" << endl;
                     return false;
                 }
                 
                 effect.setTextureFilename(path);
+                effect.setTextureFilePath(filePath, EncoderArguments::getInstance()->getOutputDirPath());
+                if (EncoderArguments::getInstance()->textureOutputEnabled())
+                {
+                    effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+                }
             }
             else
             {

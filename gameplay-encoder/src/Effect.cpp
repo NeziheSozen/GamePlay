@@ -3,10 +3,10 @@
 #include "Light.h"
 #include "Scene.h"
 #include "Node.h"
+#include <copyfile.h>
 
 namespace gameplay
 {
-
     std::string Effect::wrapStr[] = { "REPEAT", "CLAMP" };
     std::string Effect::filterStr[] = {
         "NEAREST",
@@ -28,7 +28,9 @@ namespace gameplay
         magFilter(LINEAR),
         texFilename(""),
         hasTexture(false),
-        alpha(1.0f)
+        alpha(1.0f),
+        texAbsPath(""),
+        texDestinationPath("")
 {
 
 }
@@ -60,6 +62,7 @@ void Effect::writeText(FILE* file)
 
 void Effect::writeEffect(FILE* file, Light* light)
 {
+    copyTexture();
     std::string unlit = "";
     if(light == NULL)
     {
@@ -179,12 +182,44 @@ void Effect::setMagFilter(Filter magFilter)
 void Effect::setTextureFilename(std::string path)
 {
     int x = path.find_last_of('/');
-    this->texFilename = "res/model/" + path.substr(path.find_last_of('/') + 1);
+    this->texFilename = "res/model/tex/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
+}
+
+void Effect::setTextureFilePath(std::string path, std::string gpbOutputPath)
+{
+    int index = path.find("file://");
+    if (index != std::string::npos)
+    {
+        path = path.substr(7);
+    }
+    if(path[0] == '.')
+    {
+        path = gpbOutputPath + path.substr(path.find_first_of('.') + 1);
+    }
+    this->texAbsPath = path;
+}
+
+std::string Effect::getTextureFilePath()
+{
+    return this->texAbsPath;
 }
 
 void Effect::setAlpha(float alpha)
 {
     this->alpha = alpha;
+}
+
+void Effect::setTexDestinationPath(std::string texDestinationPath)
+{
+    this->texDestinationPath = texDestinationPath + this->texAbsPath.substr(this->texAbsPath.find_last_of('/'));
+}
+
+void Effect::copyTexture()
+{
+    if (!this->texDestinationPath.empty() && this->texAbsPath.compare(this->texDestinationPath) != 0)
+    {
+        int result = copyfile(this->texAbsPath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
+    }
 }
 }

@@ -23,7 +23,8 @@ EncoderArguments::EncoderArguments(size_t argc, const char** argv) :
     _daeOutput(false),
     _optimizeAnimations(false),
     _materialOutput(false),
-    _sceneOutput(false)
+    _sceneOutput(false),
+    _textureOutput(false)
 {
     __instance = this;
 
@@ -144,6 +145,15 @@ std::string EncoderArguments::getSceneOutputPath()
     return _sceneOutputPath;
 }
 
+std::string EncoderArguments::getTextureOutputPath()
+{
+    if(_textureOutputPath.empty())
+    {
+        _textureOutputPath = getOutputDirPath();
+    }
+    return _textureOutputPath;
+}
+
 const std::vector<std::string>& EncoderArguments::getGroupAnimationNodeId() const
 {
     return _groupAnimationNodeId;
@@ -184,6 +194,11 @@ bool EncoderArguments::materialOutputEnabled() const
 bool EncoderArguments::sceneOutputEnabled() const
 {
     return _sceneOutput;
+}
+
+bool EncoderArguments::textureOutputEnabled() const
+{
+    return _textureOutput;
 }
 
 bool EncoderArguments::parseErrorOccured() const
@@ -435,12 +450,13 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
             // read one string, make sure not to go out of bounds
             if ((*index + 1) < options.size())
             {
-                size_t* tmpIndex = index;
+                size_t tmpIndex = *index;
                 tmpIndex++;
-                std::string path = options[*tmpIndex];
-                if ((!endsWith(path.c_str(), ".dae")  || !endsWith(path.c_str(), ".fbx")) && path[0] != '-')
+                std::string path = options[tmpIndex];
+                if (!endsWith(path.c_str(), ".dae")  && !endsWith(path.c_str(), ".fbx") && path[0] != '-')
                 {
                     _sceneOutputPath = path;
+                    (*index)++;
                 }
                 else
                 {
@@ -482,7 +498,34 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
         }
         break;
     case 't':
-        _textOutput = true;
+        if (str.compare("-t") == 0)
+        {
+            _textOutput = true;
+        }
+        else if (str.compare("-tex") == 0)
+        {
+            _textureOutput = true;
+            // read one string, make sure not to go out of bounds
+            if ((*index + 1) < options.size())
+            {
+                size_t tmpIndex = *index;
+                tmpIndex++;
+                std::string path = options[tmpIndex];
+                if (!endsWith(path.c_str(), ".dae")  && !endsWith(path.c_str(), ".fbx") && path[0] != '-')
+                {
+                    _textureOutputPath = path;
+                    (*index)++;
+                }
+                else
+                {
+                    _textureOutputPath = std::string("");
+                }
+            }
+            else
+            {
+                _textureOutputPath = std::string("");
+            }
+        }
         break;
     case 'v':
         (*index)++;
@@ -502,12 +545,13 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
             // read one string, make sure not to go out of bounds
             if ((*index + 1) < options.size())
             {
-                size_t* tmpIndex = index;
+                size_t tmpIndex = *index;
                 tmpIndex++;
-                std::string path = options[*tmpIndex];
-                if ((!endsWith(path.c_str(), ".dae") || !endsWith(path.c_str(), ".fbx")) && path[0] != '-')
+                std::string path = options[tmpIndex];
+                if (!endsWith(path.c_str(), ".dae") && !endsWith(path.c_str(), ".fbx") && path[0] != '-')
                 {
                     _materialOutputPath = path;
+                    (*index)++;
                 }
                 else
                 {

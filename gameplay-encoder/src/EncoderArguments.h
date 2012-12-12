@@ -73,6 +73,11 @@ public:
     std::string getSceneOutputPath();
 
     /**
+     * Returns the path to where the Textures should be written to.
+     */
+    std::string getTextureOutputPath();
+
+    /**
      * Returns the output path/folder.
      * Example: "C:/dir"
      */
@@ -101,6 +106,11 @@ public:
      *  Returns true if a scene-file should be created
      */
     bool sceneOutputEnabled() const;
+
+    /**
+     *  Returns true if a scene-file should be created
+     */
+    bool textureOutputEnabled() const;
 
     /**
      * Returns true if an error occurred while parsing the command line arguments.
@@ -162,6 +172,7 @@ private:
     std::string _daeOutputPath;
     std::string _materialOutputPath;
     std::string _sceneOutputPath;
+    std::string _textureOutputPath;
 
     unsigned int _fontSize;
 
@@ -173,6 +184,7 @@ private:
 
     bool _materialOutput;
     bool _sceneOutput;
+    bool _textureOutput;
 
     std::vector<std::string> _groupAnimationNodeId;
     std::vector<std::string> _groupAnimationAnimationId;
