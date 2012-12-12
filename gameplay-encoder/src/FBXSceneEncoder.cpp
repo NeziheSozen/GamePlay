@@ -956,8 +956,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     }
                     else
                     {
+                        std::string fp = EncoderArguments::getInstance()->getFilePath();
+                        int pos = fp.find_last_of('/');
+                        fp = (pos == -1) ? fp : fp.substr(0, pos);
                         mat->getEffect().setTextureFilename(path);
-                        mat->getEffect().setTextureFilePath(path, EncoderArguments::getInstance()->getOutputDirPath());
+                        mat->getEffect().setTextureFilePath(path, fp);
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
                             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
@@ -1033,8 +1036,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     }
                     else
                     {
+                        std::string fp = EncoderArguments::getInstance()->getFilePath();
+                        int pos = fp.find_last_of('/');
+                        fp = (pos == -1) ? fp : fp.substr(0, pos);
                         mat->getEffect().setTextureFilename(path);
-                        mat->getEffect().setTextureFilePath(path, EncoderArguments::getInstance()->getOutputDirPath());
+                        mat->getEffect().setTextureFilePath(path, fp);
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
                             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
