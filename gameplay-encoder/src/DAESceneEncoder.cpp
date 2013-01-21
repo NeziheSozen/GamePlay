@@ -63,8 +63,27 @@ void DAESceneEncoder::optimizeCOLLADA(const EncoderArguments& arguments, domCOLL
         std::vector<std::string> nodeIds;
         if (findGroupAnimationNodes(dom, nodeIds))
         {
+            bool autoGroupAnimations;
+            int hasToGroupAnimations = arguments.groupAnimations();
+            switch(hasToGroupAnimations)
+            {
+                case 0:
+                    autoGroupAnimations = false;
+                    break;
+                case 1:
+                    autoGroupAnimations = true;
+                    break;
+                case -1:
+                default:
+                    if (promptUserGroupAnimations())
+                    {
+                        autoGroupAnimations = true;
+                    }
+                    break;
+            }
+
             // Ask the user if they want to group animations automatically.
-            if (promptUserGroupAnimations())
+            if (autoGroupAnimations)
             {
                 LOG(2, "Grouping animations...\n");
 
@@ -217,19 +236,19 @@ void DAESceneEncoder::createTrianglesFromPolylist(domMesh* domMesh, domPolylist*
     {
         triangles->placeElement(domPolylist->getInput_array()[i]->clone());
     }
-    
+
     // Get the number of inputs and primitives for the polygons array.
     unsigned int inputCount = getMaxOffset(domPolylist->getInput_array()) + 1;
     unsigned int primitiveCount = domPolylist->getVcount()->getValue().getCount();
-    
+
     unsigned int offset = 0;
     unsigned int trianglesProcessed = 0;
-    
+
     // Triangulate all the primitives, this generates all the triangles in a single <p> element.
     for (unsigned int j = 0; j < primitiveCount; ++j)
     {
         unsigned int triangleCount = (unsigned int)domPolylist->getVcount()->getValue()[j] - 2;
-        
+
         // Write out the primitives as triangles, just fan using the first element as the base.
         int index = inputCount;
         for (unsigned int k = 0; k < triangleCount; ++k)
@@ -250,10 +269,9 @@ void DAESceneEncoder::createTrianglesFromPolylist(domMesh* domMesh, domPolylist*
             {
                 domTrianglesP->getValue().append(domPolylist->getP()->getValue()[offset + index + l]);
             }
-            
+
             trianglesProcessed++;
         }
-        
         offset += (unsigned int)domPolylist->getVcount()->getValue()[j] * inputCount;
     }
     triangles->setCount(trianglesProcessed);

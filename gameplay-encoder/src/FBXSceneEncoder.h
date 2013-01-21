@@ -194,6 +194,7 @@ private:
      */
     static void triangulateRecursive(FbxNode* fbxNode);
 
+    Material* getMaterial(std::string materialId);
 private:
 
     /**

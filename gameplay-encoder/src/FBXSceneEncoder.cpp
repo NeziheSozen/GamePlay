@@ -218,9 +218,22 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     // Determine if animations should be grouped.
     if (arguments.getGroupAnimationAnimationId().empty() && isGroupAnimationPossible(fbxScene))
     {
-        if (promptUserGroupAnimations())
+        int hasToGroupAnimations = arguments.groupAnimations();
+        switch(hasToGroupAnimations)
         {
-            _autoGroupAnimations = true;
+            case 0:
+                _autoGroupAnimations = false;
+                break;
+            case 1:
+                _autoGroupAnimations = true;
+                break;
+            case -1:
+            default:
+                if (promptUserGroupAnimations())
+                {
+                    _autoGroupAnimations = true;
+                }
+                break;
         }
     }
 
@@ -919,10 +932,14 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     sprintf(uniqueId, "%llu", fbxMaterial->GetUniqueID());
     std::string materialId = std::string(uniqueId);
 
-    Material* mat = new Material();
-    mat->setMaterialId(materialId);
+    Material* mat = getMaterial(materialId);
     meshPart->setMaterialSymbolName(materialId);
-    mesh->addInstanceMaterial(materialId, mat);
+    if(mat == NULL) {
+        mat = new Material();
+        mat->setMaterialId(materialId);
+        mesh->addInstanceMaterial(materialId, mat);
+        _materials.push_back(mat);
+    }
 
     FbxPropertyT<FbxDouble3> lKFbxDouble3;
     FbxPropertyT<FbxDouble> lKFbxDouble1;
@@ -959,7 +976,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                         std::string fp = EncoderArguments::getInstance()->getFilePath();
                         int pos = fp.find_last_of('/');
                         fp = (pos == -1) ? fp : fp.substr(0, pos);
-                        mat->getEffect().setTextureFilename(path);
+                        mat->getEffect().setTextureFilename(path, fp);
                         mat->getEffect().setTextureFilePath(path, fp);
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
@@ -1039,7 +1056,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                         std::string fp = EncoderArguments::getInstance()->getFilePath();
                         int pos = fp.find_last_of('/');
                         fp = (pos == -1) ? fp : fp.substr(0, pos);
-                        mat->getEffect().setTextureFilename(path);
+                        mat->getEffect().setTextureFilename(path, fp);
                         mat->getEffect().setTextureFilePath(path, fp);
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
@@ -1069,8 +1086,19 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     else {
         LOG(1, "*********** No Material\n");
     }
+}
 
-    _materials.push_back(mat);
+Material* FBXSceneEncoder::getMaterial(std::string materialId) {
+    // TODO: optimize search because complexity O(n) is too high
+    std::list<Material*>::iterator it;
+    for (it = _materials.begin(); it != _materials.end(); ++it)
+    {
+        if((*it)->getMaterialId().compare(materialId) == 0)
+        {
+            return (*it);
+        }
+    }
+    return NULL;
 }
 
 Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)

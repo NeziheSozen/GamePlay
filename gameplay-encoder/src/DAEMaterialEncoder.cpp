@@ -48,7 +48,6 @@ namespace gameplay
             
             for (size_t j = 0; j < materialCount; j++)
             {
-                // cout << "--- " << j+1 << "/" <<  materialCount << "---" << endl;
                 domMaterial *mat = daeSafeCast< domMaterial >(materialArray.get(j));
                 if (mat)
                 {
@@ -128,7 +127,6 @@ namespace gameplay
         
         if(blinn)
         {
-            // cout << "blinn" << endl;
             processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect());
             processColorOrTextureType(blinn->getAmbient(), AMBIENT, material->getEffect());
             error = !processColorOrTextureType(blinn->getDiffuse(), DIFFUSE, material->getEffect());
@@ -154,12 +152,11 @@ namespace gameplay
             
             if(error)
             {
-                cout << "error in material " << material->getMaterialId() << endl;
+                LOG(1, "error in material %s", material->getMaterialId().c_str());
             }
         }
         else if(constant)
         {
-//            cout << "constant" << endl;
             error = !processColorOrTextureType(constant->getEmission(), EMISSION, material->getEffect());
             
             if (constant->getTransparency()) {
@@ -182,12 +179,11 @@ namespace gameplay
             
             if(error)
             {
-                cout << "error in material " << material->getMaterialId() << endl;
+                LOG(1, "error in material %s", material->getMaterialId().c_str());
             }
         }
         else if(lambert)
         {
-//            cout << "lambert" << endl;
             processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect());
             processColorOrTextureType(lambert->getAmbient(), AMBIENT, material->getEffect());
             error = error || !processColorOrTextureType(lambert->getDiffuse(), DIFFUSE, material->getEffect());
@@ -212,12 +208,11 @@ namespace gameplay
             
             if(error)
             {
-                cout << "error in material " << material->getMaterialId() << endl;
+                LOG(1, "error in material %s", material->getMaterialId().c_str());
             }
         }
         else if(phong)
         {
-//            cout << "phong" << endl;
             processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect());
             processColorOrTextureType(phong->getAmbient(), AMBIENT, material->getEffect());
             error = !processColorOrTextureType(phong->getDiffuse(), DIFFUSE, material->getEffect());
@@ -243,7 +238,7 @@ namespace gameplay
             
             if(error)
             {
-                cout << "error in material " << material->getMaterialId() << endl;
+                LOG(1, "error in material %s", material->getMaterialId().c_str());
             }
         }
     }
@@ -283,7 +278,7 @@ namespace gameplay
             }
             else
             {
-                cout << "Currently no support for <texture> in Ambient channel " << std::endl;
+                LOG(1, "Currently no support for <texture> in Ambient channel");
             }
         }
         else if ( channel == DIFFUSE )
@@ -346,7 +341,7 @@ namespace gameplay
             }
             else
             {
-                cout << "Currently no support for <texture> in Specular channel " << std::endl;
+                LOG(1, "Currently no support for <texture> in Specular channel ");
             }
             if (fop && fop->getFloat())
             {
@@ -558,15 +553,14 @@ namespace gameplay
                             std::string ext = path.substr(path.find_last_of('.') + 1);
                             if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                             {
-                                // TODO: use encoder-logging
-                                cout << "Gameplay3d can handle only png's. Please use png's and export your dae-file again" << endl;
+                                LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
                                 return false;
                             }
 
                             std::string fp = EncoderArguments::getInstance()->getFilePath();
                             int pos = fp.find_last_of('/');
                             fp = (pos == -1) ? fp : fp.substr(0, pos);
-                            effect.setTextureFilename(path);
+                            effect.setTextureFilename(path, fp);
                             effect.setTextureFilePath(filePath, fp);
                             if (EncoderArguments::getInstance()->textureOutputEnabled())
                             {
@@ -608,15 +602,14 @@ namespace gameplay
                 std::string ext = path.substr(path.find_last_of('.') + 1);
                 if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                 {
-                    // TODO: use encoder-logging
-                    cout << "Gameplay3d can handle only png's. Please use png's and export your dae-file again" << endl;
+                    LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
                     return false;
                 }
                 std::string fp = EncoderArguments::getInstance()->getFilePath();
                 int pos = fp.find_last_of('/');
                 fp = (pos == -1) ? fp : fp.substr(0, pos);
                 
-                effect.setTextureFilename(path);
+                effect.setTextureFilename(path, fp);
                 effect.setTextureFilePath(filePath, fp);
                 if (EncoderArguments::getInstance()->textureOutputEnabled())
                 {

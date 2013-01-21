@@ -21,9 +21,14 @@ void SceneFile::writeFile(FILE* file){
     std::string materialName = EncoderArguments::getInstance()->getMaterialOutputPath();
     materialName = materialName.substr(materialName.find_last_of('/') + 1, materialName.length());
 
+    std::string fp = EncoderArguments::getInstance()->getFilePath();
+    int pos = fp.find_last_of('/');
+    fp = (pos == -1) ? fp : fp.substr(0, pos);
+
     fprintf(file, "scene\n");
     fprintf(file, "{\n");
-    fprintf(file, "    path = res/model/%s\n\n", filename.c_str());
+    fprintf(file, "    path = %s\n\n", filename.c_str());
+//    fprintf(file, "    path = %s%s\n\n", fp.c_str(), filename.c_str());
 
     std::list<Node*> nodes = _gpbFile.getNodeList();
 
@@ -50,6 +55,9 @@ void SceneFile::writeFile(FILE* file){
                 {
                     std::string symbolname = (*i)->getMaterialSymbolName();
                     Material* material = mesh->getMaterial(symbolname);
+                    if(material == NULL) {
+                        continue;
+                    }
 
                     fprintf(file, "        material");
                     if (mesh->parts.size() > 1)
@@ -67,7 +75,8 @@ void SceneFile::writeFile(FILE* file){
                         }
                     }
 
-                    fprintf(file, "res/model/%s#%s\n", materialName.c_str(),material->getMaterialId().c_str());
+                    fprintf(file, "%s#%s\n", materialName.c_str(),material->getMaterialId().c_str());
+//                    fprintf(file, "%s%s#%s\n", fp.c_str(), materialName.c_str(),material->getMaterialId().c_str());
                     count++;
 
 //                    LOG(1,"symbol: %s material: %s\n", symbolname.c_str(), material.getMaterialId().c_str());

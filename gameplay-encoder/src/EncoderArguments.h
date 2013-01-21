@@ -140,6 +140,8 @@ public:
 
     static std::string getRealPath(const std::string& filepath);
 
+    // TODO: change to enum - int is a bit ugly
+    int groupAnimations() const;
 private:
 
     /**
@@ -157,7 +159,6 @@ private:
      * Sets the output file path that the encoder will write to.
      */
     void setOutputfilePath(const std::string& outputPath);
-    
 
     /**
      * Replaces all instance of oldChar with newChar in str.
@@ -185,6 +186,8 @@ private:
     bool _materialOutput;
     bool _sceneOutput;
     bool _textureOutput;
+
+    int _groupAnimations;
 
     std::vector<std::string> _groupAnimationNodeId;
     std::vector<std::string> _groupAnimationAnimationId;

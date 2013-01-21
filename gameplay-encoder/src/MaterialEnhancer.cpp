@@ -54,6 +54,9 @@ void MaterialEnhancer::setLightInMaterial(GPBFile& gameplayFile)
                 {
                     std::string symbolname = (*i)->getMaterialSymbolName();
                     Material* material = mesh->getMaterial(symbolname);
+                    if(material == NULL) {
+                        continue;
+                    }
                     Light* light = getClosestLight(n);
                     material->setLight(light);
                 }

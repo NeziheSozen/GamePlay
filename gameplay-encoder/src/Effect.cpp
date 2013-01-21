@@ -7,30 +7,30 @@
 
 namespace gameplay
 {
-    std::string Effect::wrapStr[] = { "REPEAT", "CLAMP" };
-    std::string Effect::filterStr[] = {
-        "NEAREST",
-        "LINEAR",
-        "NEAREST_MIPMAP_NEAREST",
-        "LINEAR_MIPMAP_NEAREST",
-        "NEAREST_MIPMAP_LINEAR",
-        "LINEAR_MIPMAP_LINEAR"
-    };
+std::string Effect::wrapStr[] = { "REPEAT", "CLAMP" };
+std::string Effect::filterStr[] = {
+    "NEAREST",
+    "LINEAR",
+    "NEAREST_MIPMAP_NEAREST",
+    "LINEAR_MIPMAP_NEAREST",
+    "NEAREST_MIPMAP_LINEAR",
+    "LINEAR_MIPMAP_LINEAR"
+};
 
-    Effect::Effect(void) :
-        ambientColor(Vector4(.2f, .2f, .2f, 1.0f)),
-        diffuseColor(Vector4(.8f, .8f, .8f, 1.0f)),
-        specularColor(Vector4(.0f, .0f, .0f, .0f)),
-        specularExponent(.0f),
-        wrapS(REPEAT),
-        wrapT(REPEAT),
-        minFilter(NEAREST_MIPMAP_LINEAR),
-        magFilter(LINEAR),
-        texFilename(""),
-        hasTexture(false),
-        alpha(1.0f),
-        texAbsPath(""),
-        texDestinationPath("")
+Effect::Effect(void) :
+    ambientColor(Vector4(.2f, .2f, .2f, 1.0f)),
+    diffuseColor(Vector4(.8f, .8f, .8f, 1.0f)),
+    specularColor(Vector4(.0f, .0f, .0f, .0f)),
+    specularExponent(.0f),
+    wrapS(REPEAT),
+    wrapT(REPEAT),
+    minFilter(NEAREST_MIPMAP_LINEAR),
+    magFilter(LINEAR),
+    texFilename(""),
+    hasTexture(false),
+    alpha(1.0f),
+    texAbsPath(""),
+    texDestinationPath("")
 {
 
 }
@@ -92,6 +92,13 @@ void Effect::writeEffect(FILE* file, Light* light)
 //                this->ambientColor.z,
 //                this->ambientColor.w);
 //
+
+        // TEST
+//        fprintf(file, "\n\t\t\tu_lightColor = %f, %f, %f, 1.0\n",
+//                this->specularColor.x,
+//                this->specularColor.y,
+//                this->specularColor.z);
+
 //        if (!light->isAmbient())
 //        {
 //            fprintf(file, "\t\t\tu_lightColor = %f, %f, %f\n",
@@ -106,11 +113,11 @@ void Effect::writeEffect(FILE* file, Light* light)
 
     if(this->hasTexture)
     {
-        fprintf(file, "\t\t\tvertexShader = res/shaders/textured%s.vert\n", unlit.c_str());
-        fprintf(file, "\t\t\tfragmentShader = res/shaders/textured%s.frag\n\n", unlit.c_str());
+        fprintf(file, "\t\t\tvertexShader = shaders/textured%s.vert\n", unlit.c_str());
+        fprintf(file, "\t\t\tfragmentShader = shaders/textured%s.frag\n\n", unlit.c_str());
         fprintf(file, "\t\t\tsampler u_diffuseTexture\n");
         fprintf(file, "\t\t\t{\n");
-        // e.g. path = res/duck-diffuse.png
+        // e.g. path = duck-diffuse.png
         fprintf(file, "\t\t\t\tpath = %s\n", this->texFilename.c_str());
         fprintf(file, "\t\t\t\twrapS = %s\n", wrapStr[this->wrapS].c_str());
         fprintf(file, "\t\t\t\twrapT = %s\n", wrapStr[this->wrapT].c_str());
@@ -124,8 +131,8 @@ void Effect::writeEffect(FILE* file, Light* light)
     }
     else
     {
-        fprintf(file, "\t\t\tvertexShader = res/shaders/colored%s.vert\n", unlit.c_str());
-        fprintf(file, "\t\t\tfragmentShader = res/shaders/colored%s.frag\n\n", unlit.c_str());
+        fprintf(file, "\t\t\tvertexShader = shaders/colored%s.vert\n", unlit.c_str());
+        fprintf(file, "\t\t\tfragmentShader = shaders/colored%s.frag\n\n", unlit.c_str());
             fprintf(file, "\t\t\tu_diffuseColor = %f, %f, %f, %f\n",
             this->diffuseColor.x,
             this->diffuseColor.y,
@@ -179,10 +186,11 @@ void Effect::setMagFilter(Filter magFilter)
     this->magFilter = magFilter;
 }
 
-void Effect::setTextureFilename(std::string path)
+void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 {
     int x = path.find_last_of('/');
-    this->texFilename = "res/model/tex/" + path.substr(path.find_last_of('/') + 1);
+    this->texFilename = "tex/" + path.substr(path.find_last_of('/') + 1);
+    //this->texFilename = gpbOutputPath + "/tex/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
 }
 
@@ -212,7 +220,13 @@ void Effect::setAlpha(float alpha)
 
 void Effect::setTexDestinationPath(std::string texDestinationPath)
 {
-    this->texDestinationPath = texDestinationPath + this->texAbsPath.substr(this->texAbsPath.find_last_of('/'));
+    size_t pos = this->texAbsPath.find_last_of('/');
+    if(pos != std::string::npos) {
+        this->texDestinationPath = texDestinationPath + this->texAbsPath.substr(pos);
+    }
+    else {
+        this->texDestinationPath = texDestinationPath + this->texAbsPath;
+    }
 }
 
 void Effect::copyTexture()

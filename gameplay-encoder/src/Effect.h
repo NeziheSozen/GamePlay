@@ -59,7 +59,7 @@ public:
     void setWrapT(Wrap wrapT);
     void setMinFilter(Filter minFilter);
     void setMagFilter(Filter magFilter);
-    void setTextureFilename(std::string path);
+    void setTextureFilename(std::string path, std::string gpbOutputPath);
     void setAlpha(float alpha);
 
     void setTextureFilePath(std::string path, std::string gpbOutputPath);

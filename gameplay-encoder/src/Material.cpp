@@ -13,7 +13,7 @@ Material::Material(void) : _light(NULL)
 
 Material::~Material(void)
 {
-
+    delete _effect;
 }
 
 unsigned int Material::getTypeId(void) const

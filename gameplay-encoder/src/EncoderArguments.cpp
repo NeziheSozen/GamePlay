@@ -24,7 +24,8 @@ EncoderArguments::EncoderArguments(size_t argc, const char** argv) :
     _optimizeAnimations(false),
     _materialOutput(false),
     _sceneOutput(false),
-    _textureOutput(false)
+    _textureOutput(false),
+    _groupAnimations(-1)
 {
     __instance = this;
 
@@ -348,7 +349,14 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
         }
         break;
     case 'g':
-        if (str.compare("-groupAnimations") == 0 || str.compare("-g") == 0)
+        if(str.compare("-gy") == 0){
+            _groupAnimations = 1;
+        }
+        else if(str.compare("-gn") == 0)
+        {
+            _groupAnimations = 0;
+        }
+        else if (str.compare("-groupAnimations") == 0 || str.compare("-g") == 0)
         {
             // read two strings, make sure not to go out of bounds
             if ((*index + 2) >= options.size())
@@ -567,6 +575,11 @@ void EncoderArguments::readOption(const std::vector<std::string>& options, size_
     default:
         break;
     }
+}
+
+int EncoderArguments::groupAnimations() const
+{
+    return _groupAnimations;
 }
 
 void EncoderArguments::setInputfilePath(const std::string& inputPath)
