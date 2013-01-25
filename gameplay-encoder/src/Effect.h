@@ -67,8 +67,8 @@ public:
     void setTexDestinationPath(std::string texDestinationPath);
 
 public:
-    static const std::string wrapStr[2];
-    static const std::string filterStr[6];
+    static std::string wrapStr[];
+    static std::string filterStr[];
 
 private:
     void copyTexture();

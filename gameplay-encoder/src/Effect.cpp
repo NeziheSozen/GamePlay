@@ -3,8 +3,12 @@
 #include "Light.h"
 #include "Scene.h"
 #include "Node.h"
+#ifdef WIN32
+#include <iostream>
+#include <Windows.h>
+#else
 #include <copyfile.h>
-
+#endif
 namespace gameplay
 {
 std::string Effect::wrapStr[] = { "REPEAT", "CLAMP" };
@@ -188,8 +192,15 @@ void Effect::setMagFilter(Filter magFilter)
 
 void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 {
-    int x = path.find_last_of('/');
-    this->texFilename = "tex/" + path.substr(path.find_last_of('/') + 1);
+    size_t index1 = path.find_last_of('\\');
+    size_t index2 = path.find_last_of('/');
+    size_t index = (index1 != -1 && index1 > index2 ? index1 : index2);
+	if (index == std::string::npos)
+	{
+		index = 0;
+	}
+    size_t length = path.length();
+    this->texFilename = "tex/" + path.substr(index + 1);
     //this->texFilename = gpbOutputPath + "/tex/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
 }
@@ -220,7 +231,9 @@ void Effect::setAlpha(float alpha)
 
 void Effect::setTexDestinationPath(std::string texDestinationPath)
 {
-    size_t pos = this->texAbsPath.find_last_of('/');
+	size_t index1 = this->texAbsPath.find_last_of('\\');
+    size_t index2 = this->texAbsPath.find_last_of('/');
+    size_t pos = (index1 != -1 && index1 > index2 ? index1 : index2);
     if(pos != std::string::npos) {
         this->texDestinationPath = texDestinationPath + this->texAbsPath.substr(pos);
     }
@@ -233,7 +246,15 @@ void Effect::copyTexture()
 {
     if (!this->texDestinationPath.empty() && this->texAbsPath.compare(this->texDestinationPath) != 0)
     {
+#ifdef WIN32
+		std::wstring sourceStr = std::wstring(this->texAbsPath.begin(), this->texAbsPath.end());
+		LPCWSTR source = sourceStr.c_str();
+		std::wstring destStr = std::wstring(this->texDestinationPath.begin(), this->texDestinationPath.end());
+		LPCWSTR dest = destStr.c_str();
+		BOOL b = CopyFile(source, dest,0);
+#else
         int result = copyfile(this->texAbsPath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
+#endif
     }
 }
 }
