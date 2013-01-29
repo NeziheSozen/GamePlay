@@ -212,9 +212,13 @@ void Effect::setTextureFilePath(std::string path, std::string gpbOutputPath)
     {
         path = path.substr(7);
     }
-    if(path[0] == '.')
+    if(path[0] == '.' && path[1] != '.')
     {
         path = gpbOutputPath + path.substr(path.find_first_of('.') + 1);
+    }
+    if(path[0] == '.' && path[1] == '.')
+    {
+        path = gpbOutputPath + "/" + path.substr(path.find_first_of('.'));
     }
     this->texAbsPath = path;
 }
@@ -254,6 +258,7 @@ void Effect::copyTexture()
 		BOOL b = CopyFile(source, dest,0);
 #else
         int result = copyfile(this->texAbsPath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
+        // TODO check result and log if error
 #endif
     }
 }
