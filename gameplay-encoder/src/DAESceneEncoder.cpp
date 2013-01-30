@@ -1126,6 +1126,10 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
             if (model)
             {
                 node->setModel(model);
+                
+                // Store Symbol-Material Mapping
+                const domBind_materialRef bindMaterialRef = geometryInstanceRef->getBind_material();
+                loadMaterialMapping(bindMaterialRef, node->getModel(), false);
             }
         }
         else
@@ -1133,10 +1137,6 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
 //            LOG(1, "Failed to resolve geometry url: %s\n", geometryURI.getURI());
             GP_ERROR(ERR_RESOLVING_GEOMETRY_URL, geometryURI.getURI());
         }
-
-        // Store Symbol-Material Mapping
-        const domBind_materialRef bindMaterialRef = geometryInstanceRef->getBind_material();
-        loadMaterialMapping(bindMaterialRef, node->getModel(), false);
     }
 
     // TODO: Check materials within instance_controller
