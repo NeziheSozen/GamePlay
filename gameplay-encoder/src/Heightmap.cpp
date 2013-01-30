@@ -38,7 +38,8 @@ bool intersect(const Vector3& rayOrigin, const Vector3& rayDirection, const std:
 
 void Heightmap::generate(const std::vector<std::string>& nodeIds, const char* filename, bool highP)
 {
-    LOG(1, "Generating heightmap: %s...\n", filename);
+//    LOG(1, "Generating heightmap: %s...\n", filename);
+    GP_WARNING(WARN_GENERATING_HEIGHTMAP, filename);
 
     // Initialize state variables
     __processedHeightmapScanLines = 0;
@@ -71,18 +72,21 @@ void Heightmap::generate(const std::vector<std::string>& nodeIds, const char* fi
             }
             else
             {
-                LOG(1, "WARNING: Node passed to heightmap argument does not have a mesh: %s\n", nodeIds[j].c_str());
+//                LOG(1, "WARNING: Node passed to heightmap argument does not have a mesh: %s\n", nodeIds[j].c_str());
+                GP_WARNING(WARN_HEIGHTMAP_NODE_HAS_NO_MESH, nodeIds[j].c_str());
             }
         }
         else
         {
-            LOG(1, "WARNING: Failed to locate node for heightmap argument: %s\n", nodeIds[j].c_str());
+//            LOG(1, "WARNING: Failed to locate node for heightmap argument: %s\n", nodeIds[j].c_str());
+            GP_WARNING(WARN_HEIGHTMAP_NODE_FAILED_TO_LOCATE, nodeIds[j].c_str());
         }
     }
 
     if (meshes.size() == 0)
     {
-        LOG(1, "WARNING: Skipping generation of heightmap '%s'. No nodes found.\n", filename);
+//        LOG(1, "WARNING: Skipping generation of heightmap '%s'. No nodes found.\n", filename);
+        GP_WARNING(WARN_HEIGHTMAP_NO_NODES_FOUND, filename);
         return;
     }
 
@@ -128,7 +132,8 @@ void Heightmap::generate(const std::vector<std::string>& nodeIds, const char* fi
         // Start the processing thread
         if (!createThread(&threads[i], &generateHeightmapChunk, &data))
         {
-            LOG(1, "ERROR: Failed to spawn worker thread for generation of heightmap: %s\n", filename);
+//            LOG(1, "ERROR: Failed to spawn worker thread for generation of heightmap: %s\n", filename);
+            GP_WARNING(WARN_HEIGHTMAP_FAILED_CREATING_WORKER_THREAD, filename);
             return;
         }
     }
@@ -153,7 +158,8 @@ void Heightmap::generate(const std::vector<std::string>& nodeIds, const char* fi
 
     if (__failedRayCasts)
     {
-        LOG(1, "Warning: %d triangle intersections failed for heightmap: %s\n", __failedRayCasts, filename);
+//        LOG(1, "Warning: %d triangle intersections failed for heightmap: %s\n", __failedRayCasts, filename);
+        GP_WARNING(WARN_TRIANGLE_INTERSECTIONS_FAILED_FOR_HEIGHTMAP, __failedRayCasts, filename);
 
         // Go through and clamp any height values that are set to -FLT_MAX to the min recorded height value
         // (otherwise the range of height values will be far too large).
@@ -174,21 +180,24 @@ void Heightmap::generate(const std::vector<std::string>& nodeIds, const char* fi
     FILE* fp = fopen(filename, "wb");
     if (fp == NULL)
     {
-        LOG(1, "Error: Failed to open file for writing: %s\n", filename);
+//        LOG(1, "Error: Failed to open file for writing: %s\n", filename);
+        GP_ERROR(ERR_FAILED_TO_OPEN_WRITE_FILE, filename);
         goto error;
     }
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (png_ptr == NULL)
     {
-        LOG(1, "Error: Write struct creation failed: %s\n", filename);
+//        LOG(1, "Error: Write struct creation failed: %s\n", filename);
+        GP_ERROR(ERR_WRITE_STRUCT_FAILED, filename);
         goto error;
     }
 
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL)
     {
-        LOG(1, "Error: Info struct creation failed: %s\n", filename);
+//        LOG(1, "Error: Info struct creation failed: %s\n", filename);
+        GP_ERROR(ERR_FAILED_TO_WRITE_INFO_STRUCT, filename);
         goto error;
     }
 

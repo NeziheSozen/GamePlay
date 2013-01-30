@@ -171,8 +171,8 @@ void AnimationChannel::removeDuplicates()
             deleteRange(prevIndex+1, i, propSize);
         }
     }
-
-    LOG(3, "      Removed %d duplicate keyframes from channel.\n", startCount- _keytimes.size());
+    
+    GP_WARNING(WARN_DUPLICATE_KEYFRAMES, toCharPtr(startCount - _keytimes.size()));
 }
 
 unsigned int AnimationChannel::getInterpolationType(const char* str)

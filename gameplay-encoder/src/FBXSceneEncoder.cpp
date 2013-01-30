@@ -204,8 +204,10 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     
     if (!importer->Initialize(filepath.c_str(), -1, sdkManager->GetIOSettings()))
     {
-        LOG(1, "Call to FbxImporter::Initialize() failed.\n");
-        LOG(1, "Error returned: %s\n\n", importer->GetLastErrorString());
+//        LOG(1, "Call to FbxImporter::Initialize() failed.\n");
+        GP_ERROR(ERR_FBX_IMPORTER_NOT_INITIALIZED, filepath.c_str());
+//        LOG(1, "Error returned: %s\n\n", importer->GetLastErrorString());
+        GP_ERROR(ERR_FBX_ERROR_MESSAGE, importer->GetLastErrorString());
         exit(-1);
     }
     
@@ -291,19 +293,23 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         {
             std::string path = outputFilePath.substr(0, pos);
             path.append(".xml");
-            LOG(1, "Saving debug file: %s\n", path.c_str());
+//            LOG(1, "Saving debug file: %s\n", path.c_str());
+            GP_WARNING(WARN_SAVE_DEBUG_FILE, path.c_str());
             if (!_gamePlayFile.saveText(path))
             {
-                LOG(1, "Error writing text file: %s\n", path.c_str());
+//                LOG(1, "Error writing text file: %s\n", path.c_str());
+                GP_ERROR(ERR_WRITING_TEXT_FILE, path.c_str());
             }
         }
     }
     else
     {
-        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
+//        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
+        GP_WARNING(WARN_SAVE_BINARY_FILE, outputFilePath.c_str());
         if (!_gamePlayFile.saveBinary(outputFilePath))
         {
-            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
+//            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
+            GP_ERROR(ERR_WRITING_BINARY_FILE, outputFilePath.c_str());
         }
     }
 }
@@ -681,7 +687,9 @@ void FBXSceneEncoder::saveMesh(FbxUInt64 meshId, Mesh* mesh)
 
 void FBXSceneEncoder::print(const char* str)
 {
-    LOG(1, "%s\n", str);
+//    LOG(1, "%s\n", str);
+    GP_WARNING(WARN_GENERIC_FBX_LOG, str);
+    
 }
 
 void FBXSceneEncoder::transformNode(FbxNode* fbxNode, Node* node)
@@ -764,7 +772,8 @@ void FBXSceneEncoder::loadCamera(FbxNode* fbxNode, Node* node)
     }
     else
     {
-        LOG(2, "Warning: Unknown camera type in node.\n");
+//        LOG(2, "Warning: Unknown camera type in node.\n");
+        GP_WARNING(WARN_UNKNOWN_CAMERA_TYPE, name ? name : "Unknowm Node");
         return;
     }
     _gamePlayFile.addCamera(camera);
@@ -848,7 +857,8 @@ void FBXSceneEncoder::loadLight(FbxNode* fbxNode, Node* node)
     }
     default:
     {
-        LOG(2, "Warning: Unknown light type in node.\n");
+//        LOG(2, "Warning: Unknown light type in node.\n");
+        GP_WARNING(WARN_UNKNOWN_LIGHT_TYPE, name ? name : "Unknowm Node");
         return;
     }
     }
@@ -969,7 +979,8 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     std::string ext = path.substr(path.find_last_of('.') + 1);
                     if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                     {
-                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+//                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                        GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
                     }
                     else
                     {
@@ -1049,7 +1060,8 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                     std::string ext = path.substr(path.find_last_of('.') + 1);
                     if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                     {
-                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+//                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                        GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
                     }
                     else
                     {
@@ -1085,6 +1097,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     }
     else {
         LOG(1, "*********** No Material\n");
+        GP_WARNING(WARN_GENERIC_FBX_LOG, "No Material");
     }
 }
 
@@ -1130,7 +1143,9 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
         MeshPart* meshPart = new MeshPart();
         meshParts.push_back(meshPart);
         FbxSurfaceMaterial* material = fbxNode->GetMaterial(i);
-        loadMaterial(mesh, meshPart, material);
+        if (material) {
+            loadMaterial(mesh, meshPart, material);
+        }
     }
 
     // Find the blend weights and blend indices if this mesh is skinned.
@@ -1779,7 +1794,8 @@ void appendKeyFrame(FbxNode* fbxNode, AnimationChannel* channel, float time, con
 
         default:
         {
-            LOG(1, "Warning: Invalid animatoin target (%d) attribute for node: %s.\n", channel->getTargetAttribute(), fbxNode->GetName());
+//            LOG(1, "Warning: Invalid animatoin target (%d) attribute for node: %s.\n", channel->getTargetAttribute(), fbxNode->GetName());
+            GP_WARNING(WARN_INVALID_ANIMATION_TARGET, channel->getTargetAttribute(), fbxNode->GetName());
         }
         return;
     }

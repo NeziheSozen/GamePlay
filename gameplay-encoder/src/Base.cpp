@@ -23,4 +23,12 @@ std::string getBaseName(const std::string& filepath)
     return output;
 }
 
+const char* toCharPtr(double number)
+{
+    std::stringstream ss;
+    ss << number;
+    return ss.str().c_str();
 }
+    
+}
+

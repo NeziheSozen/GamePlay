@@ -224,7 +224,8 @@ void Light::setFalloffExponent(float value)
     _falloffExponent = value;
     if ( value != 1.0)
     {
-        LOG(1, "Warning: spot light falloff_exponent must be 1.0. \n");
+//        LOG(1, "Warning: spot light falloff_exponent must be 1.0. \n");
+        GP_WARNING(WARN_SPOTLIGHT_FALLOFF_EXPONENT, value);
     }
 }
 

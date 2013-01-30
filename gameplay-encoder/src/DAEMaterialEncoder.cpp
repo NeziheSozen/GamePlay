@@ -152,7 +152,8 @@ namespace gameplay
             
             if(error)
             {
-                LOG(1, "error in material %s", material->getMaterialId().c_str());
+//                LOG(1, "error in material %s", material->getMaterialId().c_str());
+                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
             }
         }
         else if(constant)
@@ -179,7 +180,8 @@ namespace gameplay
             
             if(error)
             {
-                LOG(1, "error in material %s", material->getMaterialId().c_str());
+//                LOG(1, "error in material %s", material->getMaterialId().c_str());
+                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
             }
         }
         else if(lambert)
@@ -208,7 +210,8 @@ namespace gameplay
             
             if(error)
             {
-                LOG(1, "error in material %s", material->getMaterialId().c_str());
+//                LOG(1, "error in material %s", material->getMaterialId().c_str());
+                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
             }
         }
         else if(phong)
@@ -238,7 +241,8 @@ namespace gameplay
             
             if(error)
             {
-                LOG(1, "error in material %s", material->getMaterialId().c_str());
+//                LOG(1, "error in material %s", material->getMaterialId().c_str());
+                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
             }
         }
     }
@@ -278,7 +282,8 @@ namespace gameplay
             }
             else
             {
-                LOG(1, "Currently no support for <texture> in Ambient channel");
+//                LOG(1, "Currently no support for <texture> in Ambient channel");
+                GP_ERROR(ERR_NO_TEXTURE_SUPPORT_IN_MATERIAL, "Ambient");
             }
         }
         else if ( channel == DIFFUSE )
@@ -341,7 +346,9 @@ namespace gameplay
             }
             else
             {
-                LOG(1, "Currently no support for <texture> in Specular channel ");
+//                LOG(1, "Currently no support for <texture> in Specular channel ");
+                GP_ERROR(ERR_NO_TEXTURE_SUPPORT_IN_MATERIAL, "Specular");
+                
             }
             if (fop && fop->getFloat())
             {
@@ -553,7 +560,8 @@ namespace gameplay
                             std::string ext = path.substr(path.find_last_of('.') + 1);
                             if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                             {
-                                LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+//                                LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                                GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
                                 return false;
                             }
 
@@ -602,7 +610,8 @@ namespace gameplay
                 std::string ext = path.substr(path.find_last_of('.') + 1);
                 if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
                 {
-                    LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+//                    LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+                    GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
                     return false;
                 }
                 std::string fp = EncoderArguments::getInstance()->getFilePath();

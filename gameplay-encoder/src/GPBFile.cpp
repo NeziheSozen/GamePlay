@@ -414,7 +414,8 @@ void GPBFile::optimizeAnimations()
 
         const int channelCount = animation->getAnimationChannelCount();
 
-        LOG(2, "Optimizing %d channel(s) in animation '%s'.\n", channelCount, animation->getId().c_str());
+//        LOG(2, "Optimizing %d channel(s) in animation '%s'.\n", channelCount, animation->getId().c_str());
+        GP_WARNING(WARN_OPTIMIZING_CHANNELS_FOR_ANIMATION, channelCount, animation->getId().c_str());
 
         // loop backwards because we will be adding and removing channels
         for (int channelIndex = channelCount -1; channelIndex >= 0 ; --channelIndex)
@@ -440,7 +441,8 @@ void GPBFile::optimizeAnimations()
 
 void GPBFile::decomposeTransformAnimationChannel(Animation* animation, AnimationChannel* channel, int channelIndex)
 {
-    LOG(2, "  Optimizing animaton channel %s:%d.\n", animation->getId().c_str(), channelIndex+1);
+//    LOG(2, "  Optimizing animaton channel %s:%d.\n", animation->getId().c_str(), channelIndex+1);
+    GP_WARNING(WARN_OPTIMIZING_ANIMATION_CHANNEL, animation->getId().c_str(), channelIndex+1);
 
     const std::vector<float>& keyTimes = channel->getKeyTimes();
     const std::vector<float>& keyValues = channel->getKeyValues();
@@ -477,11 +479,13 @@ void GPBFile::decomposeTransformAnimationChannel(Animation* animation, Animation
     size_t oneCount = (size_t)std::count_if(scaleKeyValues.begin(), scaleKeyValues.end(), isAlmostOne);
     if (scaleKeyValues.size() == oneCount)
     {
-        LOG(2, "    Discarding scale channel.\n");
+//        LOG(2, "    Discarding scale channel.\n");
+        GP_WARNING(WARN_SCALE_CHANNEL, "Discarding");
     }
     else
     {
-        LOG(3, "    Keeping scale channel.\n");
+//        LOG(3, "    Keeping scale channel.\n");
+        GP_WARNING(WARN_SCALE_CHANNEL, "Keeping");
         AnimationChannel* scaleChannel = new AnimationChannel();
         scaleChannel->setTargetId(channel->getTargetId());
         scaleChannel->setKeyTimes(channel->getKeyTimes());
@@ -506,7 +510,8 @@ void GPBFile::decomposeTransformAnimationChannel(Animation* animation, Animation
             ++oneCount;
         else
         {
-            LOG(4, "Rotation not identity: %u\n", i);
+//            LOG(4, "Rotation not identity: %u\n", i);
+            GP_WARNING(WARN_ROTATION_NOT_IDENTITY, i);
             Quaternion q(x, y, z, w);
             Vector3 axis;
             float angle = q.toAxisAngle(&axis);
@@ -515,11 +520,13 @@ void GPBFile::decomposeTransformAnimationChannel(Animation* animation, Animation
     }
     if ((rotateKeyValues.size()>>2) == oneCount)
     {
-        LOG(2, "    Discarding rotation channel.\n");
+//        LOG(2, "    Discarding rotation channel.\n");
+        GP_WARNING(WARN_ROTATION_CHANNEL, "Discarding");
     }
     else
     {
-        LOG(3, "    Keeping rotation channel.\n");
+//        LOG(3, "    Keeping rotation channel.\n");
+        GP_WARNING(WARN_ROTATION_CHANNEL, "Keeping");
         AnimationChannel* rotateChannel = new AnimationChannel();
         rotateChannel->setTargetId(channel->getTargetId());
         rotateChannel->setKeyTimes(channel->getKeyTimes());
@@ -536,11 +543,13 @@ void GPBFile::decomposeTransformAnimationChannel(Animation* animation, Animation
     oneCount = (size_t)std::count_if(translateKeyValues.begin(), translateKeyValues.end(), isAlmostZero);
     if (translateKeyValues.size() == oneCount)
     {
-        LOG(2, "    Discarding translation channel.\n");
+//        LOG(2, "    Discarding translation channel.\n");
+                GP_WARNING(WARN_TRANSLATION_CHANNEL, "Discarding");
     }
     else
     {
-        LOG(3, "    Keeping translation channel.\n");
+//        LOG(3, "    Keeping translation channel.\n");
+        GP_WARNING(WARN_TRANSLATION_CHANNEL, "Keeping");
         AnimationChannel* translateChannel = new AnimationChannel();
         translateChannel->setTargetId(channel->getTargetId());
         translateChannel->setKeyTimes(channel->getKeyTimes());

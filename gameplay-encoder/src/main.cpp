@@ -56,7 +56,8 @@ int main(int argc, const char** argv)
     // Check if the file exists.
     if (!arguments.fileExists())
     {
-        LOG(1, "Error: File not found: %s\n", arguments.getFilePathPointer());
+//        LOG(1, "Error: File not found: %s\n", arguments.getFilePathPointer());
+        GP_ERROR(ERR_FILE_NOT_FOUND, arguments.getFilePathPointer());
         return -1;
     }
 
@@ -80,7 +81,8 @@ int main(int argc, const char** argv)
             fbxEncoder.write(realpath, arguments);
             break;
 #else
-            LOG(1, "Error: FBX not enabled. Install the FBX SDK and use the preprocessor definition USE_FBX.\n");
+//            LOG(1, "Error: FBX not enabled. Install the FBX SDK and use the preprocessor definition USE_FBX.\n");
+            GP_ERROR(ERR_FBX_NOT_ENABLED, "");
             return -1;
 #endif
         }
@@ -104,7 +106,8 @@ int main(int argc, const char** argv)
         }
    default:
         {
-            LOG(1, "Error: Unsupported file format: %s\n", arguments.getFilePathPointer());
+//            LOG(1, "Error: Unsupported file format: %s\n", arguments.getFilePathPointer());
+            GP_ERROR(ERR_UNSUPPORTED_FILE_FORMAT, arguments.getFilePathPointer());
             return -1;
         }
     }

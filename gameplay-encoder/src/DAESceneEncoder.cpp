@@ -86,6 +86,7 @@ void DAESceneEncoder::optimizeCOLLADA(const EncoderArguments& arguments, domCOLL
             if (autoGroupAnimations)
             {
                 LOG(2, "Grouping animations...\n");
+                
 
                 DAEOptimizer optimizer(dom);
                 begin();
@@ -109,7 +110,8 @@ void DAESceneEncoder::optimizeCOLLADA(const EncoderArguments& arguments, domCOLL
     {
         if (!_collada->writeTo(arguments.getFilePath(), arguments.getDAEOutputPath()))
         {
-            LOG(1, "Error: COLLADA failed to write the dom for file: %s\n", arguments.getDAEOutputPath().c_str());
+//            LOG(1, "Error: COLLADA failed to write the dom for file: %s\n", arguments.getDAEOutputPath().c_str());
+            GP_ERROR(ERR_COLLADA_DOM, arguments.getDAEOutputPath().c_str());
         }
     }
 }
@@ -289,7 +291,8 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     end("Open file");
     if (!_dom)
     {
-        LOG(1, "Error: COLLADA failed to open file: %s\n", filepath.c_str());
+//        LOG(1, "Error: COLLADA failed to open file: %s\n", filepath.c_str());
+        GP_ERROR(ERR_COLLADA_OPEN_FILE, filepath.c_str());
         if (_collada)
         {
             delete _collada;
@@ -343,23 +346,27 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
                     }
                     else
                     {
-                        LOG(1, "COLLADA File loaded to the dom, but failed to load node %s.\n", nodeId);
+//                        LOG(1, "COLLADA File loaded to the dom, but failed to load node %s.\n", nodeId);
+                        GP_ERROR(ERR_COLLADA_NODE_FAILED, nodeId);
                     }
                 }
                 else
                 {
-                    LOG(1, "COLLADA File loaded to the dom, but node was not found with node ID %s.\n", nodeId);
+//                    LOG(1, "COLLADA File loaded to the dom, but node was not found with node ID %s.\n", nodeId);
+                    GP_ERROR(ERR_COLLADA_NODE_NOT_FOUND, nodeId);
                 }
             }
         }
         else
         {
-             LOG(1, "COLLADA File loaded to the dom, but query for the dom assets failed.\n");
+//             LOG(1, "COLLADA File loaded to the dom, but query for the dom assets failed.\n");
+            GP_ERROR(ERR_COLLADA_QUERY_FAILED, "");
         }
     }
     else
     {
-        LOG(1, "COLLADA File loaded to the dom, but missing <visual_scene>.\n");
+//        LOG(1, "COLLADA File loaded to the dom, but missing <visual_scene>.\n");
+        GP_ERROR(ERR_COLLADA_MISSING_VSCENE, "");
     }
     
     // The animations should be loaded last
@@ -379,20 +386,25 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         {
             std::string path = outputFilePath.substr(0, pos);
             path.append(".xml");
-            LOG(1, "Saving debug file: %s\n", path.c_str());
+//            LOG(1, "Saving debug file: %s\n", path.c_str());
+            GP_WARNING(WARN_SAVE_DEBUG_FILE, path.c_str());
+            
             if (!_gamePlayFile.saveText(path))
             {
-                LOG(1, "Error writing text file: %s\n", path.c_str());
+//                LOG(1, "Error writing text file: %s\n", path.c_str());
+                GP_ERROR(ERR_WRITING_TEXT_FILE, path.c_str());
             }
         }
     }
     else
     {
-        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
+//        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
+        GP_WARNING(WARN_SAVE_BINARY_FILE, outputFilePath.c_str());
         begin();
         if (!_gamePlayFile.saveBinary(outputFilePath))
         {
-            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
+//            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
+            GP_ERROR(ERR_WRITING_BINARY_FILE, outputFilePath.c_str());
         }
         end("save binary");
     }
@@ -619,7 +631,8 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             daeInt type = attributeElement->typeID();
             if (type == domRotate::ID())
             {
-                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Rotate", TRANSFORM_MESSAGE);
+//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Rotate", TRANSFORM_MESSAGE);
+                GP_WARNING(WARN_TRANSFORM_ROTATE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
                 // <rotate>
@@ -660,7 +673,8 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             }
             else if (type == domScale::ID())
             {
-                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Scale", TRANSFORM_MESSAGE);
+//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Scale", TRANSFORM_MESSAGE);
+                GP_WARNING(WARN_TRANSFORM_SCALE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
                 // <scale>
@@ -685,7 +699,8 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             }
             else if (type == domTranslate::ID())
             {
-                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Translate", TRANSFORM_MESSAGE);
+//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Translate", TRANSFORM_MESSAGE);
+                GP_WARNING(WARN_TRANSFORM_TRANSLATE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
                 // <translate>
@@ -983,11 +998,13 @@ void DAESceneEncoder::calcTransform(domNode* domNode, Matrix& dstTransform)
         }
         if (typeID == domSkew::ID())
         {
-            LOG(1, "Warning: Skew transform found but not supported.\n");
+//            LOG(1, "Warning: Skew transform found but not supported.\n");
+            GP_WARNING(WARN_TRANSFORM_NOT_SUPPORTED, "Skew");
         }
         if (typeID == domLookat::ID())
         {
-            LOG(1, "Warning: Lookat transform found but not supported.\n");
+//            LOG(1, "Warning: Lookat transform found but not supported.\n");
+            GP_WARNING(WARN_TRANSFORM_NOT_SUPPORTED, "Lookat");
         }
     }
 }
@@ -1080,7 +1097,8 @@ void DAESceneEncoder::loadMaterialMapping(const domBind_materialRef bindMaterial
                             }
                         }else
                         {
-                            LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
+//                            LOG(1,"WARNING - Couldnt find material: %s\n", materialName.c_str());
+                            GP_WARNING(WARN_MATERIAL_NOT_FOUND, materialName.c_str());
                         }
                     }
                 }
@@ -1112,7 +1130,8 @@ void DAESceneEncoder::loadGeometryInstance(const domNode* n, Node* node)
         }
         else
         {
-            LOG(1, "Failed to resolve geometry url: %s\n", geometryURI.getURI());
+//            LOG(1, "Failed to resolve geometry url: %s\n", geometryURI.getURI());
+            GP_ERROR(ERR_RESOLVING_GEOMETRY_URL, geometryURI.getURI());
         }
 
         // Store Symbol-Material Mapping
@@ -1508,7 +1527,8 @@ Model* DAESceneEncoder::loadSkin(const domSkin* skinElement)
     // Make sure we have some joints
     if (jointCount == 0)
     {
-        LOG(1, "Warning: No joints found for skin: %s\n", skinElement->getID());
+//        LOG(1, "Warning: No joints found for skin: %s\n", skinElement->getID());
+        GP_WARNING(WARN_JOINTS_NOT_FOUND, skinElement->getID());
         return NULL;
     }
 
@@ -1681,7 +1701,8 @@ Model* DAESceneEncoder::loadGeometry(const domGeometry* geometry, const domBind_
     const domMesh* meshElement = geometry->getMesh();
     if (meshElement == NULL)
     {
-        LOG(1, "Warning: No mesh found for geometry: %s\n", geometry->getId());
+//        LOG(1, "Warning: No mesh found for geometry: %s\n", geometry->getId());
+        GP_WARNING(WARN_MESH_NOT_FOUND, geometry->getId());
         return NULL;
     }
 
@@ -1708,7 +1729,8 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
     // Ensure the data is exported as triangles.
     if (trianglesArrayCount == 0)
     {
-        LOG(1, "Warning: Geometry mesh has no triangles: %s\n", geometryId.c_str());
+//        LOG(1, "Warning: Geometry mesh has no triangles: %s\n", geometryId.c_str());
+        GP_WARNING(WARN_TRIANGLES_NOT_FOUND, geometryId.c_str());
         return NULL;
     }
 
@@ -1759,7 +1781,8 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                         int type = getVertexUsageType(semantic);
                         if (type == -1)
                         {
-                            LOG(1, "Warning: Vertex semantic (%s) is invalid/unsupported for geometry mesh: %s\n", semantic.c_str(), geometryId.c_str());
+//                            LOG(1, "Warning: Vertex semantic (%s) is invalid/unsupported for geometry mesh: %s\n", semantic.c_str(), geometryId.c_str());
+                            GP_WARNING(WARN_UNSUPPORTED_VERTEX_SEMANTIC, semantic.c_str(), geometryId.c_str());
                         }
 
                         DAEPolygonInput* polygonInput = new DAEPolygonInput();
@@ -1778,7 +1801,8 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                     int type = getVertexUsageType(semantic);
                     if (type == -1)
                     {
-                        LOG(1, "Warning: Semantic (%s) is invalid/unsupported for geometry mesh: %s\n", semantic.c_str(), geometryId.c_str());
+//                        LOG(1, "Warning: Semantic (%s) is invalid/unsupported for geometry mesh: %s\n", semantic.c_str(), geometryId.c_str());
+                        GP_WARNING(WARN_UNSUPPORTED_SEMANTIC, semantic.c_str(), geometryId.c_str());
                         break;
                     }
                     if (type == TEXCOORD0)
@@ -1818,7 +1842,8 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                 {
                     delete polygonInputs[j];
                 }
-                LOG(1, "Warning: Triangles do not all have the same number of input sources for geometry mesh: %s\n", geometryId.c_str());
+//                LOG(1, "Warning: Triangles do not all have the same number of input sources for geometry mesh: %s\n", geometryId.c_str());
+                GP_WARNING(WARN_UNEVEN_INPUT_SOURCES_FOR_TRIANGLES, geometryId.c_str());
                 return NULL;
             }
             else

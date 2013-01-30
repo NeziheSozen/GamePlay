@@ -34,6 +34,8 @@
 #include <dom/domCamera.h>
 #include <dom/domProfile_COMMON.h>
 
+#include "encodererrors.h"
+
 // Defines
 #ifndef M_1_PI        
 #define M_1_PI                      0.31830988618379067154
@@ -107,7 +109,34 @@ extern int __logVerbosity;
         if (level <= __logVerbosity) \
             printf(__VA_ARGS__); \
     }
+    
+    const char* toCharPtr(double number);
 
+    
+    // Error macro
+#define GP_ERROR(err_code, ...) \
+    { \
+        const char* msg, *desc; \
+        encoderErr2msg(err_code, &msg, &desc); \
+        size_t msg_length = strlen(desc); \
+        size_t err_desc_length = 150; \
+        char output_buffer[msg_length+err_desc_length]; \
+        snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
+    }
+    
+#define GP_WARNING(warn_code, ...) \
+    { \
+        const char* msg, *desc; \
+        encoderErr2msg(warn_code, &msg, &desc); \
+        size_t msg_length = strlen(desc); \
+        size_t err_desc_length = 150; \
+        char output_buffer[msg_length+err_desc_length]; \
+        snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
+    }
 }
+
+
 
 #endif
