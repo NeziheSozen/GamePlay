@@ -42,7 +42,6 @@ void luaRegister_Game()
         {"getFrameRate", lua_Game_getFrameRate},
         {"getGamepad", lua_Game_getGamepad},
         {"getGamepadCount", lua_Game_getGamepadCount},
-        {"getGamepadsConnected", lua_Game_getGamepadsConnected},
         {"getHeight", lua_Game_getHeight},
         {"getPhysicsController", lua_Game_getPhysicsController},
         {"getScriptController", lua_Game_getScriptController},
@@ -55,8 +54,10 @@ void luaRegister_Game()
         {"isGestureSupported", lua_Game_isGestureSupported},
         {"isInitialized", lua_Game_isInitialized},
         {"isMouseCaptured", lua_Game_isMouseCaptured},
+        {"isMultiSampling", lua_Game_isMultiSampling},
         {"isMultiTouch", lua_Game_isMultiTouch},
         {"keyEvent", lua_Game_keyEvent},
+        {"launchURL", lua_Game_launchURL},
         {"menuEvent", lua_Game_menuEvent},
         {"mouseEvent", lua_Game_mouseEvent},
         {"pause", lua_Game_pause},
@@ -66,6 +67,7 @@ void luaRegister_Game()
         {"schedule", lua_Game_schedule},
         {"setCursorVisible", lua_Game_setCursorVisible},
         {"setMouseCaptured", lua_Game_setMouseCaptured},
+        {"setMultiSampling", lua_Game_setMultiSampling},
         {"setMultiTouch", lua_Game_setMultiTouch},
         {"setViewport", lua_Game_setViewport},
         {"touchEvent", lua_Game_touchEvent},
@@ -907,9 +909,43 @@ int lua_Game_getGamepad(lua_State* state)
             lua_error(state);
             break;
         }
+        case 3:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA) &&
+                lua_type(state, 2) == LUA_TNUMBER &&
+                lua_type(state, 3) == LUA_TBOOLEAN)
+            {
+                // Get parameter 1 off the stack.
+                unsigned int param1 = (unsigned int)luaL_checkunsigned(state, 2);
+
+                // Get parameter 2 off the stack.
+                bool param2 = ScriptUtil::luaCheckBool(state, 3);
+
+                Game* instance = getInstance(state);
+                void* returnPtr = (void*)instance->getGamepad(param1, param2);
+                if (returnPtr)
+                {
+                    ScriptUtil::LuaObject* object = (ScriptUtil::LuaObject*)lua_newuserdata(state, sizeof(ScriptUtil::LuaObject));
+                    object->instance = returnPtr;
+                    object->owns = false;
+                    luaL_getmetatable(state, "Gamepad");
+                    lua_setmetatable(state, -2);
+                }
+                else
+                {
+                    lua_pushnil(state);
+                }
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_getGamepad - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
         default:
         {
-            lua_pushstring(state, "Invalid number of parameters (expected 2).");
+            lua_pushstring(state, "Invalid number of parameters (expected 2 or 3).");
             lua_error(state);
             break;
         }
@@ -939,41 +975,6 @@ int lua_Game_getGamepadCount(lua_State* state)
             }
 
             lua_pushstring(state, "lua_Game_getGamepadCount - Failed to match the given parameters to a valid function signature.");
-            lua_error(state);
-            break;
-        }
-        default:
-        {
-            lua_pushstring(state, "Invalid number of parameters (expected 1).");
-            lua_error(state);
-            break;
-        }
-    }
-    return 0;
-}
-
-int lua_Game_getGamepadsConnected(lua_State* state)
-{
-    // Get the number of parameters.
-    int paramCount = lua_gettop(state);
-
-    // Attempt to match the parameters to a valid binding.
-    switch (paramCount)
-    {
-        case 1:
-        {
-            if ((lua_type(state, 1) == LUA_TUSERDATA))
-            {
-                Game* instance = getInstance(state);
-                unsigned int result = instance->getGamepadsConnected();
-
-                // Push the return value onto the stack.
-                lua_pushunsigned(state, result);
-
-                return 1;
-            }
-
-            lua_pushstring(state, "lua_Game_getGamepadsConnected - Failed to match the given parameters to a valid function signature.");
             lua_error(state);
             break;
         }
@@ -1442,6 +1443,41 @@ int lua_Game_isMouseCaptured(lua_State* state)
     return 0;
 }
 
+int lua_Game_isMultiSampling(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 1:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA))
+            {
+                Game* instance = getInstance(state);
+                bool result = instance->isMultiSampling();
+
+                // Push the return value onto the stack.
+                lua_pushboolean(state, result);
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_isMultiSampling - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 1).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
 int lua_Game_isMultiTouch(lua_State* state)
 {
     // Get the number of parameters.
@@ -1510,6 +1546,45 @@ int lua_Game_keyEvent(lua_State* state)
         default:
         {
             lua_pushstring(state, "Invalid number of parameters (expected 3).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
+int lua_Game_launchURL(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 2:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA) &&
+                (lua_type(state, 2) == LUA_TSTRING || lua_type(state, 2) == LUA_TNIL))
+            {
+                // Get parameter 1 off the stack.
+                const char* param1 = ScriptUtil::getString(2, false);
+
+                Game* instance = getInstance(state);
+                bool result = instance->launchURL(param1);
+
+                // Push the return value onto the stack.
+                lua_pushboolean(state, result);
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_launchURL - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 2).");
             lua_error(state);
             break;
         }
@@ -1753,7 +1828,7 @@ int lua_Game_schedule(lua_State* state)
                 float param1 = (float)luaL_checknumber(state, 2);
 
                 // Get parameter 2 off the stack.
-                ScriptUtil::LuaArray<const char> param2 = ScriptUtil::getString(3, false);
+                const char* param2 = ScriptUtil::getString(3, false);
 
                 Game* instance = getInstance(state);
                 instance->schedule(param1, param2);
@@ -1834,6 +1909,42 @@ int lua_Game_setMouseCaptured(lua_State* state)
             }
 
             lua_pushstring(state, "lua_Game_setMouseCaptured - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 2).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
+int lua_Game_setMultiSampling(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 2:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA) &&
+                lua_type(state, 2) == LUA_TBOOLEAN)
+            {
+                // Get parameter 1 off the stack.
+                bool param1 = ScriptUtil::luaCheckBool(state, 2);
+
+                Game* instance = getInstance(state);
+                instance->setMultiSampling(param1);
+
+                return 0;
+            }
+
+            lua_pushstring(state, "lua_Game_setMultiSampling - Failed to match the given parameters to a valid function signature.");
             lua_error(state);
             break;
         }

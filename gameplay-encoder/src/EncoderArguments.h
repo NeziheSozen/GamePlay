@@ -1,6 +1,8 @@
 #ifndef ENCODERARGUMENTS_H_
 #define ENCODERARGUMENTS_H_
 
+#include "Vector3.h"
+
 namespace gameplay
 {
 
@@ -17,7 +19,9 @@ public:
         FILEFORMAT_DAE,
         FILEFORMAT_FBX,
         FILEFORMAT_TTF,
-        FILEFORMAT_GPB
+        FILEFORMAT_GPB,
+        FILEFORMAT_PNG,
+        FILEFORMAT_RAW
     };
 
     struct HeightmapOption
@@ -25,6 +29,15 @@ public:
         std::vector<std::string> nodeIds;
         std::string filename;
         bool isHighPrecision;
+        int width;
+        int height;
+    };
+
+    struct NormalMapOption
+    {
+        std::string inputFile;
+        std::string outputFile;
+        Vector3 worldSize;
     };
 
     /**
@@ -89,6 +102,11 @@ public:
      */
     std::string getOutputFilePath() const;
 
+    /**
+     * Returns the output file extension.
+     */
+    std::string getOutputFileExtension() const;
+
     const std::vector<std::string>& getGroupAnimationNodeId() const;
     const std::vector<std::string>& getGroupAnimationAnimationId() const;
 
@@ -111,6 +129,25 @@ public:
      *  Returns true if a scene-file should be created
      */
     bool textureOutputEnabled() const;
+
+    /**
+     * Returns true if normal map generation is turned on.
+     */
+    bool normalMapGeneration() const;
+    
+    /**
+     * Returns the supplied intput heightmap resolution.
+     *
+     * This option is only applicable for normal map generation.
+     */
+    void getHeightmapResolution(int* x, int* y) const;
+
+    /**
+     * Returns world size option.
+     *
+     * This option is only applicable for normal map generation.
+     */
+    const Vector3& getHeightmapWorldSize() const;
 
     /**
      * Returns true if an error occurred while parsing the command line arguments.
@@ -176,6 +213,10 @@ private:
     std::string _textureOutputPath;
 
     unsigned int _fontSize;
+
+    bool _normalMap;
+    Vector3 _heightmapWorldSize;
+    int _heightmapResolution[2];
 
     bool _parseError;
     bool _fontPreview;

@@ -66,6 +66,8 @@
 		EBC5ADEE16496113008934C2 /* SceneFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBC5ADEC16496112008934C2 /* SceneFile.cpp */; };
 		EBD7D2641653AD9000DFA450 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBD7D2631653AD9000DFA450 /* libfbxsdk-2013.3-static.a */; };
 		EBD7D2A7165BD64000DFA450 /* MaterialEnhancer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBD7D2A5165BD63F00DFA450 /* MaterialEnhancer.cpp */; };
+		B661733F16A61CE40083A307 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B661733D16A61CE40083A307 /* Image.cpp */; };
+		B661734316A61CFA0083A307 /* NormalMapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B661734116A61CFA0083A307 /* NormalMapGenerator.cpp */; };
 		F18DCD0615D554B800DB35DB /* Heightmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F18DCD0315D554B800DB35DB /* Heightmap.cpp */; };
 /* End PBXBuildFile section */
 
@@ -193,6 +195,10 @@
 		EBD7D2631653AD9000DFA450 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "/Applications/Autodesk/FBX SDK/2013.3/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<absolute>"; };
 		EBD7D2A5165BD63F00DFA450 /* MaterialEnhancer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialEnhancer.cpp; path = src/MaterialEnhancer.cpp; sourceTree = SOURCE_ROOT; };
 		EBD7D2A6165BD64000DFA450 /* MaterialEnhancer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialEnhancer.h; path = src/MaterialEnhancer.h; sourceTree = SOURCE_ROOT; };
+		B661733D16A61CE40083A307 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = src/Image.cpp; sourceTree = SOURCE_ROOT; };
+		B661733E16A61CE40083A307 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Image.h; path = src/Image.h; sourceTree = SOURCE_ROOT; };
+		B661734116A61CFA0083A307 /* NormalMapGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NormalMapGenerator.cpp; path = src/NormalMapGenerator.cpp; sourceTree = SOURCE_ROOT; };
+		B661734216A61CFA0083A307 /* NormalMapGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NormalMapGenerator.h; path = src/NormalMapGenerator.h; sourceTree = SOURCE_ROOT; };
 		F18DCD0315D554B800DB35DB /* Heightmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Heightmap.cpp; path = src/Heightmap.cpp; sourceTree = SOURCE_ROOT; };
 		F18DCD0415D554B800DB35DB /* Heightmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Heightmap.h; path = src/Heightmap.h; sourceTree = SOURCE_ROOT; };
 		F18DCD0515D554B800DB35DB /* Thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Thread.h; path = src/Thread.h; sourceTree = SOURCE_ROOT; };
@@ -297,6 +303,8 @@
 				42C8EDD614724CD700E43619 /* GPBDecoder.h */,
 				42C8EDD714724CD700E43619 /* GPBFile.cpp */,
 				42C8EDD814724CD700E43619 /* GPBFile.h */,
+				B661733D16A61CE40083A307 /* Image.cpp */,
+				B661733E16A61CE40083A307 /* Image.h */,
 				42C8EDD914724CD700E43619 /* Light.cpp */,
 				42C8EDDA14724CD700E43619 /* Light.h */,
 				42C8EDDD14724CD700E43619 /* main.cpp */,
@@ -320,6 +328,8 @@
 				42C8EDED14724CD700E43619 /* Model.h */,
 				42C8EDEE14724CD700E43619 /* Node.cpp */,
 				42C8EDEF14724CD700E43619 /* Node.h */,
+				B661734116A61CFA0083A307 /* NormalMapGenerator.cpp */,
+				B661734216A61CFA0083A307 /* NormalMapGenerator.h */,
 				42C8EDF014724CD700E43619 /* Object.cpp */,
 				42C8EDF114724CD700E43619 /* Object.h */,
 				42C8EDF214724CD700E43619 /* Quaternion.cpp */,
@@ -472,6 +482,8 @@
 				EBC5ADEE16496113008934C2 /* SceneFile.cpp in Sources */,
 				EBD7D2A7165BD64000DFA450 /* MaterialEnhancer.cpp in Sources */,
 				A94F4E7E16B2D1F20048CB63 /* encodererrors.cpp in Sources */,
+				B661733F16A61CE40083A307 /* Image.cpp in Sources */,
+				B661734316A61CFA0083A307 /* NormalMapGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
