@@ -47,10 +47,10 @@ void Material::writeText(FILE* file)
         {
             fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
         }
-//        else if (_light->getLightType() != Light::SpotLight)
-//        {
-//            fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
-//        }
+        else if (_light->getLightType() != Light::SpotLight)
+        {
+            fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+        }
     }
     _effect->writeEffect(file, _light);
     fprintf(file, "\t\t}\n");
