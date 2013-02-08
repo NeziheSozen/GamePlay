@@ -78,7 +78,7 @@ ERRDEF(ERR_SET_CHAR_SIZE, 1023, "Char Size not set", "Error setting char size: %
 ERRDEF(ERR_LOAD_CHAR, 1024, "Char not loaded", "Error loading char: %d")
 
 ERRDEF(ERR_IMAGE_SIZE_EXCEEDED, 1025, "Image size exceeded!", "Image size exceeded: %d")
-
+ERRDEF(ERR_TEX_COPY, 1026, "Could not copy textures!", "Could not copy textures: src=%s dest=%s")
 
 
 // WARNINGS
