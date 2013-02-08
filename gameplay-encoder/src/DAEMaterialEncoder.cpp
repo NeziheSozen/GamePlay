@@ -569,7 +569,7 @@ namespace gameplay
                             int pos = fp.find_last_of('/');
                             fp = (pos == -1) ? fp : fp.substr(0, pos);
                             effect.setTextureFilename(path, fp);
-                            effect.setTextureFilePath(filePath, fp);
+                            effect.setTextureSourcePath(filePath, fp);
                             if (EncoderArguments::getInstance()->textureOutputEnabled())
                             {
                                 effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
@@ -619,7 +619,7 @@ namespace gameplay
                 fp = (pos == -1) ? fp : fp.substr(0, pos);
                 
                 effect.setTextureFilename(path, fp);
-                effect.setTextureFilePath(filePath, fp);
+                effect.setTextureSourcePath(filePath, fp);
                 if (EncoderArguments::getInstance()->textureOutputEnabled())
                 {
                     effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());

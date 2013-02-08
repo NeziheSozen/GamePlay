@@ -328,7 +328,7 @@ void Effect::copyTexture()
     if (!this->texDestinationPath.empty() && this->texSourcePath.compare(this->texDestinationPath) != 0)
     {
 #ifdef WIN32
-		std::wstring sourceStr = std::wstring(this->texAbsPath.begin(), this->texAbsPath.end());
+		std::wstring sourceStr = std::wstring(this->texSourcePath.begin(), this->texSourcePath.end());
 		LPCWSTR source = sourceStr.c_str();
 		std::wstring destStr = std::wstring(this->texDestinationPath.begin(), this->texDestinationPath.end());
 		LPCWSTR dest = destStr.c_str();

@@ -41,6 +41,11 @@ using std::max;
 
 #include "encodererrors.h"
 
+#ifdef WIN32
+#include <stdarg.h>
+#include <stdio.h>
+#endif
+
 // Defines
 #ifndef M_1_PI        
 #define M_1_PI                      0.31830988618379067154
@@ -117,7 +122,34 @@ extern int __logVerbosity;
     
     const char* toCharPtr(double number);
 
-    
+#ifdef WIN32
+
+#define GP_ERROR(err_code, ...) \
+    { \
+        const char* msg, *desc; \
+		encoderErr2msg(err_code, &msg, &desc); \
+		size_t msg_length = strlen(desc); \
+		size_t err_desc_length = 150; \
+		const int size = msg_length+err_desc_length; \
+		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
+		_snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+		fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
+		free(output_buffer); \
+    }
+
+#define GP_WARNING(warn_code, ...) \
+    { \
+        const char* msg, *desc; \
+        encoderErr2msg(warn_code, &msg, &desc); \
+        size_t msg_length = strlen(desc); \
+        size_t err_desc_length = 150; \
+		const int size = msg_length+err_desc_length; \
+		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
+        _snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
+		free(output_buffer); \
+    }
+#else
     // Error macro
 #define GP_ERROR(err_code, ...) \
     { \
@@ -127,9 +159,10 @@ extern int __logVerbosity;
         size_t err_desc_length = 150; \
         char output_buffer[msg_length+err_desc_length]; \
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
-        fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
+
+		fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
     }
-    
+
 #define GP_WARNING(warn_code, ...) \
     { \
         const char* msg, *desc; \
@@ -140,6 +173,9 @@ extern int __logVerbosity;
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
         fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
     }
+#endif
+
+
 }
 
 
