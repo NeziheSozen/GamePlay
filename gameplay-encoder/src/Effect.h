@@ -72,6 +72,7 @@ public:
 
 private:
     void copyTexture();
+    std::string uriDecode(const std::string & sSrc);
 
 private:
     Vector4 ambientColor;
