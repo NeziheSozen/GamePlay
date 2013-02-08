@@ -58,7 +58,7 @@ Effect::Effect(void) :
     texFilename(""),
     hasTexture(false),
     alpha(1.0f),
-    texAbsPath(""),
+    texSourcePath(""),
     texDestinationPath("")
 {
 
@@ -230,36 +230,74 @@ void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
     this->hasTexture = true;
 }
 
-void Effect::setTextureFilePath(std::string path, std::string gpbOutputPath)
+    
+void Effect::setTextureSourcePath(std::string originalTexturePath, std::string originalModelPath)
 {
-    int index = path.find("file://");
+    
+    bool isRelativePath = false;
+    
+    int index = originalTexturePath.find("file://");
     if (index != std::string::npos)
     {
-        path = path.substr(7);
+        originalTexturePath = originalTexturePath.substr(7);
     }
-    if(path[0] == '.' && path[1] != '.')
+    if(originalTexturePath[0] == '.' && originalTexturePath[1] != '.')
     {
-        path = gpbOutputPath + path.substr(path.find_first_of('.') + 1);
+        originalTexturePath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.') + 1) );
+        isRelativePath = true;
     }
-    if(path[0] == '.' && path[1] == '.')
+    else if(originalTexturePath[0] == '.' && originalTexturePath[1] == '.')
     {
-        path = gpbOutputPath + "/" + path.substr(path.find_first_of('.'));
+        originalTexturePath = this->combineFileNameWithFilePath( originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.')) );
+        isRelativePath = true;
     }
     
-    // urldecode
-//    index = path.find("%20");
-//    while(index != std::string::npos) {
-//        path = path.substr(0, index) + " " + path.substr(index + 3);
-//        index = path.find("%20");
-//    }
+    if (!isRelativePath) {
+        
+        
+        int lastSlashIndex = originalTexturePath.find_last_of("/");
+        if (lastSlashIndex == std::string::npos) {
+            
+            originalTexturePath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath);
+        }
+    }
     
-    this->texAbsPath = uriDecode(path);
-    int x = 1;
+    this->texSourcePath = uriDecode(originalTexturePath);
 }
+    
 
-std::string Effect::getTextureFilePath()
+
+std::string Effect::combineFileNameWithFilePath(const std::string& filePath, const std::string& fileName)
 {
-    return this->texAbsPath;
+    std::string combinedFileName = "";
+    
+    if ( filePath.length() > 0 && fileName.length() > 0 ) {
+    
+        // check filePath
+        if ( filePath[filePath.length()-1] != '/' ) {
+            
+            combinedFileName = filePath + '/';
+        }else {
+            combinedFileName = filePath;
+        }
+        
+        
+        // check fileName
+        if ( fileName[0] == '/' ) {
+            combinedFileName += fileName.substr(1);
+        }else
+        {
+            combinedFileName += fileName;
+        }
+    }
+    
+    return combinedFileName;
+}
+    
+
+std::string Effect::getTextureSourcePath()
+{
+    return this->texSourcePath;
 }
 
 void Effect::setAlpha(float alpha)
@@ -269,21 +307,25 @@ void Effect::setAlpha(float alpha)
 
 void Effect::setTexDestinationPath(std::string texDestinationPath)
 {
-	size_t index1 = this->texAbsPath.find_last_of('\\');
-    size_t index2 = this->texAbsPath.find_last_of('/');
+	size_t index1 = this->texSourcePath.find_last_of('\\');
+    size_t index2 = this->texSourcePath.find_last_of('/');
     size_t pos = (index1 != -1 && index1 > index2 ? index1 : index2);
     if(pos != std::string::npos) {
-        this->texDestinationPath = texDestinationPath + this->texAbsPath.substr(pos);
+        this->texDestinationPath = texDestinationPath + this->texSourcePath.substr(pos);
     }
     else {
-        this->texDestinationPath = texDestinationPath + this->texAbsPath;
+        this->texDestinationPath = texDestinationPath + this->texSourcePath;
     }
+    
+    // texDestinationPath
+    // check if path ends with '/'
+    
     this->texDestinationPath = uriDecode(this->texDestinationPath);
 }
 
 void Effect::copyTexture()
 {
-    if (!this->texDestinationPath.empty() && this->texAbsPath.compare(this->texDestinationPath) != 0)
+    if (!this->texDestinationPath.empty() && this->texSourcePath.compare(this->texDestinationPath) != 0)
     {
 #ifdef WIN32
 		std::wstring sourceStr = std::wstring(this->texAbsPath.begin(), this->texAbsPath.end());
@@ -292,10 +334,10 @@ void Effect::copyTexture()
 		LPCWSTR dest = destStr.c_str();
 		BOOL b = CopyFile(source, dest,0);
 #else
-        int result = copyfile(this->texAbsPath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
+        int result = copyfile(this->texSourcePath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
 
         if (result == -1) {
-            GP_ERROR(ERR_TEX_COPY, this->texAbsPath.c_str(), this->texDestinationPath.c_str())
+            GP_ERROR(ERR_TEX_COPY, this->texSourcePath.c_str(), this->texDestinationPath.c_str())
         }
 #endif
     }

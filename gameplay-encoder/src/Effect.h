@@ -62,8 +62,12 @@ public:
     void setTextureFilename(std::string path, std::string gpbOutputPath);
     void setAlpha(float alpha);
 
-    void setTextureFilePath(std::string path, std::string gpbOutputPath);
-    std::string getTextureFilePath();
+    void setTextureSourcePath(std::string originalTexturePath, std::string originalModelPath);
+    std::string getTextureSourcePath();
+    
+    // REFACTOR ME!!!
+    std::string combineFileNameWithFilePath(const std::string& filePath, const std::string& fileName);
+
     void setTexDestinationPath(std::string texDestinationPath);
 
 public:
@@ -88,7 +92,7 @@ private:
     float alpha;
     std::string _vertexShader;
     std::string _fragmentShader;
-    std::string texAbsPath;
+    std::string texSourcePath;
     std::string texDestinationPath;
 };
 
