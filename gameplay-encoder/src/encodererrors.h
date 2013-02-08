@@ -63,7 +63,7 @@ ERRDEF(ERR_FBX_IMPORTER_NOT_INITIALIZED, 1013, "FbxImporter not initialized", "C
 ERRDEF(ERR_FBX_ERROR_MESSAGE, 1014, "Fbx Error", "Last Fbx error returned: %s")
 
 
-ERRDEF(ERR_FAILED_TO_OPEN_WRITE_FILE, 1015, "Failed to open file", "Failed to open file for PNG writing: %s")
+ERRDEF(ERR_FAILED_TO_OPEN_WRITE_FILE, 1015, "Failed to open file", "Failed to open file for writing: %s")
 ERRDEF(ERR_WRITE_STRUCT_FAILED, 1016, "Failed to write struct", "PNG Write struct creation failed: %s")
 ERRDEF(ERR_FAILED_TO_WRITE_INFO_STRUCT, 1017, "Failed to create info struct", "Failed to create PNG info struct: %s")
 
@@ -78,6 +78,10 @@ ERRDEF(ERR_SET_CHAR_SIZE, 1023, "Char Size not set", "Error setting char size: %
 ERRDEF(ERR_LOAD_CHAR, 1024, "Char not loaded", "Error loading char: %d")
 
 ERRDEF(ERR_IMAGE_SIZE_EXCEEDED, 1025, "Image size exceeded!", "Image size exceeded: %d")
+
+ERRDEF(ERR_DIRECTORY_DOES_NOT_EXIST, 1026, "Directory does not exist", "The specified directory does not exist or is not wirtable: %s")
+
+ERRDEF(ERR_FILE_NOT_COPIED, 1027, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
 
 
 
@@ -136,7 +140,7 @@ ERRDEF(WARN_SPOTLIGHT_FALLOFF_EXPONENT, 2032, "Spot light falloff exponent", "Sp
 ERRDEF(WARN_SYMBOL_NOT_FOUND, 2033, "Symbol not found", "Symbol not found: %s")
 
 
-
+ERRDEF(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, 1028, "Material not Assigned", "Mesh '%s' has no material assigned")
 
 
 ERROR_END

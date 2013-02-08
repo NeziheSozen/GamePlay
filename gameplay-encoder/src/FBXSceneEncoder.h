@@ -195,6 +195,16 @@ private:
     static void triangulateRecursive(FbxNode* fbxNode);
 
     Material* getMaterial(std::string materialId);
+    
+    
+    /**
+     * Adds a given FbxFileTexture to a specific Material
+     *
+     * @param fbxFileTexture The FbxFileTexture
+     * @param mat The Material which gets the 
+     */
+    void addTextureToMaterial(FbxFileTexture* fbxFileTexture, Material* mat);
+    
 private:
 
     /**

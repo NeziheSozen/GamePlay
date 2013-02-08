@@ -950,9 +950,10 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     if(mat == NULL) {
         mat = new Material();
         mat->setMaterialId(materialId);
-        mesh->addInstanceMaterial(materialId, mat);
+
         _materials.push_back(mat);
     }
+    mesh->addInstanceMaterial(materialId, mat); 
 
     FbxPropertyT<FbxDouble3> lKFbxDouble3;
     FbxPropertyT<FbxDouble> lKFbxDouble1;
@@ -960,6 +961,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 
     if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
     {
+        
         // We found a Phong material.  Display its properties.
         // Display the Ambient Color
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Ambient;
@@ -971,33 +973,36 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         FbxProperty lProperty = ((FbxSurfacePhong *) fbxMaterial)->FindProperty(FbxSurfaceMaterial::sDiffuse);
         if(lProperty.IsValid())
         {
+            
+            // check if textures are available
             int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-            if(lTextureCount > 0)
-            {
-                for(int j=0; j < lTextureCount; ++j)
-                {
-                    FbxFileTexture* lfileTexture = lProperty.GetSrcObject<FbxFileTexture>(j);
-                    // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
-                    std::string path = std::string(lfileTexture->GetFileName());
-                    std::string ext = path.substr(path.find_last_of('.') + 1);
-                    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
-                    {
-//                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
-                        GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
-                    }
-                    else
-                    {
-                        std::string fp = EncoderArguments::getInstance()->getFilePath();
-                        int pos = fp.find_last_of('/');
-                        fp = (pos == -1) ? fp : fp.substr(0, pos);
-                        mat->getEffect().setTextureFilename(path, fp);
-                        mat->getEffect().setTextureFilePath(path, fp);
-                        if (EncoderArguments::getInstance()->textureOutputEnabled())
-                        {
-                            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-                        }
-                    }
-                }
+            FbxFileTexture* fileTexture = NULL;
+            if ( 0 == lTextureCount ) {
+                GP_WARNING(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
+            }else if ( 1 == lTextureCount ) {
+                
+                fileTexture = lProperty.GetSrcObject<FbxFileTexture>(0);
+                
+                this->addTextureToMaterial(fileTexture, mat);                
+                
+            }            
+            
+            // if not, check if layered textures are available
+            int layeredTextureCount = lProperty.GetSrcObjectCount<FbxLayeredTexture>();
+            if ( 1 == layeredTextureCount ) {
+                
+                // proceed with single layered texture
+                FbxLayeredTexture* layeredTexture = lProperty.GetSrcObject<FbxLayeredTexture>(0);
+                
+                fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
+                
+                this->addTextureToMaterial(fileTexture, mat);
+                // log that layered textures are used
+                
+            }else {
+                
+                // layered texture count > 1
+                // log that multiple layered textures are not supported
             }
         }
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Diffuse;
@@ -1103,6 +1108,32 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         GP_WARNING(WARN_GENERIC_FBX_LOG, "No Material");
     }
 }
+
+
+void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, Material* mat) {
+
+
+    std::string path = std::string(fbxFileTexture->GetFileName());
+    std::string ext = path.substr(path.find_last_of('.') + 1);
+    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
+    {
+        //                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
+        GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+    }
+    else
+    {
+        std::string fp = EncoderArguments::getInstance()->getFilePath();
+        int pos = fp.find_last_of('/');
+        fp = (pos == -1) ? fp : fp.substr(0, pos);
+        mat->getEffect().setTextureFilename(path, fp);
+        mat->getEffect().setTextureFilePath(path, fp);
+        if (EncoderArguments::getInstance()->textureOutputEnabled())
+        {
+            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+        }
+    }
+}
+
 
 Material* FBXSceneEncoder::getMaterial(std::string materialId) {
     // TODO: optimize search because complexity O(n) is too high
