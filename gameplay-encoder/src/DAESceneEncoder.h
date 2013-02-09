@@ -20,6 +20,7 @@
 #include "GPBFile.h"
 #include "DAEUtil.h"
 #include "EncoderArguments.h"
+#include "IdStore.h"
 
 namespace gameplay
 {
@@ -217,6 +218,7 @@ private:
     clock_t _begin;
 
     DAEMaterialEncoder* _materialEncoder;
+    IdStore idStore;
 };
 
 }
