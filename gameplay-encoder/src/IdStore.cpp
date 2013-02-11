@@ -23,17 +23,23 @@ IdStore::~IdStore()
 
 string IdStore::getId(const string& name, const string& uniqueId)
 {
-    pair<UniqueIdToNameMultiMap::const_iterator,UniqueIdToNameMultiMap::const_iterator> range = _uniqueIdToName.equal_range(name);
+    string checkedName(name);
+    if (checkedName.empty())
+    {
+        checkedName.assign("Node");
+    }
+
+    pair<UniqueIdToNameMultiMap::const_iterator,UniqueIdToNameMultiMap::const_iterator> range = _uniqueIdToName.equal_range(checkedName);
 
     if (range.first == range.second)
     {
         // name not yet used
         pair<string, string> ids;
         ids.first = uniqueId;
-        ids.second = name;
-        _uniqueIdToName.insert(pair<string,pair<string,string> >(name,ids));
+        ids.second = checkedName;
+        _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
 
-        return name;
+        return checkedName;
     }
 
     UniqueIdToNameMultiMap::const_iterator it;
@@ -51,9 +57,9 @@ string IdStore::getId(const string& name, const string& uniqueId)
     pair<string, string> ids;
     ids.first = uniqueId;
     stringstream ss;
-    ss << name << "_" << count;
+    ss << checkedName << "_" << count;
     ids.second = ss.str();
-    _uniqueIdToName.insert(pair<string,pair<string,string> >(name,ids));
+    _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
 
     return ids.second;
 }
