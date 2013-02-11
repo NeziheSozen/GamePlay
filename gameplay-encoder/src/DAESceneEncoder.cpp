@@ -849,7 +849,11 @@ Node* DAESceneEncoder::findSceneActiveCameraNode(const domVisual_scene* visualSc
                 if (nodeRef->getId()) {
                     ss << nodeRef->getId();
                 }
-                std::string id(idStore.getId(nodeRef->getName(), ss.str()).c_str());
+                std::string name;
+                if (nodeRef->getName()) {
+                    name.assign(nodeRef->getName());
+                }
+                std::string id(idStore.getId(name, ss.str()).c_str());
 
                 Node* node = _gamePlayFile.getNode(id.c_str());
                 if (node)
@@ -872,7 +876,11 @@ Node* DAESceneEncoder::loadNode(domNode* n, Node* parent)
     if (n->getID()) {
         ss << n->getID();
     }
-    std::string id(idStore.getId(n->getName(), ss.str()).c_str());
+    std::string name;
+    if (n->getName()) {
+        name.assign(n->getName());
+    }
+    std::string id(idStore.getId(name, ss.str()).c_str());
 
     node = _gamePlayFile.getNode(id.c_str());
     if (node)
