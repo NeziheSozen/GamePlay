@@ -246,6 +246,7 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     loadScene(fbxScene);
     print("Loading animations.");
     loadAnimations(fbxScene, arguments);
+    
     sdkManager->Destroy();
 
     print("Optimizing GamePlay Binary.");
@@ -331,9 +332,11 @@ void FBXSceneEncoder::loadScene(FbxScene* fbxScene)
     if (rootNode)
     {
         print("Triangulate.");
+
         triangulateRecursive(rootNode);
 
         print("Load nodes.");
+
         // Don't include the FBX root node in the GPB.
         const int childCount = rootNode->GetChildCount();
         for (int i = 0; i < childCount; ++i)
@@ -974,37 +977,9 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         if(lProperty.IsValid())
         {
             
-            // check if textures are available
-            int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-            FbxFileTexture* fileTexture = NULL;
-            if ( 0 == lTextureCount ) {
-                GP_WARNING(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
-            }else if ( 1 == lTextureCount ) {
-                
-                fileTexture = lProperty.GetSrcObject<FbxFileTexture>(0);
-                
-                this->addTextureToMaterial(fileTexture, mat);                
-                
-            }            
-            
-            // if not, check if layered textures are available
-            int layeredTextureCount = lProperty.GetSrcObjectCount<FbxLayeredTexture>();
-            if ( 1 == layeredTextureCount ) {
-                
-                // proceed with single layered texture
-                FbxLayeredTexture* layeredTexture = lProperty.GetSrcObject<FbxLayeredTexture>(0);
-                
-                fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
-                
-                this->addTextureToMaterial(fileTexture, mat);
-                // log that layered textures are used
-                
-            }else {
-                
-                // layered texture count > 1
-                // log that multiple layered textures are not supported
-            }
+            this->assignTexturesToMaterialFromFBXPropertyForMeshPart(mat, lProperty, meshPart);
         }
+        
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Diffuse;
         theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
         //LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
@@ -1057,34 +1032,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         FbxProperty lProperty = ((FbxSurfaceLambert *) fbxMaterial)->FindProperty(FbxSurfaceMaterial::sDiffuse);
         if(lProperty.IsValid())
         {
-            int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-            if(lTextureCount > 0)
-            {
-                for(int j=0; j < lTextureCount; ++j)
-                {
-                    FbxFileTexture* lfileTexture = lProperty.GetSrcObject<FbxFileTexture>(j);
-                    // LOG(1, "            DiffuseTexMediaName: %s\n", lfileTexture->GetFileName());
-                    std::string path = std::string(lfileTexture->GetFileName());
-                    std::string ext = path.substr(path.find_last_of('.') + 1);
-                    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
-                    {
-//                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
-                        GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
-                    }
-                    else
-                    {
-                        std::string fp = EncoderArguments::getInstance()->getFilePath();
-                        int pos = fp.find_last_of('/');
-                        fp = (pos == -1) ? fp : fp.substr(0, pos);
-                        mat->getEffect().setTextureFilename(path, fp);
-                        mat->getEffect().setTextureFilePath(path, fp);
-                        if (EncoderArguments::getInstance()->textureOutputEnabled())
-                        {
-                            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-                        }
-                    }
-                }
-            }
+            this->assignTexturesToMaterialFromFBXPropertyForMeshPart(mat, lProperty, meshPart);
         }
 
         // Display the Diffuse Color
@@ -1109,8 +1057,64 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     }
 }
 
+void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const Material* mat, const FbxProperty& property, const MeshPart* meshPart) {
+    
+    // check if textures are available
+    
+    bool foundTextureForMesh = false;
+    
+    int lTextureCount = property.GetSrcObjectCount<FbxFileTexture>();
+    FbxFileTexture* fileTexture = NULL;
+    if ( 0 == lTextureCount ) {
+        GP_WARNING(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
+    }else if ( 1 == lTextureCount ) {
+        
+        fileTexture = property.GetSrcObject<FbxFileTexture>(0);
+        
+        this->addTextureToMaterial(fileTexture, mat);
+        
+        foundTextureForMesh = true;
+        
+    }else if ( lTextureCount > 1 )
+    {
+        
+        fileTexture = property.GetSrcObject<FbxFileTexture>(0);
+        
+        this->addTextureToMaterial(fileTexture, mat);
+        
+        GP_WARNING(WARN_MULTIPLE_MATERIALS_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
+        
+        foundTextureForMesh = true;
+    }
+    
+    if (!foundTextureForMesh) {
+        
+        // if not, check if layered textures are available
+        int layeredTextureCount = property.GetSrcObjectCount<FbxLayeredTexture>();
+        if ( 1 == layeredTextureCount ) {
+            
+            // proceed with single layered texture
+            FbxLayeredTexture* layeredTexture = property.GetSrcObject<FbxLayeredTexture>(0);
+            
+            fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
+            this->addTextureToMaterial(fileTexture, mat);
+            
+            
+            GP_WARNING(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, meshPart->getId().c_str());
+            
+        }else if ( layeredTextureCount > 1) {
+            
+            FbxLayeredTexture* layeredTexture = property.GetSrcObject<FbxLayeredTexture>(0);
+            
+            fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
+            this->addTextureToMaterial(fileTexture, mat);
+            
+            GP_WARNING(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, meshPart->getId().c_str());
+        }
+    }
+}
 
-void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, Material* mat) {
+void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat) {
 
 
     std::string path = std::string(fbxFileTexture->GetFileName());
@@ -1126,7 +1130,7 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, Mater
         int pos = fp.find_last_of('/');
         fp = (pos == -1) ? fp : fp.substr(0, pos);
         mat->getEffect().setTextureFilename(path, fp);
-        mat->getEffect().setTextureFilePath(path, fp);
+        mat->getEffect().setTextureSourcePath(path, fp);
         if (EncoderArguments::getInstance()->textureOutputEnabled())
         {
             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());

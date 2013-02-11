@@ -35,6 +35,8 @@ void encoderErr2msg(int code, const char** name, const char** desc);
 
 #define WARN_NUM 2000 // start at error number for warnings at 2000
 
+#define INFO_NUM 3000
+
 #define ERR_NUM_INC ERR_NUM +1
 #define WARN_NUM_INC WARN_NUM +1
 
@@ -140,7 +142,16 @@ ERRDEF(WARN_SPOTLIGHT_FALLOFF_EXPONENT, 2032, "Spot light falloff exponent", "Sp
 ERRDEF(WARN_SYMBOL_NOT_FOUND, 2033, "Symbol not found", "Symbol not found: %s")
 
 
-ERRDEF(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, 1028, "Material not Assigned", "Mesh '%s' has no material assigned")
+ERRDEF(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, 2034, "Material not Assigned", "Mesh '%s' has no material assigned")
 
+ERRDEF(WARN_MULTIPLE_MATERIALS_ASSIGNED_FOR_MESH, 2035, "Multiple Materials Assigned", "Mesh '%s' has multiple materials assigned -> using first assigned material.")
+
+
+ERRDEF(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, 2036, "No texture found", "Using first layered texture because no other texture was assigned to mesh '%s'.")
+ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Layered textures not supported", "Layered textures are generally not supported. Using only first texture for mesh '%s'.")
+
+
+// INOFS
+ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
 
 ERROR_END
