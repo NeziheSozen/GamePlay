@@ -298,7 +298,7 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
             std::string path = outputFilePath.substr(0, pos);
             path.append(".xml");
 //            LOG(1, "Saving debug file: %s\n", path.c_str());
-            GP_WARNING(WARN_SAVE_DEBUG_FILE, path.c_str());
+            GP_INFO(INFO_SAVE_DEBUG_FILE, path.c_str());
             if (!_gamePlayFile.saveText(path))
             {
 //                LOG(1, "Error writing text file: %s\n", path.c_str());
@@ -309,7 +309,7 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     else
     {
 //        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
-        GP_WARNING(WARN_SAVE_BINARY_FILE, outputFilePath.c_str());
+        GP_INFO(INFO_SAVE_BINARY_FILE, outputFilePath.c_str());
         if (!_gamePlayFile.saveBinary(outputFilePath))
         {
 //            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
@@ -694,7 +694,7 @@ void FBXSceneEncoder::saveMesh(FbxUInt64 meshId, Mesh* mesh)
 void FBXSceneEncoder::print(const char* str)
 {
 //    LOG(1, "%s\n", str);
-    GP_WARNING(WARN_GENERIC_FBX_LOG, str);
+    GP_INFO(INFO_LOG, str);
     
 }
 

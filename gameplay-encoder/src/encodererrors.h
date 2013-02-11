@@ -92,8 +92,7 @@ ERRDEF(WARN_DUPLICATE_KEYFRAMES, 2001, "Duplicate Keyframes", "Removed %ld dupli
 
 ERRDEF(WARN_DELETE_RANGE, 2002, "Delete Range", "Deleting Range: %s")
 
-ERRDEF(WARN_SAVE_DEBUG_FILE, 2003, "Saving debug file", "Saving debug file: %s")
-ERRDEF(WARN_SAVE_BINARY_FILE, 2004, "Saving binary file", "Saving binary file: %s")
+
 
 ERRDEF(WARN_TRANSFORM_ROTATE_NOT_SUPPORTED, 2005, "Could not apply rotation", "Node %s: \"Rotate\" transform found but not supported.\n Use \"Bake Transform\" options when exporting")
 ERRDEF(WARN_TRANSFORM_SCALE_NOT_SUPPORTED, 2006, "Could not apply rotation", "Node %s: \"Scale\" transform found but not supported.\n Use \"Bake Transform\" options when exporting")
@@ -153,5 +152,8 @@ ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Laye
 
 // INOFS
 ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
+
+ERRDEF(INFO_SAVE_DEBUG_FILE, 3002, "Saving debug file", "Saving debug file: %s")
+ERRDEF(INFO_SAVE_BINARY_FILE, 3003, "Saving binary file", "Saving binary file: %s")
 
 ERROR_END
