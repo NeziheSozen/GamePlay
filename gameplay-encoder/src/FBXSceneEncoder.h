@@ -33,6 +33,7 @@
 #include "Transform.h"
 #include "GPBFile.h"
 #include "EncoderArguments.h"
+#include "IdStore.h"
 
 using namespace gameplay;
 
@@ -231,6 +232,8 @@ private:
      *  list of all material-objects that were created from the model
      */
     std::list<Material*> _materials;
+
+    IdStore idStore;
 };
 
 #endif

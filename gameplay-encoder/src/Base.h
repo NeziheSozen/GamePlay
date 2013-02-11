@@ -159,7 +159,6 @@ extern int __logVerbosity;
         size_t err_desc_length = 150; \
         char output_buffer[msg_length+err_desc_length]; \
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
-
 		fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
     }
 

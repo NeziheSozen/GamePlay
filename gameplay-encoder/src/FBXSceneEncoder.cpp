@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 #include "FBXSceneEncoder.h"
 #include "EncoderArguments.h"
@@ -626,20 +627,18 @@ Node* FBXSceneEncoder::loadNode(FbxNode* fbxNode)
     Node* node = NULL;
 
     // Check if this node has already been loaded
-    const char* id = fbxNode->GetName();
-    if (id && strlen(id) > 0)
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    std::string id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
+
+    node = _gamePlayFile.getNode(id.c_str());
+    if (node)
     {
-        node = _gamePlayFile.getNode(fbxNode->GetName());
-        if (node)
-        {
-            return node;
-        }
+        return node;
     }
+
     node = new Node();
-    if (id)
-    {
-        node->setId(id);
-    }
+    node->setId(id);
     _gamePlayFile.addNode(node);
 
     transformNode(fbxNode, node);
@@ -726,7 +725,10 @@ void FBXSceneEncoder::loadBindShapes(FbxScene* fbxScene)
             FbxNode* fbxNode = pose->GetNode(0);
             if (fbxNode->GetMesh() != NULL)
             {
-                Node* node = _gamePlayFile.getNode(fbxNode->GetName());
+                std::stringstream ss;
+                ss << fbxNode->GetUniqueID();
+                std::string id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
+                Node* node = _gamePlayFile.getNode(id.c_str());
                 assert(node && node->getModel());
 
                 Model* model = node->getModel();
@@ -1077,7 +1079,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                         int pos = fp.find_last_of('/');
                         fp = (pos == -1) ? fp : fp.substr(0, pos);
                         mat->getEffect().setTextureFilename(path, fp);
-                        mat->getEffect().setTextureFilePath(path, fp);
+                        mat->getEffect().setTextureSourcePath(path, fp);
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
                             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
@@ -1126,7 +1128,7 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, Mater
         int pos = fp.find_last_of('/');
         fp = (pos == -1) ? fp : fp.substr(0, pos);
         mat->getEffect().setTextureFilename(path, fp);
-        mat->getEffect().setTextureFilePath(path, fp);
+        mat->getEffect().setTextureSourcePath(path, fp);
         if (EncoderArguments::getInstance()->textureOutputEnabled())
         {
             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());

@@ -845,7 +845,12 @@ Node* DAESceneEncoder::findSceneActiveCameraNode(const domVisual_scene* visualSc
             domNode* nodeRef = daeSafeCast<domNode>(cameraNodeURI.getElement());
             if (nodeRef)
             {
-                std::string id = nodeRef->getId();
+                std::stringstream ss;
+                if (nodeRef->getId()) {
+                    ss << nodeRef->getId();
+                }
+                std::string id(idStore.getId(nodeRef->getName(), ss.str()).c_str());
+
                 Node* node = _gamePlayFile.getNode(id.c_str());
                 if (node)
                 {
@@ -863,16 +868,18 @@ Node* DAESceneEncoder::loadNode(domNode* n, Node* parent)
     Node* node = NULL;
 
     // Check if this node has already been loaded
-    const char* id = n->getID();
-    if (id && strlen(id) > 0)
-    {
-        node = _gamePlayFile.getNode(n->getID());
-        if (node)
-        {
-            return node;
-        }
+    std::stringstream ss;
+    if (n->getID()) {
+        ss << n->getID();
     }
-    
+    std::string id(idStore.getId(n->getName(), ss.str()).c_str());
+
+    node = _gamePlayFile.getNode(id.c_str());
+    if (node)
+    {
+        return node;
+    }
+
     // Load the node
     node = new Node();
 
@@ -887,7 +894,7 @@ Node* DAESceneEncoder::loadNode(domNode* n, Node* parent)
     }
 
     // Set node id
-    node->setId(n->getId());
+    node->setId(id.c_str());
 
     // If this node has an id then add it to the ref table
     _gamePlayFile.addNode(node);
