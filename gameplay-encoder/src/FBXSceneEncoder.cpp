@@ -333,11 +333,9 @@ void FBXSceneEncoder::loadScene(FbxScene* fbxScene)
     if (rootNode)
     {
         print("Triangulate.");
-
         triangulateRecursive(rootNode);
 
         print("Load nodes.");
-
         // Don't include the FBX root node in the GPB.
         const int childCount = rootNode->GetChildCount();
         for (int i = 0; i < childCount; ++i)
@@ -637,11 +635,7 @@ Node* FBXSceneEncoder::loadNode(FbxNode* fbxNode)
     node = _gamePlayFile.getNode(id.c_str());
     if (node)
     {
-        node = _gamePlayFile.getNode(fbxNode->GetName());
-        if (node)
-        {
         return node;
-        }
     }
 
     node = new Node();
@@ -1137,6 +1131,11 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
         fp = (pos == -1) ? fp : fp.substr(0, pos);
         mat->getEffect().setTextureFilename(path, fp);
         mat->getEffect().setTextureSourcePath(path, fp);
+        
+        if(!mat->getEffect().isPngFile()) {
+            GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+        }
+        
         if (EncoderArguments::getInstance()->textureOutputEnabled())
         {
             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());

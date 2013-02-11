@@ -6,6 +6,7 @@
 #include <dom/domInstance_effect.h>
 #include <dom/domCommon_color_or_texture_type.h>
 #include <iostream>
+#include <png.h>
 
 using namespace std;
 
@@ -467,7 +468,6 @@ namespace gameplay
         }
     }
     
-    
     bool DAEMaterialEncoder::processTexture(domCommon_color_or_texture_type_complexType::domTexture *tex, Effect &effect)
     {
         //find the newparam for the sampler based on the texture attribute
@@ -570,6 +570,12 @@ namespace gameplay
                             fp = (pos == -1) ? fp : fp.substr(0, pos);
                             effect.setTextureFilename(path, fp);
                             effect.setTextureSourcePath(filePath, fp);
+                            
+                            if(!effect.isPngFile()) {
+                                GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
+                                return false;
+                            }
+                            
                             if (EncoderArguments::getInstance()->textureOutputEnabled())
                             {
                                 effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
@@ -620,6 +626,12 @@ namespace gameplay
                 
                 effect.setTextureFilename(path, fp);
                 effect.setTextureSourcePath(filePath, fp);
+                
+                if(!effect.isPngFile()) {
+                    GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
+                    return false;
+                }
+                
                 if (EncoderArguments::getInstance()->textureOutputEnabled())
                 {
                     effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());

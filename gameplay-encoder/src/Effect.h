@@ -70,6 +70,9 @@ public:
 
     void setTexDestinationPath(std::string texDestinationPath);
 
+    int isPowerOfTwo(unsigned int x);
+    bool isPngFile();
+    
 public:
     static std::string wrapStr[];
     static std::string filterStr[];
