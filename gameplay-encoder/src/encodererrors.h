@@ -150,6 +150,7 @@ ERRDEF(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, 2036, "No texture found", 
 ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Layered textures not supported", "Layered textures are generally not supported. Using only first texture for mesh '%s'.")
 
 ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024).\nTexture-Path: %s")
+ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2038, "Normal Maps not supported", "Normal maps are currently not supported")
 
 // INOFS
 ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")

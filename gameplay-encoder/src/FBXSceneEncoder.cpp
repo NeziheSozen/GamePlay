@@ -1,5 +1,6 @@
 #ifdef USE_FBX
 
+#include "Base.h"
 #include <algorithm>
 #include <string>
 #include <sstream>
@@ -962,6 +963,12 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     FbxPropertyT<FbxDouble> lKFbxDouble1;
     FbxColor theColor;
 
+    FbxProperty lPropertyNormalMap = fbxMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
+    if(lPropertyNormalMap.IsValid())
+    {
+        GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
+    }
+    
     if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
     {
         
@@ -1057,17 +1064,20 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
     }
 }
 
-void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const Material* mat, const FbxProperty& property, const MeshPart* meshPart) {
-    
+void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const Material* mat, const FbxProperty& property, const MeshPart* meshPart)
+{
     // check if textures are available
     
     bool foundTextureForMesh = false;
     
     int lTextureCount = property.GetSrcObjectCount<FbxFileTexture>();
     FbxFileTexture* fileTexture = NULL;
-    if ( 0 == lTextureCount ) {
+    if ( 0 == lTextureCount )
+    {
         GP_WARNING(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
-    }else if ( 1 == lTextureCount ) {
+    }
+    else if ( 1 == lTextureCount )
+    {
         
         fileTexture = property.GetSrcObject<FbxFileTexture>(0);
         
@@ -1075,7 +1085,8 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
         
         foundTextureForMesh = true;
         
-    }else if ( lTextureCount > 1 )
+    }
+    else if ( lTextureCount > 1 )
     {
         
         fileTexture = property.GetSrcObject<FbxFileTexture>(0);
@@ -1087,11 +1098,12 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
         foundTextureForMesh = true;
     }
     
-    if (!foundTextureForMesh) {
-        
+    if (!foundTextureForMesh)
+    {
         // if not, check if layered textures are available
         int layeredTextureCount = property.GetSrcObjectCount<FbxLayeredTexture>();
-        if ( 1 == layeredTextureCount ) {
+        if ( 1 == layeredTextureCount )
+        {
             
             // proceed with single layered texture
             FbxLayeredTexture* layeredTexture = property.GetSrcObject<FbxLayeredTexture>(0);
@@ -1099,10 +1111,10 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
             fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
             this->addTextureToMaterial(fileTexture, mat);
             
-            
             GP_WARNING(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, meshPart->getId().c_str());
             
-        }else if ( layeredTextureCount > 1) {
+        }else if ( layeredTextureCount > 1)
+        {
             
             FbxLayeredTexture* layeredTexture = property.GetSrcObject<FbxLayeredTexture>(0);
             
@@ -1114,9 +1126,8 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
     }
 }
 
-void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat) {
-
-
+void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat)
+{
     std::string path = std::string(fbxFileTexture->GetFileName());
     std::string ext = path.substr(path.find_last_of('.') + 1);
     if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
@@ -1132,7 +1143,8 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
         mat->getEffect().setTextureFilename(path, fp);
         mat->getEffect().setTextureSourcePath(path, fp);
         
-        if(!mat->getEffect().isPngFile()) {
+        if(!mat->getEffect().isPngFile())
+        {
             GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
         }
         
@@ -1176,7 +1188,8 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
 }
 
 
-Material* FBXSceneEncoder::getMaterial(std::string materialId) {
+Material* FBXSceneEncoder::getMaterial(std::string materialId)
+{
     // TODO: optimize search because complexity O(n) is too high
     std::list<Material*>::iterator it;
     for (it = _materials.begin(); it != _materials.end(); ++it)
