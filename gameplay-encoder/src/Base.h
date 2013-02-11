@@ -172,11 +172,21 @@ extern int __logVerbosity;
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
         fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
     }
+    
+#define GP_INFO(warn_code, ...) \
+    { \
+        const char* msg, *desc; \
+        encoderErr2msg(warn_code, &msg, &desc); \
+        size_t msg_length = strlen(desc); \
+        size_t err_desc_length = 150; \
+        char output_buffer[msg_length+err_desc_length]; \
+        snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        fprintf(stdout, "Info (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
+    }
 #endif
 
 
 }
-
 
 
 #endif

@@ -387,7 +387,7 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
             std::string path = outputFilePath.substr(0, pos);
             path.append(".xml");
 //            LOG(1, "Saving debug file: %s\n", path.c_str());
-            GP_WARNING(WARN_SAVE_DEBUG_FILE, path.c_str());
+            GP_INFO(INFO_SAVE_DEBUG_FILE, path.c_str());
             
             if (!_gamePlayFile.saveText(path))
             {
@@ -399,7 +399,7 @@ void DAESceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     else
     {
 //        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
-        GP_WARNING(WARN_SAVE_BINARY_FILE, outputFilePath.c_str());
+        GP_INFO(INFO_SAVE_BINARY_FILE, outputFilePath.c_str());
         begin();
         if (!_gamePlayFile.saveBinary(outputFilePath))
         {

@@ -199,12 +199,20 @@ private:
     
     
     /**
+     * Adds all available textures from a giben FbxProperty to a Gameplay Material
+     *
+     * @param mat The destination Material
+     * @param property The fbx source Property
+     */
+    void assignTexturesToMaterialFromFBXPropertyForMeshPart(const Material* mat, const FbxProperty& property, const MeshPart* meshPart);
+    
+    /**
      * Adds a given FbxFileTexture to a specific Material
      *
      * @param fbxFileTexture The FbxFileTexture
      * @param mat The Material which gets the 
      */
-    void addTextureToMaterial(FbxFileTexture* fbxFileTexture, Material* mat);
+    void addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat);
     
 private:
 
