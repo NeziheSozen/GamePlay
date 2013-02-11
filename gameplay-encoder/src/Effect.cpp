@@ -3,6 +3,8 @@
 #include "Light.h"
 #include "Scene.h"
 #include "Node.h"
+#include <png.h>
+
 #ifdef WIN32
 #include <iostream>
 #include <Windows.h>
@@ -382,5 +384,27 @@ std::string Effect::uriDecode(const std::string & sSrc)
     std::string sResult(pStart, pEnd);
     delete [] pStart;
     return sResult;
+}
+
+// if non-pow-of-2: clamp & linear
+int Effect::isPowerOfTwo(unsigned int x)
+{
+    return ((x != 0) && !(x & (x - 1)));
+}
+
+bool Effect::isPngFile() {
+    FILE *fp = fopen(this->texSourcePath.c_str(), "rb");
+    if (!fp)
+    {
+        return false;
+    }
+    
+    int number = 7;
+    Byte* header = (Byte*) malloc(sizeof(Byte)*number);
+    
+    fread(header, 1, number, fp);
+    bool isPng = !png_sig_cmp(header, 0, number);
+    fclose(fp);
+    return isPng;
 }
 }

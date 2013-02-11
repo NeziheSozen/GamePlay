@@ -1080,6 +1080,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
                         fp = (pos == -1) ? fp : fp.substr(0, pos);
                         mat->getEffect().setTextureFilename(path, fp);
                         mat->getEffect().setTextureSourcePath(path, fp);
+                        
+                        if(!mat->getEffect().isPngFile()) {
+                            GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+                        }
+                        
                         if (EncoderArguments::getInstance()->textureOutputEnabled())
                         {
                             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
@@ -1129,6 +1134,11 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, Mater
         fp = (pos == -1) ? fp : fp.substr(0, pos);
         mat->getEffect().setTextureFilename(path, fp);
         mat->getEffect().setTextureSourcePath(path, fp);
+        
+        if(!mat->getEffect().isPngFile()) {
+            GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+        }
+        
         if (EncoderArguments::getInstance()->textureOutputEnabled())
         {
             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
