@@ -70,7 +70,7 @@ public:
 
     void setTexDestinationPath(std::string texDestinationPath);
 
-    int isPowerOfTwo(unsigned int x);
+    int isPowerOfTwo();
     bool isPngFile();
     
 public:
@@ -80,6 +80,7 @@ public:
 private:
     void copyTexture();
     std::string uriDecode(const std::string & sSrc);
+    int isPowerOfTwo(unsigned int x);
 
 private:
     Vector4 ambientColor;

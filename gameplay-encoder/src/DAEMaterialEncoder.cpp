@@ -646,51 +646,64 @@ namespace gameplay
         //set texture parameters
         if (sampler)
         {
-            if (sampler->getWrap_s())
+            if(!effect.isPowerOfTwo())
             {
-                gameplay::Effect::Wrap wrap;
-                switch( sampler->getWrap_t()->getValue() )
-                {
-                    case FX_SAMPLER_WRAP_COMMON_WRAP:
-                    case FX_SAMPLER_WRAP_COMMON_MIRROR:
-                        wrap = Effect::REPEAT;
-                        break;
-                    case FX_SAMPLER_WRAP_COMMON_CLAMP:
-                    case FX_SAMPLER_WRAP_COMMON_NONE:
-                    case FX_SAMPLER_WRAP_COMMON_BORDER:
-                    default:
-                        wrap = Effect::CLAMP;
-                        break;
-                }
-                effect.setWrapS(wrap);
+                effect.setWrapS(Effect::CLAMP);
+                effect.setWrapT(Effect::CLAMP);
+                effect.setMinFilter(Effect::LINEAR);
+                effect.setMagFilter(Effect::LINEAR);
+                GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, effect.getTextureSourcePath().c_str());
             }
             else
             {
-                effect.setWrapS(Effect::REPEAT);
-            }
-            if (sampler->getWrap_t())
-            {
-                gameplay::Effect::Wrap wrap;
-                switch( sampler->getWrap_t()->getValue() )
+                /**************   wrapS   **************/
+                if (sampler->getWrap_s())
                 {
-                    case FX_SAMPLER_WRAP_COMMON_WRAP:
-                    case FX_SAMPLER_WRAP_COMMON_MIRROR:
-                        wrap = Effect::REPEAT;
-                        break;
-                    case FX_SAMPLER_WRAP_COMMON_CLAMP:
-                    case FX_SAMPLER_WRAP_COMMON_NONE:
-                    case FX_SAMPLER_WRAP_COMMON_BORDER:
-                    default:
-                        wrap = Effect::CLAMP;
-                        break;
+                    gameplay::Effect::Wrap wrap;
+                    switch( sampler->getWrap_t()->getValue() )
+                    {
+                        case FX_SAMPLER_WRAP_COMMON_WRAP:
+                        case FX_SAMPLER_WRAP_COMMON_MIRROR:
+                            wrap = Effect::REPEAT;
+                            break;
+                        case FX_SAMPLER_WRAP_COMMON_CLAMP:
+                        case FX_SAMPLER_WRAP_COMMON_NONE:
+                        case FX_SAMPLER_WRAP_COMMON_BORDER:
+                        default:
+                            wrap = Effect::CLAMP;
+                            break;
+                    }
+                    effect.setWrapS(wrap);
                 }
-                effect.setWrapT(wrap);
+                else
+                {
+                    effect.setWrapS(Effect::REPEAT);
+                }
+                /**************   wrapT   **************/
+                if (sampler->getWrap_t())
+                {
+                    gameplay::Effect::Wrap wrap;
+                    switch( sampler->getWrap_t()->getValue() )
+                    {
+                        case FX_SAMPLER_WRAP_COMMON_WRAP:
+                        case FX_SAMPLER_WRAP_COMMON_MIRROR:
+                            wrap = Effect::REPEAT;
+                            break;
+                        case FX_SAMPLER_WRAP_COMMON_CLAMP:
+                        case FX_SAMPLER_WRAP_COMMON_NONE:
+                        case FX_SAMPLER_WRAP_COMMON_BORDER:
+                        default:
+                            wrap = Effect::CLAMP;
+                            break;
+                    }
+                    effect.setWrapT(wrap);
+                }
+                else
+                {
+                    effect.setWrapT(Effect::REPEAT);
+                }
             }
-            else
-            {
-                effect.setWrapT(Effect::REPEAT);
-            }
-            
+            /**************   Minfilter   **************/
             if (sampler->getMinfilter())
             {
                 gameplay::Effect::Filter filter;
@@ -725,6 +738,7 @@ namespace gameplay
             {
                 effect.setMinFilter(Effect::NEAREST_MIPMAP_LINEAR);
             }
+            /**************   Magfilter   **************/
             if (sampler->getMagfilter())
             {
                 gameplay::Effect::Filter filter;

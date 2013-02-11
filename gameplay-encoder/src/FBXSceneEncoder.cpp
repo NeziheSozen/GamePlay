@@ -1140,6 +1140,38 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
         {
             mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
         }
+        
+        if(mat->getEffect().isPowerOfTwo())
+        {
+            mat->getEffect().setWrapS(Effect::CLAMP);
+            mat->getEffect().setWrapT(Effect::CLAMP);
+            mat->getEffect().setMinFilter(Effect::LINEAR);
+            mat->getEffect().setMagFilter(Effect::LINEAR);
+            GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, mat->getEffect().getTextureSourcePath().c_str());
+        }
+        else
+        {
+            switch(fbxFileTexture->GetWrapModeU())
+            {
+                case fbxsdk_2013_3::FbxTexture::eRepeat:
+                    mat->getEffect().setWrapS(Effect::REPEAT);
+                    break;
+                case fbxsdk_2013_3::FbxTexture::eClamp:
+                default:
+                    mat->getEffect().setWrapS(Effect::CLAMP);
+                    break;
+            }
+            switch(fbxFileTexture->GetWrapModeV())
+            {
+                case fbxsdk_2013_3::FbxTexture::eRepeat:
+                    mat->getEffect().setWrapT(Effect::REPEAT);
+                    break;
+                case fbxsdk_2013_3::FbxTexture::eClamp:
+                default:
+                    mat->getEffect().setWrapT(Effect::CLAMP);
+                    break;
+            }
+        }
     }
 }
 
