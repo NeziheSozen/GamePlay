@@ -736,7 +736,7 @@ namespace gameplay
             }
             else
             {
-                effect.setMinFilter(Effect::NEAREST_MIPMAP_LINEAR);
+                effect.setMinFilter(Effect::LINEAR);
             }
             /**************   Magfilter   **************/
             if (sampler->getMagfilter())

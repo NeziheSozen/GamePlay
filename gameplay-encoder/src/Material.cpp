@@ -43,15 +43,26 @@ void Material::writeText(FILE* file)
     if(_light != NULL)
     {
         fprintf(file, "\t\t\tu_inverseTransposeWorldViewMatrix = INVERSE_TRANSPOSE_WORLD_VIEW_MATRIX\n");
-        if (_light->getLightType() != Light::PointLight)
-        {
-            fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
-        }
+        fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+        fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
         
-        if (_light->getLightType() == Light::SpotLight)
-        {
-            fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
-        }
+//        switch (_light->getLightType()) {
+//            case Light::PointLight:
+//                fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+//                fprintf(file, "\t\t\tu_cameraPosition = CAMERA_VIEW_POSITION\n");
+//                break;
+//            case Light::SpotLight:
+//                fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+//                fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+//                break;
+//            case Light::DirectionalLight:
+//            case Light::AmbientLight:
+//            default:
+//                fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+//                fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+//                break;
+//        }
+        
     }
     _effect->writeEffect(file, _light);
     fprintf(file, "\t\t}\n");

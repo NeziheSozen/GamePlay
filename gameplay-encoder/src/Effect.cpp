@@ -55,7 +55,7 @@ Effect::Effect(void) :
     specularExponent(.0f),
     wrapS(REPEAT),
     wrapT(REPEAT),
-    minFilter(NEAREST_MIPMAP_LINEAR),
+    minFilter(LINEAR),
     magFilter(LINEAR),
     texFilename(""),
     hasTexture(false),
@@ -113,29 +113,7 @@ void Effect::writeEffect(FILE* file, Light* light)
         }
 //        else
 //        {
-//            // Light::DirectionalLight (already defined in shader)
-//        }
-
-//        // this will be set in the sceneviewer
-//        fprintf(file, "\n\t\t\tu_ambientColor = %f, %f, %f, %f\n",
-//                this->ambientColor.x,
-//                this->ambientColor.y,
-//                this->ambientColor.z,
-//                this->ambientColor.w);
-//
-
-        // TEST
-//        fprintf(file, "\n\t\t\tu_lightColor = %f, %f, %f, 1.0\n",
-//                this->specularColor.x,
-//                this->specularColor.y,
-//                this->specularColor.z);
-
-//        if (!light->isAmbient())
-//        {
-//            fprintf(file, "\t\t\tu_lightColor = %f, %f, %f\n",
-//                    light->getRed(),
-//                    light->getGreen(),
-//                    light->getBlue());
+//            // Light::DirectionalLight (already defined as default in shader)
 //        }
 
         fprintf(file, "\n\t\t\tu_specularExponent = %f\n", this->specularExponent);
@@ -152,11 +130,9 @@ void Effect::writeEffect(FILE* file, Light* light)
         fprintf(file, "\t\t\t\tpath = %s\n", this->texFilename.c_str());
         fprintf(file, "\t\t\t\twrapS = %s\n", wrapStr[this->wrapS].c_str());
         fprintf(file, "\t\t\t\twrapT = %s\n", wrapStr[this->wrapT].c_str());
-        // TODO: set proper mipmap-values
-        // fprintf(file, "\t\t\t\tminFilter = %s\n", filterStr[this->minFilter].c_str());
-        // fprintf(file, "\t\t\t\tmagFilter = %s\n", filterStr[this->magFilter].c_str());
-        fprintf(file, "\t\t\t\tminFilter = LINEAR\n");
-        fprintf(file, "\t\t\t\tmagFilter = LINEAR\n");
+        fprintf(file, "\t\t\t\tminFilter = %s\n", filterStr[this->minFilter].c_str());
+        fprintf(file, "\t\t\t\tmagFilter = %s\n", filterStr[this->magFilter].c_str());
+        // TODO: support mipmapping
         fprintf(file, "\t\t\t\tmipmap = false\n");
         fprintf(file, "\t\t\t}\n\n");
     }
