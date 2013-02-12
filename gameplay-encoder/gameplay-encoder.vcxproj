@@ -41,6 +41,7 @@
     <ClCompile Include="src\GPBDecoder.cpp" />
     <ClCompile Include="src\GPBFile.cpp" />
     <ClCompile Include="src\Heightmap.cpp" />
+    <ClCompile Include="src\IdStore.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="src\GPBDecoder.h" />
     <ClInclude Include="src\GPBFile.h" />
     <ClInclude Include="src\Heightmap.h" />
+    <ClInclude Include="src\IdStore.h" />
     <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Material.h" />
