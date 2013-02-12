@@ -129,7 +129,7 @@ extern int __logVerbosity;
         const char* msg, *desc; \
 		encoderErr2msg(err_code, &msg, &desc); \
 		size_t msg_length = strlen(desc); \
-		size_t err_desc_length = 150; \
+		size_t err_desc_length = 512; \
 		const int size = msg_length+err_desc_length; \
 		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
 		_snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
@@ -142,11 +142,24 @@ extern int __logVerbosity;
         const char* msg, *desc; \
         encoderErr2msg(warn_code, &msg, &desc); \
         size_t msg_length = strlen(desc); \
-        size_t err_desc_length = 150; \
+        size_t err_desc_length = 512; \
 		const int size = msg_length+err_desc_length; \
 		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
         _snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
         fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
+		free(output_buffer); \
+    }
+
+#define GP_INFO(warn_code, ...) \
+    { \
+        const char* msg, *desc; \
+        encoderErr2msg(warn_code, &msg, &desc); \
+        size_t msg_length = strlen(desc); \
+        size_t err_desc_length = 512; \
+		const int size = msg_length+err_desc_length; \
+		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
+		_snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        fprintf(stdout, "Info (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
 		free(output_buffer); \
     }
 #else
@@ -156,7 +169,7 @@ extern int __logVerbosity;
         const char* msg, *desc; \
         encoderErr2msg(err_code, &msg, &desc); \
         size_t msg_length = strlen(desc); \
-        size_t err_desc_length = 150; \
+        size_t err_desc_length = 512; \
         char output_buffer[msg_length+err_desc_length]; \
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
 		fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
@@ -167,7 +180,7 @@ extern int __logVerbosity;
         const char* msg, *desc; \
         encoderErr2msg(warn_code, &msg, &desc); \
         size_t msg_length = strlen(desc); \
-        size_t err_desc_length = 150; \
+        size_t err_desc_length = 512; \
         char output_buffer[msg_length+err_desc_length]; \
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
         fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
@@ -178,7 +191,7 @@ extern int __logVerbosity;
         const char* msg, *desc; \
         encoderErr2msg(warn_code, &msg, &desc); \
         size_t msg_length = strlen(desc); \
-        size_t err_desc_length = 150; \
+        size_t err_desc_length = 512; \
         char output_buffer[msg_length+err_desc_length]; \
         snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
         fprintf(stdout, "Info (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
