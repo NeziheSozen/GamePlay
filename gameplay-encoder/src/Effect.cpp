@@ -234,36 +234,50 @@ void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 
 void Effect::setTextureSourcePath(std::string originalTexturePath, std::string originalModelPath)
 {
-    
     bool isRelativePath = false;
-    
+    std::string resultPath("");
     int index = originalTexturePath.find("file://");
     if (index != std::string::npos)
     {
         originalTexturePath = originalTexturePath.substr(7);
     }
+	resultPath = originalTexturePath;
     if(originalTexturePath[0] == '.' && originalTexturePath[1] != '.')
     {
-        originalTexturePath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.') + 1) );
+        resultPath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.') + 1) );
         isRelativePath = true;
     }
     else if(originalTexturePath[0] == '.' && originalTexturePath[1] == '.')
     {
-        originalTexturePath = this->combineFileNameWithFilePath( originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.')) );
+        resultPath = this->combineFileNameWithFilePath( originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.')) );
         isRelativePath = true;
     }
     
-    if (!isRelativePath) {
-        
-        
+	
+    if (!isRelativePath) 
+	{
         int lastSlashIndex = originalTexturePath.find_last_of("/");
-        if (lastSlashIndex == std::string::npos) {
-            
-            originalTexturePath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath);
+        if (lastSlashIndex == std::string::npos) 
+		{    
+            resultPath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath);
         }
     }
-    
-    this->texSourcePath = uriDecode(originalTexturePath);
+
+	resultPath = uriDecode(resultPath);
+
+	// check if resultPath exists
+	FILE *fp = fopen(resultPath.c_str(), "rb");
+	if(fp == 0)
+	{
+		// this happens when we get a path like this: "/texture.png"
+		resultPath = this->combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(0));
+	}
+	else
+	{
+		fclose(fp);
+	}
+	
+    this->texSourcePath = uriDecode(resultPath);
 }
     
 
