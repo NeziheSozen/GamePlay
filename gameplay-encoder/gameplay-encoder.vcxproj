@@ -155,6 +155,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -167,16 +168,17 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NO_BOOST;NO_ZAE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../external-deps/freetype2/include;../external-deps/collada-dom/include;../external-deps/collada-dom/include/1.4;../external-deps/libpng/include;../external-deps/zlib/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_FBX;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NO_BOOST;NO_ZAE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../external-deps/freetype2/include;../external-deps/collada-dom/include;../external-deps/collada-dom/include/1.4;../external-deps/libpng/include;../external-deps/zlib/include;C:\Program Files\Autodesk\FBX\FBX SDK\2013.3\include</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>
       </DisableLanguageExtensions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../external-deps/freetype2/lib/windows/x86;../external-deps/collada-dom/lib/windows/x86;../external-deps/libpng/lib/windows/x86;../external-deps/zlib/lib/windows/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype245.lib;libcollada14dom22-d.lib;libpng14.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../external-deps/freetype2/lib/windows/x86;../external-deps/collada-dom/lib/windows/x86;../external-deps/libpng/lib/windows/x86;../external-deps/zlib/lib/windows/x86;C:\Program Files\Autodesk\FBX\FBX SDK\2013.3\lib\vs2010\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype245.lib;libcollada14dom22-d.lib;libpng14.lib;zlib.lib;fbxsdk-2013.3-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
@@ -191,7 +193,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NO_BOOST;NO_ZAE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_FBX;WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NO_BOOST;NO_ZAE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../external-deps/freetype2/include;../external-deps/collada-dom/include;../external-deps/collada-dom/include/1.4;../external-deps/libpng/include;../external-deps/zlib/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

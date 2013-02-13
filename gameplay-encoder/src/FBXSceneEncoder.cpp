@@ -1128,7 +1128,8 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
 
 void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat)
 {
-    std::string path = std::string(fbxFileTexture->GetFileName());
+//	std::string path = std::string(fbxFileTexture->GetFileName());
+	std::string path = std::string(fbxFileTexture->GetRelativeFileName());
     std::string ext = path.substr(path.find_last_of('.') + 1);
     if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
     {

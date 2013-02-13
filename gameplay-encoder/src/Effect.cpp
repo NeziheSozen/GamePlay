@@ -197,18 +197,41 @@ void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 {
     size_t index1 = path.find_last_of('\\');
     size_t index2 = path.find_last_of('/');
-    size_t index = (index1 != -1 && index1 > index2 ? index1 : index2);
-	if (index == std::string::npos)
+	size_t length = path.length();
+	size_t index;
+
+	if(index1 != -1 && index1 != std::string::npos)
+	{
+		if(index2 < length && index1 > index2 || index2 >= length)
+		{
+			index = index1;
+		}
+		else
+		{
+			index = index2;
+		}
+	}
+	else
+	{
+		if(index1 < length && index2 > index1 || index1 >= length)
+		{
+			index = index2;
+		}
+		else
+		{
+			index = index1;
+		}
+	}
+
+	if (index == std::string::npos || index >= length)
 	{
 		index = 0;
 	}
-    size_t length = path.length();
     this->texFilename = "tex/" + path.substr(index + 1);
     //this->texFilename = gpbOutputPath + "/tex/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
 }
 
-    
 void Effect::setTextureSourcePath(std::string originalTexturePath, std::string originalModelPath)
 {
     
@@ -441,7 +464,7 @@ bool Effect::isPngFile() {
     FILE *fp = fopen(this->texSourcePath.c_str(), "rb");
     if (!fp)
     {
-        fclose(fp);
+		GP_WARNING(WARN_TEXTURE_NOT_FOUND, this->texSourcePath.c_str());
         return false;
     }
     
