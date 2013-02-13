@@ -12,6 +12,8 @@
 
 using namespace gameplay;
 
+static IdStore idStore;
+
 /**
  * Returns the aspect ratio from the given camera.
  * 
@@ -323,11 +325,20 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
 void FBXSceneEncoder::loadScene(FbxScene* fbxScene)
 {
     Scene* scene = new Scene();
-    scene->setId(fbxScene->GetName());
-    if (scene->getId().length() == 0)
-    {
-        scene->setId("__SCENE__");
+
+    std::string sceneName;
+    if (!fbxScene->GetName()) {
+        sceneName.assign(fbxScene->GetName());
     }
+
+    if (sceneName.length() == 0)
+    {
+        sceneName.assign("__SCENE__");
+    }
+    std::stringstream ss;
+    ss << fbxScene->GetUniqueID();
+    const char* name = idStore.getId(sceneName, ss.str()).c_str();
+    scene->setId(name);
 
     // Load all of the nodes and their contents.
     FbxNode* rootNode = fbxScene->GetRootNode();
@@ -367,7 +378,9 @@ void FBXSceneEncoder::loadScene(FbxScene* fbxScene)
 
 void FBXSceneEncoder::loadAnimationChannels(FbxAnimLayer* animLayer, FbxNode* fbxNode, Animation* animation)
 {
-    const char* name = fbxNode->GetName();
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    const char* name = idStore.getId(fbxNode->GetName(), ss.str()).c_str();
     //Node* node = _gamePlayFile.getNode(name);
 
     // Determine which properties are animated on this node
@@ -575,7 +588,9 @@ void FBXSceneEncoder::loadAnimationChannels(FbxAnimLayer* animLayer, FbxNode* fb
 void FBXSceneEncoder::loadAnimationLayer(FbxAnimLayer* fbxAnimLayer, FbxNode* fbxNode, const EncoderArguments& arguments)
 {
     bool animationGroupId = false;
-    const char* name = fbxNode->GetName();
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    const char* name = idStore.getId(fbxNode->GetName(), ss.str()).c_str();
     // Check if this node's animations are supposed to be grouped
     if (name && arguments.containsGroupNodeId(name))
     {
@@ -753,7 +768,10 @@ void FBXSceneEncoder::loadCamera(FbxNode* fbxNode, Node* node)
         return;
     }
     Camera* camera = new Camera();
-    const char* name = fbxNode->GetName();
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    const char* name = idStore.getId(fbxNode->GetName(), ss.str()).c_str();
+
     if (name)
     {
         std::string id(name);
@@ -795,7 +813,9 @@ void FBXSceneEncoder::loadLight(FbxNode* fbxNode, Node* node)
         return;
     }
     Light* light = new Light();
-    const char* name = fbxNode->GetName();
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    const char* name = idStore.getId(fbxNode->GetName(), ss.str()).c_str();
     if (name)
     {
         std::string id(name);
@@ -920,7 +940,9 @@ void FBXSceneEncoder::loadSkin(FbxMesh* fbxMesh, Model* model)
                 FbxNode* linkedNode = cluster->GetLink();
                 if (linkedNode && linkedNode->GetSkeleton())
                 {
-                    const char* jointName = linkedNode->GetName();
+                    std::stringstream ss;
+                    ss << linkedNode->GetUniqueID();
+                    const char* jointName = idStore.getId(linkedNode->GetName(), ss.str()).c_str();
                     assert(jointName);
                     jointNames.push_back(jointName);
                     Node* joint = loadNode(linkedNode);
@@ -1213,7 +1235,9 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
     }
     mesh = new Mesh();
     // GamePlay requires that a mesh have a unique ID but FbxMesh doesn't have a string ID.
-    const char* name = fbxMesh->GetNode()->GetName();
+    std::stringstream ss;
+    ss << fbxMesh->GetNode()->GetUniqueID();
+    const char* name = idStore.getId(fbxMesh->GetNode()->GetName(), ss.str()).c_str();
     if (name)
     {
         std::string id(name);
@@ -1993,7 +2017,10 @@ void decompose(FbxNode* fbxNode, float time, Vector3* scale, Quaternion* rotatio
 AnimationChannel* createAnimationChannel(FbxNode* fbxNode, unsigned int targetAttrib, const std::vector<float>& keyTimes, const std::vector<float>& keyValues)
 {
     AnimationChannel* channel = new AnimationChannel();
-    channel->setTargetId(fbxNode->GetName());
+    std::stringstream ss;
+    ss << fbxNode->GetUniqueID();
+    const char* name = idStore.getId(fbxNode->GetName(), ss.str()).c_str();
+    channel->setTargetId(name);
     channel->setKeyTimes(keyTimes);
     channel->setKeyValues(keyValues);
     channel->setInterpolation(AnimationChannel::LINEAR);

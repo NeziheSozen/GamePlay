@@ -46,7 +46,7 @@ string IdStore::getId(const string& name, const string& uniqueId)
     int count = 0;
     for (it = range.first; it != range.second; it++)
     {
-        if (it->first == uniqueId) {
+        if (it->second.first == uniqueId) {
             // found uniqueId -> return stored id
             return it->second.second;
         }

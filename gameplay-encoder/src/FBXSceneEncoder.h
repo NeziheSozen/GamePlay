@@ -240,8 +240,6 @@ private:
      *  list of all material-objects that were created from the model
      */
     std::list<Material*> _materials;
-
-    IdStore idStore;
 };
 
 #endif
