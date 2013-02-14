@@ -225,7 +225,7 @@ void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 
 	if (index == std::string::npos || index >= length)
 	{
-		index = 0;
+		index = -1; // index is set to -1 because the substring is taken from 0 then (index+1)
 	}
     this->texFilename = "tex/" + path.substr(index + 1);
     //this->texFilename = gpbOutputPath + "/tex/" + path.substr(path.find_last_of('/') + 1);
