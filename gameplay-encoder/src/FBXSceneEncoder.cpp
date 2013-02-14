@@ -647,7 +647,7 @@ Node* FBXSceneEncoder::loadNode(FbxNode* fbxNode)
     // Check if this node has already been loaded
     std::stringstream ss;
     ss << fbxNode->GetUniqueID();
-    std::string id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
+    const std::string& id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
 
     node = _gamePlayFile.getNode(id.c_str());
     if (node)
@@ -745,7 +745,7 @@ void FBXSceneEncoder::loadBindShapes(FbxScene* fbxScene)
             {
                 std::stringstream ss;
                 ss << fbxNode->GetUniqueID();
-                std::string id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
+                const std::string& id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
                 Node* node = _gamePlayFile.getNode(id.c_str());
                 assert(node && node->getModel());
 

@@ -63,5 +63,5 @@ const string& IdStore::getId(const string& name, const string& uniqueId)
     ids.second = ss.str();
 	it = _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
 
-    return ids.second;
+    return it->second.second;
 }
