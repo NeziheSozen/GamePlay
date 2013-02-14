@@ -21,7 +21,7 @@ IdStore::~IdStore()
 
 }
 
-string IdStore::getId(const string& name, const string& uniqueId)
+const string& IdStore::getId(const string& name, const string& uniqueId)
 {
     string checkedName(name);
     if (checkedName.empty())
@@ -37,9 +37,11 @@ string IdStore::getId(const string& name, const string& uniqueId)
         pair<string, string> ids;
         ids.first = uniqueId;
         ids.second = checkedName;
-        _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
-
-        return checkedName;
+        
+		UniqueIdToNameMultiMap::iterator it;
+		it = _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
+		
+		return it->second.second;
     }
 
     UniqueIdToNameMultiMap::const_iterator it;
@@ -59,7 +61,7 @@ string IdStore::getId(const string& name, const string& uniqueId)
     stringstream ss;
     ss << checkedName << "_" << count;
     ids.second = ss.str();
-    _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
+	it = _uniqueIdToName.insert(pair<string,pair<string,string> >(checkedName,ids));
 
     return ids.second;
 }

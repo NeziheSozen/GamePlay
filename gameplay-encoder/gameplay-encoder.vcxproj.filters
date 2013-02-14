@@ -1,9 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Animation.cpp">
+    <None Include="gameplay-bundle.txt" />
+    <None Include="src\Curve.inl">
       <Filter>src</Filter>
-    </ClCompile>
+    </None>
+    <None Include="src\Quaternion.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\Vector2.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\Vector3.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\Vector4.inl">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{6393521c-00fb-48f6-b480-87f8d978a74f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\AnimationChannel.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -19,7 +39,13 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Curve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\DAEChannelTarget.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DAEMaterialEncoder.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\DAEOptimizer.cpp">
@@ -35,6 +61,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\EncoderArguments.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\encodererrors.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FBXSceneEncoder.cpp">
@@ -55,6 +84,12 @@
     <ClCompile Include="src\GPBFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Heightmap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Light.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -62,6 +97,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialEnhancer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\MaterialParameter.cpp">
@@ -79,10 +117,16 @@
     <ClCompile Include="src\MeshSkin.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\MeshSubSet.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Model.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Node.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NormalMapGenerator.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Object.cpp">
@@ -98,6 +142,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\StringUtil.cpp">
@@ -124,26 +171,14 @@
     <ClCompile Include="src\VertexElement.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Curve.cpp">
+    <ClCompile Include="src\Animation.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Heightmap.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Image.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\NormalMapGenerator.cpp">
+    <ClCompile Include="src\IdStore.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\VertexElement.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Animation.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\AnimationChannel.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -159,7 +194,13 @@
     <ClInclude Include="src\Camera.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Curve.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\DAEChannelTarget.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DAEMaterialEncoder.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\DAEOptimizer.h">
@@ -175,6 +216,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\EncoderArguments.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\encodererrors.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\FBXSceneEncoder.h">
@@ -195,10 +239,19 @@
     <ClInclude Include="src\GPBFile.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Heightmap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Image.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Light.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Material.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MaterialEnhancer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\MaterialParameter.h">
@@ -216,10 +269,16 @@
     <ClInclude Include="src\MeshSkin.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\MeshSubSet.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Model.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Node.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NormalMapGenerator.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Object.h">
@@ -237,7 +296,13 @@
     <ClInclude Include="src\Scene.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\SceneFile.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\StringUtil.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Transform.h">
@@ -258,43 +323,14 @@
     <ClInclude Include="src\Vertex.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Curve.h">
+    <ClInclude Include="src\VertexElement.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Thread.h">
+    <ClInclude Include="src\Animation.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Heightmap.h">
+    <ClInclude Include="src\IdStore.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Image.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\NormalMapGenerator.h">
-      <Filter>src</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Vector2.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\Vector3.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\Vector4.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\Quaternion.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\Curve.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="gameplay-bundle.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{6393521c-00fb-48f6-b480-87f8d978a74f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

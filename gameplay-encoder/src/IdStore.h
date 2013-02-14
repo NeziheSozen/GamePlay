@@ -27,7 +27,7 @@ public:
      * id returned is the name. The uniqueId is used to detect name conflicts. Once such
      * a conflict is encountered a number is appended to the name.
      */
-    std::string getId(const std::string& name, const std::string& uniqueId);
+    const std::string& getId(const std::string& name, const std::string& uniqueId);
 
 private:
     UniqueIdToNameMultiMap _uniqueIdToName;

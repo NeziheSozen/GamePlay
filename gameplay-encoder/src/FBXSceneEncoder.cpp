@@ -337,7 +337,8 @@ void FBXSceneEncoder::loadScene(FbxScene* fbxScene)
     }
     std::stringstream ss;
     ss << fbxScene->GetUniqueID();
-    const char* name = idStore.getId(sceneName, ss.str()).c_str();
+
+	const char* name = idStore.getId(sceneName, ss.str()).c_str();
     scene->setId(name);
 
     // Load all of the nodes and their contents.
@@ -1236,7 +1237,7 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
     mesh = new Mesh();
     // GamePlay requires that a mesh have a unique ID but FbxMesh doesn't have a string ID.
     std::stringstream ss;
-    ss << fbxMesh->GetNode()->GetUniqueID();
+	ss << fbxMesh->GetNode()->GetUniqueID();
     const char* name = idStore.getId(fbxMesh->GetNode()->GetName(), ss.str()).c_str();
     if (name)
     {
