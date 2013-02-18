@@ -36,6 +36,7 @@
     <ClCompile Include="src\encodererrors.cpp" />
     <ClCompile Include="src\FBXSceneEncoder.cpp" />
     <ClCompile Include="src\FileIO.cpp" />
+    <ClCompile Include="src\FilepathUtils.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\Glyph.cpp" />
     <ClCompile Include="src\GPBDecoder.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="src\Heightmap.cpp" />
     <ClCompile Include="src\IdStore.cpp" />
     <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\ImageUtils.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
@@ -89,6 +91,7 @@
     <ClInclude Include="src\encodererrors.h" />
     <ClInclude Include="src\FBXSceneEncoder.h" />
     <ClInclude Include="src\FileIO.h" />
+    <ClInclude Include="src\FilepathUtils.h" />
     <ClInclude Include="src\Font.h" />
     <ClInclude Include="src\Glyph.h" />
     <ClInclude Include="src\GPBDecoder.h" />
@@ -96,6 +99,7 @@
     <ClInclude Include="src\Heightmap.h" />
     <ClInclude Include="src\IdStore.h" />
     <ClInclude Include="src\Image.h" />
+    <ClInclude Include="src\ImageUtils.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\MaterialEnhancer.h" />
@@ -156,11 +160,14 @@
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -181,8 +188,13 @@
       <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ProjectDir)..\bin\windows\*.dll" "$(TargetDir)"</Command>
+      <Command>copy /Y "$(ProjectDir)..\bin\windows\*.dll" "$(TargetDir)"
+copy $(ProjectDir)convert.exe  $(ProjectDir)$(Configuration)\convert.exe</Command>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -193,21 +205,24 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_FBX;WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NO_BOOST;NO_ZAE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../external-deps/freetype2/include;../external-deps/collada-dom/include;../external-deps/collada-dom/include/1.4;../external-deps/libpng/include;../external-deps/zlib/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../external-deps/freetype2/include;../external-deps/collada-dom/include;../external-deps/collada-dom/include/1.4;../external-deps/libpng/include;../external-deps/zlib/include;C:\Program Files\Autodesk\FBX\FBX SDK\2013.3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>freetype245.lib;libcollada14dom22-d.lib;libpng14.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../external-deps/freetype2/lib/windows/x86;../external-deps/collada-dom/lib/windows/x86;../external-deps/libpng/lib/windows/x86;../external-deps/zlib/lib/windows/x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype245.lib;collada15dom2-vc100-mt.lib;libpng14.lib;zlib.lib;fbxsdk-2013.3-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../external-deps/freetype2/lib/windows/x86;../external-deps/collada-dom/lib/windows/x86;../external-deps/libpng/lib/windows/x86;../external-deps/zlib/lib/windows/x86;C:\Program Files\Autodesk\FBX\FBX SDK\2013.3\lib\vs2010\x86</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)..\bin\windows\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>copy $(ProjectDir)convert.exe  $(ProjectDir)$(Configuration)\convert.exe</Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

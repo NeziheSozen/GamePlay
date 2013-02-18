@@ -7,6 +7,8 @@
 #include <dom/domCommon_color_or_texture_type.h>
 #include <iostream>
 #include <png.h>
+#include "FilepathUtils.h"
+#include "ImageUtils.h"
 
 using namespace std;
 
@@ -468,6 +470,58 @@ namespace gameplay
         }
     }
     
+	bool DAEMaterialEncoder::setTexturePaths(std::string path, std::string filepath, Effect& effect)
+	{
+		int index = path.find_last_of('.') + 1;
+		std::string ext = path.substr(index);
+		const std::string& strJpg(path);
+		const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
+		bool isConverted2Png = false;
+
+		std::string fp(filepath);
+		int pos = fp.find_last_of('/');
+		fp = (pos == -1) ? fp : fp.substr(0, pos);
+		std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+
+		if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
+		{
+			absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp);
+			std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+			if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
+			{
+				GP_ERROR(ERR_CONVERT_JPG_PNG, strJpg.c_str(), strPng.c_str());
+				return false;
+			}
+			isConverted2Png = true;
+		}
+    
+		// set filepath of the png-texture
+		std::string textureFilepath;
+		if(isConverted2Png)
+		{
+			textureFilepath = std::string(strPng);
+		}
+		else
+		{
+			textureFilepath = path;
+		}
+
+		effect.setTextureFilename(absTexPathPng, fp);
+		effect.setTextureSourcePath(absTexPathPng);
+
+		if(!effect.isPngFile())
+		{
+			GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+			return false;
+		}
+        
+		if (EncoderArguments::getInstance()->textureOutputEnabled())
+		{
+			effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+		}
+		return true;
+	}
+
     bool DAEMaterialEncoder::processTexture(domCommon_color_or_texture_type_complexType::domTexture *tex, Effect &effect)
     {
         //find the newparam for the sampler based on the texture attribute
@@ -555,31 +609,12 @@ namespace gameplay
                     {
                         if(img->getInit_from() && img->getInit_from()->hasValue())
                         {
-                            std::string path = img->getInit_from()->getValue().str();
-                            std::string filePath = img->getInit_from()->getValue().originalStr();
-                            std::string ext = path.substr(path.find_last_of('.') + 1);
-                            if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
-                            {
-//                                LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
-                                GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
-                                return false;
-                            }
-
-                            std::string fp = EncoderArguments::getInstance()->getFilePath();
-                            int pos = fp.find_last_of('/');
-                            fp = (pos == -1) ? fp : fp.substr(0, pos);
-                            effect.setTextureFilename(path, fp);
-                            effect.setTextureSourcePath(filePath, fp);
-                            
-                            if(!effect.isPngFile()) {
-                                GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
-                                return false;
-                            }
-                            
-                            if (EncoderArguments::getInstance()->textureOutputEnabled())
-                            {
-                                effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-                            }
+							if(!setTexturePaths(img->getInit_from()->getValue().str(), 
+												img->getInit_from()->getValue().originalStr(), 
+												effect))
+							{
+								return false;
+							}
                             isTexFilenameSet = true;
                         }
                     }
@@ -613,29 +648,10 @@ namespace gameplay
                     return false;
                 }
 
-                std::string ext = path.substr(path.find_last_of('.') + 1);
-                if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
-                {
-//                    LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
-                    GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
-                    return false;
-                }
-                std::string fp = EncoderArguments::getInstance()->getFilePath();
-                int pos = fp.find_last_of('/');
-                fp = (pos == -1) ? fp : fp.substr(0, pos);
-                
-                effect.setTextureFilename(path, fp);
-                effect.setTextureSourcePath(filePath, fp);
-                
-                if(!effect.isPngFile()) {
-                    GP_ERROR(ERR_ONLY_PNG_SUPPORTED, filePath.c_str());
-                    return false;
-                }
-                
-                if (EncoderArguments::getInstance()->textureOutputEnabled())
-                {
-                    effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-                }
+				if(!setTexturePaths(path, EncoderArguments::getInstance()->getFilePath(), effect))
+				{
+					return false;
+				}
             }
             else
             {

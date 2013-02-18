@@ -177,6 +177,12 @@
     <ClCompile Include="src\IdStore.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImageUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FilepathUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AnimationChannel.h">
@@ -330,6 +336,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\IdStore.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FilepathUtils.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

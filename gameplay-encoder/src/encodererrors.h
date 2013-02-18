@@ -81,10 +81,10 @@ ERRDEF(ERR_LOAD_CHAR, 1024, "Char not loaded", "Error loading char: %d")
 
 ERRDEF(ERR_IMAGE_SIZE_EXCEEDED, 1025, "Image size exceeded!", "Image size exceeded: %d")
 ERRDEF(ERR_DIRECTORY_DOES_NOT_EXIST, 1026, "Directory does not exist", "The specified directory does not exist or is not wirtable: %s")
-ERRDEF(ERR_TEX_COPY, 1026, "Could not copy textures!", "Could not copy textures: src=%s dest=%s")
+ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures: src=%s dest=%s")
 
-ERRDEF(ERR_FILE_NOT_COPIED, 1027, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
-
+ERRDEF(ERR_FILE_NOT_COPIED, 1028, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
+ERRDEF(ERR_CONVERT_JPG_PNG, 1029, "Error at conversion from jpg to png", "File could not be converted from jpg to png\njpg: %s\npng: %s")
 
 
 // WARNINGS

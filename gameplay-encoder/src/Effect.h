@@ -62,7 +62,7 @@ public:
     void setTextureFilename(std::string path, std::string gpbOutputPath);
     void setAlpha(float alpha);
 
-    void setTextureSourcePath(std::string originalTexturePath, std::string originalModelPath);
+    void setTextureSourcePath(std::string path);
     std::string getTextureSourcePath();
     
     // REFACTOR ME!!!
@@ -79,7 +79,6 @@ public:
 
 private:
     void copyTexture();
-    std::string uriDecode(const std::string & sSrc);
     int isPowerOfTwo(unsigned int x);
 
 private:

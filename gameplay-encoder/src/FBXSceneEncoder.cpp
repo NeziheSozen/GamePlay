@@ -9,7 +9,8 @@
 #include "EncoderArguments.h"
 #include "SceneFile.h"
 #include "MaterialEnhancer.h"
-
+#include "ImageUtils.h"
+#include "FilepathUtils.h"
 using namespace gameplay;
 
 static IdStore idStore;
@@ -1153,60 +1154,82 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
 {
 //	std::string path = std::string(fbxFileTexture->GetFileName());
 	std::string path = std::string(fbxFileTexture->GetRelativeFileName());
-    std::string ext = path.substr(path.find_last_of('.') + 1);
-    if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
+    int index = path.find_last_of('.') + 1;
+	std::string ext = path.substr(index);
+	const std::string& strJpg(path);
+	const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
+	bool isConverted2Png = false;
+
+	std::string fp = EncoderArguments::getInstance()->getFilePath();
+    int pos = fp.find_last_of('/');
+    fp = (pos == -1) ? fp : fp.substr(0, pos);
+	std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+
+	if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
+	{
+		absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp);
+		std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+		if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
+		{
+			GP_ERROR(ERR_CONVERT_JPG_PNG, strJpg.c_str(), strPng.c_str());
+			return;
+		}
+		isConverted2Png = true;
+    }
+    
+	// set filepath of the png-texture
+	std::string textureFilepath;
+	if(isConverted2Png)
+	{
+		textureFilepath = std::string(strPng);
+	}
+	else
+	{
+		textureFilepath = path;
+	}
+
+	mat->getEffect().setTextureFilename(absTexPathPng, fp);
+	mat->getEffect().setTextureSourcePath(absTexPathPng);
+
+    if(!mat->getEffect().isPngFile())
     {
-        //                        LOG(1, "Gameplay3d can handle only png's. Please use png's and export your dae-file again");
         GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+    }
+        
+    if (EncoderArguments::getInstance()->textureOutputEnabled())
+    {
+        mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+    }
+        
+    if(mat->getEffect().isPowerOfTwo())
+    {
+        mat->getEffect().setWrapS(Effect::CLAMP);
+        mat->getEffect().setWrapT(Effect::CLAMP);
+        mat->getEffect().setMinFilter(Effect::LINEAR);
+        mat->getEffect().setMagFilter(Effect::LINEAR);
+        GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, mat->getEffect().getTextureSourcePath().c_str());
     }
     else
     {
-        std::string fp = EncoderArguments::getInstance()->getFilePath();
-        int pos = fp.find_last_of('/');
-        fp = (pos == -1) ? fp : fp.substr(0, pos);
-        mat->getEffect().setTextureFilename(path, fp);
-        mat->getEffect().setTextureSourcePath(path, fp);
-        
-        if(!mat->getEffect().isPngFile())
+        switch(fbxFileTexture->GetWrapModeU())
         {
-            GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+            case fbxsdk_2013_3::FbxTexture::eRepeat:
+                mat->getEffect().setWrapS(Effect::REPEAT);
+                break;
+            case fbxsdk_2013_3::FbxTexture::eClamp:
+            default:
+                mat->getEffect().setWrapS(Effect::CLAMP);
+                break;
         }
-        
-        if (EncoderArguments::getInstance()->textureOutputEnabled())
+        switch(fbxFileTexture->GetWrapModeV())
         {
-            mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-        }
-        
-        if(mat->getEffect().isPowerOfTwo())
-        {
-            mat->getEffect().setWrapS(Effect::CLAMP);
-            mat->getEffect().setWrapT(Effect::CLAMP);
-            mat->getEffect().setMinFilter(Effect::LINEAR);
-            mat->getEffect().setMagFilter(Effect::LINEAR);
-            GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, mat->getEffect().getTextureSourcePath().c_str());
-        }
-        else
-        {
-            switch(fbxFileTexture->GetWrapModeU())
-            {
-                case fbxsdk_2013_3::FbxTexture::eRepeat:
-                    mat->getEffect().setWrapS(Effect::REPEAT);
-                    break;
-                case fbxsdk_2013_3::FbxTexture::eClamp:
-                default:
-                    mat->getEffect().setWrapS(Effect::CLAMP);
-                    break;
-            }
-            switch(fbxFileTexture->GetWrapModeV())
-            {
-                case fbxsdk_2013_3::FbxTexture::eRepeat:
-                    mat->getEffect().setWrapT(Effect::REPEAT);
-                    break;
-                case fbxsdk_2013_3::FbxTexture::eClamp:
-                default:
-                    mat->getEffect().setWrapT(Effect::CLAMP);
-                    break;
-            }
+            case fbxsdk_2013_3::FbxTexture::eRepeat:
+                mat->getEffect().setWrapT(Effect::REPEAT);
+                break;
+            case fbxsdk_2013_3::FbxTexture::eClamp:
+            default:
+                mat->getEffect().setWrapT(Effect::CLAMP);
+                break;
         }
     }
 }
