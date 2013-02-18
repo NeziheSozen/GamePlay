@@ -158,5 +158,6 @@ ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
 
 ERRDEF(INFO_SAVE_DEBUG_FILE, 3002, "Saving debug file", "Saving debug file: %s")
 ERRDEF(INFO_SAVE_BINARY_FILE, 3003, "Saving binary file", "Saving binary file: %s")
+ERRDEF(INFO_TEXTURE_CONVERTED2PNG, 3004, "Texture was converted to png", "old: %s\nnew: %s")
 
 ERROR_END

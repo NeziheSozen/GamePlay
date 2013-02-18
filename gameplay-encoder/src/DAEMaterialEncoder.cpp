@@ -474,7 +474,7 @@ namespace gameplay
 	{
 		int index = path.find_last_of('.') + 1;
 		std::string ext = path.substr(index);
-		const std::string& strJpg(path);
+		const std::string& strNoPng(path);
 		const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
 		bool isConverted2Png = false;
 
@@ -489,10 +489,11 @@ namespace gameplay
 			std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
 			if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
 			{
-				GP_ERROR(ERR_CONVERT_JPG_PNG, strJpg.c_str(), strPng.c_str());
+				GP_ERROR(ERR_CONVERT_JPG_PNG, strNoPng.c_str(), strPng.c_str());
 				return false;
 			}
 			isConverted2Png = true;
+			GP_INFO(INFO_TEXTURE_CONVERTED2PNG, strNoPng.c_str(), strPng.c_str())
 		}
     
 		// set filepath of the png-texture
