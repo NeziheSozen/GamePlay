@@ -9,6 +9,7 @@
 #include "IdStore.h"
 
 #include <sstream>
+#include "FilepathUtils.h"
 
 using namespace std;
 
@@ -37,6 +38,9 @@ const string& IdStore::getId(const char* name, const char* uniqueId) {
 const string& IdStore::getId(const string& name, const string& uniqueId)
 {
     string checkedName(name);
+    
+    gameplay::FilepathUtils::replaceOccurencesOfStringWithString(checkedName, ":", "_");
+    
     if (checkedName.empty())
     {
         checkedName.assign("Node");
