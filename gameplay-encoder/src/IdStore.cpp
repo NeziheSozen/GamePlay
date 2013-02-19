@@ -21,6 +21,19 @@ IdStore::~IdStore()
 
 }
 
+const string& IdStore::getId(const char* name, const char* uniqueId) {
+    string n;
+    string id;
+    if (name) {
+        n.assign(name);
+    }
+    if (uniqueId) {
+        id.assign(uniqueId);
+    }
+
+    return getId(n, id);
+}
+
 const string& IdStore::getId(const string& name, const string& uniqueId)
 {
     string checkedName(name);

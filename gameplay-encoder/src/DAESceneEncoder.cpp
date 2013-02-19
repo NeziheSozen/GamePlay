@@ -469,7 +469,7 @@ void DAESceneEncoder::loadAnimation(const domAnimationRef animationRef, const ch
     if (animationCount == 1)
     {
         // DAE_FBX nests 1 animation within another animation for some reason.
-        loadAnimation(animationArray.get(0), animationRef->getId());
+        loadAnimation(animationArray.get(0), idStore.getId(animationRef->getName(), animationRef->getId()).c_str());
     }
     else if ( animationCount > 1)
     {
@@ -485,7 +485,7 @@ void DAESceneEncoder::loadAnimation(const domAnimationRef animationRef, const ch
     if (channelArrayCount > 0)
     {
         Animation* animation = new Animation();
-        const char* str = animationRef->getId();
+        const char* str = idStore.getId(animationRef->getName(), animationRef->getId()).c_str();
         if (str)
         {
             animation->setId(str);
@@ -618,7 +618,7 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
     unsigned int targetProperty = 0;
     DAEChannelTarget channelTarget(channelRef);
 
-    const char* targetId = channelTarget.getTargetId().c_str();
+    const char* targetId = idStore.getId(channelTarget.getTargetElement()->getElementName(), channelTarget.getTargetId()).c_str();
 
     // TODO: Do we want to support more than one? If yes then this needs to be fixed.
     for (size_t i = 0; i < channelTarget.getTargetAttributeCount(); ++i)
@@ -806,11 +806,16 @@ void DAESceneEncoder::loadScene(const domVisual_scene* visualScene)
     Scene* scene = new Scene();
 
     const domNode_Array& nodes = visualScene->getNode_array();
-    scene->setId(visualScene->getId());
-    if (scene->getId().length() == 0)
-    {
-        scene->setId("__SCENE__");
+    std::string name;
+    if (visualScene->getName()) {
+        name.assign(visualScene->getName());
     }
+
+    if (name.length() == 0)
+    {
+        name.assign("__SCENE__");
+    }
+    idStore.getId(name, visualScene->getId());
 
     size_t childCount = nodes.getCount();
     for (size_t i = 0; i < childCount; ++i)
@@ -845,15 +850,7 @@ Node* DAESceneEncoder::findSceneActiveCameraNode(const domVisual_scene* visualSc
             domNode* nodeRef = daeSafeCast<domNode>(cameraNodeURI.getElement());
             if (nodeRef)
             {
-                std::stringstream ss;
-                if (nodeRef->getId()) {
-                    ss << nodeRef->getId();
-                }
-                std::string name;
-                if (nodeRef->getName()) {
-                    name.assign(nodeRef->getName());
-                }
-                const std::string& id(idStore.getId(name, ss.str()).c_str());
+                const std::string& id(idStore.getId(nodeRef->getName(), nodeRef->getId()).c_str());
 
                 Node* node = _gamePlayFile.getNode(id.c_str());
                 if (node)
@@ -872,15 +869,7 @@ Node* DAESceneEncoder::loadNode(domNode* n, Node* parent)
     Node* node = NULL;
 
     // Check if this node has already been loaded
-    std::stringstream ss;
-    if (n->getID()) {
-        ss << n->getID();
-    }
-    std::string name;
-    if (n->getName()) {
-        name.assign(n->getName());
-    }
-    const std::string& id(idStore.getId(name, ss.str()).c_str());
+    const std::string& id(idStore.getId(n->getName(), n->getId()).c_str());
 
     node = _gamePlayFile.getNode(id.c_str());
     if (node)
@@ -1223,8 +1212,10 @@ void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
 
 Camera* DAESceneEncoder::loadCamera(const domCamera* cameraRef)
 {
+    const std::string& id(idStore.getId(cameraRef->getName(), cameraRef->getId()).c_str());
+
     Camera* camera = new Camera();
-    camera->setId(cameraRef->getId());
+    camera->setId(id);
 
     // Optics
     const domCamera::domOpticsRef opticsRef = cameraRef->getOptics();
@@ -1290,8 +1281,10 @@ Camera* DAESceneEncoder::loadCamera(const domCamera* cameraRef)
 
 Light* DAESceneEncoder::loadLight(const domLight* lightRef)
 {
+    const std::string& id(idStore.getId(lightRef->getName(), lightRef->getId()).c_str());
+
     Light* light = new Light();
-    light->setId(lightRef->getId());
+    light->setId(id);
 
     const domLight::domTechnique_commonRef techRef = lightRef->getTechnique_common();
 
@@ -1418,7 +1411,7 @@ void DAESceneEncoder::loadSkeleton(domInstance_controller::domSkeleton* skeleton
 void DAESceneEncoder::loadSkeleton(domNode* rootNode, MeshSkin* skin)
 {
     // Get the lookup scene id (sid) and joint index.
-    std::string id = std::string(rootNode->getId());
+    std::string id(idStore.getId(rootNode->getName(), rootNode->getId()));
 
     // Has the skeleton (root joint) been loaded yet?
     Node* skeleton = (Node*)_gamePlayFile.getFromRefTable(id);
@@ -1431,7 +1424,7 @@ void DAESceneEncoder::loadSkeleton(domNode* rootNode, MeshSkin* skin)
         while (
             topLevelParent->getParent() &&
             topLevelParent->getParent()->typeID() == domNode::ID() &&
-            _gamePlayFile.getFromRefTable(topLevelParent->getParent()->getID()) == NULL)
+            _gamePlayFile.getFromRefTable(idStore.getId(topLevelParent->getParent()->getElementName(), topLevelParent->getParent()->getID())) == NULL)
         {
             topLevelParent = (domNode*)topLevelParent->getParent();
         }
@@ -1440,9 +1433,9 @@ void DAESceneEncoder::loadSkeleton(domNode* rootNode, MeshSkin* skin)
         Node* parentNode = NULL;
         if (topLevelParent->getParent() &&
             topLevelParent->getParent()->typeID() == domNode::ID() &&
-            _gamePlayFile.getFromRefTable(topLevelParent->getParent()->getID()) != NULL)
+            _gamePlayFile.getFromRefTable(idStore.getId(topLevelParent->getParent()->getElementName(), topLevelParent->getParent()->getID())) != NULL)
         {
-            parentNode = (Node*)_gamePlayFile.getFromRefTable(topLevelParent->getParent()->getID());
+            parentNode = (Node*)_gamePlayFile.getFromRefTable(idStore.getId(topLevelParent->getParent()->getElementName(), topLevelParent->getParent()->getID()));
         }
 
         // Finally, load the node hierarchy that includes the skeleton
@@ -1519,7 +1512,8 @@ Model* DAESceneEncoder::loadSkin(const domSkin* skinElement)
                 if (element && element->typeID() == domNode::ID())
                 {
                     domNodeRef node = daeSafeCast<domNode>(element);
-                    const char* nodeId = node->getId();
+                    const char* nodeId = idStore.getId(node->getName(), node->getId()).c_str();
+
                     if (nodeId && !equals(*i, nodeId))
                     {
                         *i = nodeId;
@@ -1697,7 +1691,7 @@ Model* DAESceneEncoder::loadSkin(const domSkin* skinElement)
         const domMesh* meshElement = geometry->getMesh();
         if (meshElement)
         {
-            Mesh* mesh = loadMesh(meshElement, geometry->getId());
+            Mesh* mesh = loadMesh(meshElement, idStore.getId(geometry->getName(), geometry->getId()));
             if (mesh)
             {
                 model->setMesh(mesh);
@@ -1724,7 +1718,7 @@ Model* DAESceneEncoder::loadGeometry(const domGeometry* geometry, const domBind_
     ///////////////////////////// GEOMETRY
 
     // Load the mesh for this model
-    Mesh* mesh = loadMesh(meshElement, geometry->getId());
+    Mesh* mesh = loadMesh(meshElement, idStore.getId(geometry->getName(), geometry->getId()));
     if (mesh == NULL)
     {
         return NULL;

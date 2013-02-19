@@ -22,6 +22,8 @@ public:
     IdStore();
     virtual ~IdStore();
 
+    const std::string& getId(const char* name, const char* uniqueId);
+
     /**
      * Retrieves the id (unique) for a given name. If all node's have unique names, the
      * id returned is the name. The uniqueId is used to detect name conflicts. Once such
