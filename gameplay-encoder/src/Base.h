@@ -132,7 +132,7 @@ extern int __logVerbosity;
 		size_t err_desc_length = 512; \
 		const int size = msg_length+err_desc_length; \
 		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
-		_snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+		_snprintf(output_buffer, size * sizeof(char), desc, __VA_ARGS__); \
 		fprintf(stderr, "Error (GP#%i | %s): %s\n", err_code, msg, output_buffer); \
 		free(output_buffer); \
     }
@@ -145,7 +145,7 @@ extern int __logVerbosity;
         size_t err_desc_length = 512; \
 		const int size = msg_length+err_desc_length; \
 		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
-        _snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+        _snprintf(output_buffer, size * sizeof(char), desc, __VA_ARGS__); \
         fprintf(stdout, "Warning (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
 		free(output_buffer); \
     }
@@ -158,7 +158,7 @@ extern int __logVerbosity;
         size_t err_desc_length = 512; \
 		const int size = msg_length+err_desc_length; \
 		char* output_buffer = (char*) malloc((size_t)(size*sizeof(char))); \
-		_snprintf(output_buffer, sizeof(output_buffer), desc, __VA_ARGS__); \
+		_snprintf(output_buffer, size * sizeof(char), desc, __VA_ARGS__); \
         fprintf(stdout, "Info (GP#%i | %s): %s\n", warn_code, msg, output_buffer); \
 		free(output_buffer); \
     }
