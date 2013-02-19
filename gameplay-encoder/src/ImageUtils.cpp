@@ -1,20 +1,39 @@
 #include "ImageUtils.h"
+#include "FilepathUtils.h"
 #include <png.h>
+#include <errno.h>
+
 
 namespace gameplay
 {
 	int ImageUtils::convertJpg2Png(const std::string& imgJpg, const std::string& imgPng)
 	{
+#ifdef WIN32
 		std::string str_cmd = ".\\convert.exe \"" + imgJpg + "\" \"" + imgPng + "\"";
-		return system(str_cmd.c_str());
+        return system(str_cmd.c_str());
+#else
+        std::string escapedSource(imgJpg);
+        std::string escapedDestination(imgPng);
+
+        FilepathUtils::escapeFilePath(escapedSource);
+        FilepathUtils::escapeFilePath(escapedDestination);
+        
+        std::string str_cmd = "./convert " + escapedSource + " -colorspace sRGB " + escapedDestination;
+        
+        int systemStatus = system(str_cmd.c_str());
+        
+        return systemStatus;
+#endif
+        
 	}
 
-	bool ImageUtils::isPngFile(const char* path) 
+	bool ImageUtils::isPngFile(const char* path)
 	{
+        
 		FILE *fp = fopen(path, "rb");
 		if (!fp)
 		{
-			GP_WARNING(WARN_TEXTURE_NOT_FOUND, path);
+			GP_WARNING(WARN_TEXTURE_NOT_FOUND, path, strerror(errno));
 			return false;
 		}
     

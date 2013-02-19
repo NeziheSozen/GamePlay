@@ -57,7 +57,7 @@ namespace gameplay
 		}
 
 		resultPath = FilepathUtils::uriDecode(resultPath);
-
+        
 		// check if resultPath exists
 		FILE *fp = fopen(resultPath.c_str(), "rb");
 		if(fp == 0)
@@ -69,8 +69,7 @@ namespace gameplay
 		{
 			fclose(fp);
 		}
-	
-		//this->texSourcePath = uriDecode(resultPath);
+        
 		return FilepathUtils::uriDecode(resultPath);
 	}
     
@@ -144,4 +143,33 @@ namespace gameplay
 		delete [] pStart;
 		return sResult;
 	}
+    
+    void FilepathUtils::escapeFilePath(std::string& filePath)
+    {
+    #ifndef WIN32
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, "\\", "/");
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, " ", "\\ ");
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, "(", "\\(");
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, ")", "\\)");
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, "//", "/");
+    #endif
+    }
+    
+    void FilepathUtils::convertToUNIXFilePath(std::string &filePath)
+    {
+#ifndef WIN32
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, "\\", "/");
+#endif
+    }
+    
+    void FilepathUtils::replaceOccurencesOfStringWithString(std::string& input, const std::string& oldStr, const std::string& newStr)
+    {
+
+        size_t pos = 0;
+        while((pos = input.find(oldStr, pos)) != std::string::npos)
+        {
+            input.replace(pos, oldStr.length(), newStr);
+            pos += newStr.length();
+        }
+    }
 }

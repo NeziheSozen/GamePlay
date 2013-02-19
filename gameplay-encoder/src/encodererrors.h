@@ -43,7 +43,7 @@ void encoderErr2msg(int code, const char** name, const char** desc);
 ERROR_START
 
 // ERRORS
-ERRDEF(ERR_ONLY_PNG_SUPPORTED, 1001, "Only PNG Supported", "Encoder can handle only png's. Please use png's and export your dae-file again (%s)")
+ERRDEF(ERR_ONLY_PNG_SUPPORTED, 1001, "Only PNG Supported", "Encoder can handle only png's. Please use png's and export your file again (%s)")
 ERRDEF(ERR_MATERIAL, 1002, "Error in Material", "Error occurred in Material: %s")
 
 ERRDEF(ERR_NO_TEXTURE_SUPPORT_IN_MATERIAL, 1003, "No <texture> Support", "Currently no support for <texture> in %s channel")
@@ -81,7 +81,7 @@ ERRDEF(ERR_LOAD_CHAR, 1024, "Char not loaded", "Error loading char: %d")
 
 ERRDEF(ERR_IMAGE_SIZE_EXCEEDED, 1025, "Image size exceeded!", "Image size exceeded: %d")
 ERRDEF(ERR_DIRECTORY_DOES_NOT_EXIST, 1026, "Directory does not exist", "The specified directory does not exist or is not wirtable: %s")
-ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures: src=%s dest=%s")
+ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures: src=%s dest=%s - error: %s")
 
 ERRDEF(ERR_FILE_NOT_COPIED, 1028, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
 ERRDEF(ERR_CONVERT_JPG_PNG, 1029, "Error at conversion from jpg to png", "File could not be converted from jpg to png\njpg: %s\npng: %s")
@@ -151,13 +151,13 @@ ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Laye
 
 ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024).\nTexture-Path: %s")
 ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2039, "Normal Maps not supported", "Normal maps are currently not supported")
-ERRDEF(WARN_TEXTURE_NOT_FOUND, 2040, "Texture-file not found", "filepath:\n%s")
+ERRDEF(WARN_TEXTURE_NOT_FOUND, 2040, "Texture-file not found", "filepath:%s - error: %s\n")
 
 // INOFS
 ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
 
 ERRDEF(INFO_SAVE_DEBUG_FILE, 3002, "Saving debug file", "Saving debug file: %s")
 ERRDEF(INFO_SAVE_BINARY_FILE, 3003, "Saving binary file", "Saving binary file: %s")
-ERRDEF(INFO_TEXTURE_CONVERTED2PNG, 3004, "Texture was converted to png", "old: %s\nnew: %s")
+ERRDEF(INFO_TEXTURE_CONVERTED2PNG, 3004, "Texture was converted to png", "old: %s - new: %s\n")
 
 ERROR_END

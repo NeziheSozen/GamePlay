@@ -11,6 +11,7 @@
 #include <Windows.h>
 #else
 #include <copyfile.h>
+#include <errno.h>
 #endif
 namespace gameplay
 {
@@ -253,16 +254,26 @@ void Effect::copyTexture()
 		LPCWSTR dest = destStr.c_str();
 		BOOL b = CopyFile(source, dest,0);
 #else
+        FilepathUtils::convertToUNIXFilePath(this->texSourcePath);
+        
+        FilepathUtils::convertToUNIXFilePath(this->texDestinationPath);
+        
         int result = copyfile(this->texSourcePath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
 
         if (result == -1) {
-            GP_ERROR(ERR_TEX_COPY, this->texSourcePath.c_str(), this->texDestinationPath.c_str())
+            GP_ERROR(ERR_TEX_COPY, this->texSourcePath.c_str(), this->texDestinationPath.c_str(), strerror(errno));
         }
 #endif
     }
 }
 
 bool Effect::isPngFile() {
+#ifndef WIN32
+    std::string escapedFilePath(this->texSourcePath);
+    FilepathUtils::convertToUNIXFilePath(escapedFilePath);
+	return ImageUtils::isPngFile(escapedFilePath.c_str());
+#endif
+    
 	return ImageUtils::isPngFile(this->texSourcePath.c_str());
 }
 

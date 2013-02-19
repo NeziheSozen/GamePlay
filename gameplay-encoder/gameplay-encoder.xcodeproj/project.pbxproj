@@ -409,6 +409,7 @@
 				42475CE2147208A000610A6A /* Sources */,
 				42475CE3147208A000610A6A /* Frameworks */,
 				42475CE4147208A000610A6A /* CopyFiles */,
+				A984EC4A16D3822E0082D0BC /* Copy ImageMagick  */,
 			);
 			buildRules = (
 			);
@@ -443,6 +444,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A984EC4A16D3822E0082D0BC /* Copy ImageMagick  */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy ImageMagick ";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# copy ImageMagick 'convert' binary\ncp $SRCROOT/convert $BUILT_PRODUCTS_DIR\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		42475CE2147208A000610A6A /* Sources */ = {
