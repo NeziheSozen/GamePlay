@@ -61,6 +61,8 @@
 		42D2775A1472EFA700D867A4 /* libpcrecpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 42D277581472EFA700D867A4 /* libpcrecpp.a */; };
 		5BCD0643152CFC3C0071FAB5 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCD0642152CFC3C0071FAB5 /* libpng.a */; };
 		5FA636B41647BF8A002AAEA5 /* DAEMaterialEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FA636B21647BF8A002AAEA5 /* DAEMaterialEncoder.cpp */; };
+		5FEF6EB016D36DEF00CFAEC7 /* FilepathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FEF6EAC16D36DEF00CFAEC7 /* FilepathUtils.cpp */; };
+		5FEF6EB116D36DEF00CFAEC7 /* ImageUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FEF6EAE16D36DEF00CFAEC7 /* ImageUtils.cpp */; };
 		A94F4E7E16B2D1F20048CB63 /* encodererrors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A94F4E7C16B2D1F20048CB63 /* encodererrors.cpp */; };
 		B661733F16A61CE40083A307 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B661733D16A61CE40083A307 /* Image.cpp */; };
 		B661734316A61CFA0083A307 /* NormalMapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B661734116A61CFA0083A307 /* NormalMapGenerator.cpp */; };
@@ -188,6 +190,10 @@
 		5BCD0642152CFC3C0071FAB5 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "../external-deps/libpng/lib/macosx/libpng.a"; sourceTree = "<group>"; };
 		5FA636B21647BF8A002AAEA5 /* DAEMaterialEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DAEMaterialEncoder.cpp; path = src/DAEMaterialEncoder.cpp; sourceTree = SOURCE_ROOT; };
 		5FA636B31647BF8A002AAEA5 /* DAEMaterialEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DAEMaterialEncoder.h; path = src/DAEMaterialEncoder.h; sourceTree = SOURCE_ROOT; };
+		5FEF6EAC16D36DEF00CFAEC7 /* FilepathUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilepathUtils.cpp; path = src/FilepathUtils.cpp; sourceTree = SOURCE_ROOT; };
+		5FEF6EAD16D36DEF00CFAEC7 /* FilepathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilepathUtils.h; path = src/FilepathUtils.h; sourceTree = SOURCE_ROOT; };
+		5FEF6EAE16D36DEF00CFAEC7 /* ImageUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageUtils.cpp; path = src/ImageUtils.cpp; sourceTree = SOURCE_ROOT; };
+		5FEF6EAF16D36DEF00CFAEC7 /* ImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageUtils.h; path = src/ImageUtils.h; sourceTree = SOURCE_ROOT; };
 		A94F4E7C16B2D1F20048CB63 /* encodererrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = encodererrors.cpp; path = src/encodererrors.cpp; sourceTree = SOURCE_ROOT; };
 		A94F4E7D16B2D1F20048CB63 /* encodererrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = encodererrors.h; path = src/encodererrors.h; sourceTree = SOURCE_ROOT; };
 		B661733D16A61CE40083A307 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = src/Image.cpp; sourceTree = SOURCE_ROOT; };
@@ -260,6 +266,10 @@
 		42475CE9147208A000610A6A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				5FEF6EAC16D36DEF00CFAEC7 /* FilepathUtils.cpp */,
+				5FEF6EAD16D36DEF00CFAEC7 /* FilepathUtils.h */,
+				5FEF6EAE16D36DEF00CFAEC7 /* ImageUtils.cpp */,
+				5FEF6EAF16D36DEF00CFAEC7 /* ImageUtils.h */,
 				A94F4E7C16B2D1F20048CB63 /* encodererrors.cpp */,
 				A94F4E7D16B2D1F20048CB63 /* encodererrors.h */,
 				F18DCD0315D554B800DB35DB /* Heightmap.cpp */,
@@ -490,6 +500,8 @@
 				B661733F16A61CE40083A307 /* Image.cpp in Sources */,
 				B661734316A61CFA0083A307 /* NormalMapGenerator.cpp in Sources */,
 				EBD15AC016C8FE2B00C9FA8F /* IdStore.cpp in Sources */,
+				5FEF6EB016D36DEF00CFAEC7 /* FilepathUtils.cpp in Sources */,
+				5FEF6EB116D36DEF00CFAEC7 /* ImageUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
