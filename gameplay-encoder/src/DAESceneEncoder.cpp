@@ -1793,6 +1793,10 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
 //                            LOG(1, "Warning: Vertex semantic (%s) is invalid/unsupported for geometry mesh: %s\n", semantic.c_str(), geometryId.c_str());
                             GP_WARNING(WARN_UNSUPPORTED_VERTEX_SEMANTIC, semantic.c_str(), geometryId.c_str());
                         }
+						else if(type == NORMAL)
+						{
+							GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED);
+						}
 
                         DAEPolygonInput* polygonInput = new DAEPolygonInput();
                         domURIFragmentType& sourceURI = vertexInput->getSource();
@@ -1821,6 +1825,10 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                         type += texCoordCount;
                         ++texCoordCount;
                     }
+					else if(type == NORMAL)
+					{
+						GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED);
+					}
 
                     DAEPolygonInput* polygonInput = new DAEPolygonInput();
                     domURIFragmentType& sourceURI = input->getSource();
