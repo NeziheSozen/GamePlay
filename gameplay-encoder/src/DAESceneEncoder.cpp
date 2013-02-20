@@ -1795,7 +1795,7 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                         }
 						else if(type == NORMAL)
 						{
-							GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED);
+							GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
 						}
 
                         DAEPolygonInput* polygonInput = new DAEPolygonInput();
@@ -1827,7 +1827,7 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                     }
 					else if(type == NORMAL)
 					{
-						GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED);
+						GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
 					}
 
                     DAEPolygonInput* polygonInput = new DAEPolygonInput();
