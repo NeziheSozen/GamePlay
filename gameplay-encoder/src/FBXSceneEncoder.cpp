@@ -1202,7 +1202,7 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
 		mat->getEffect().setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
 	}
 		
-	if(mat->getEffect().isPowerOfTwo())
+	if(!mat->getEffect().isPowerOfTwo())
 	{
 		mat->getEffect().setWrapS(Effect::CLAMP);
 		mat->getEffect().setWrapT(Effect::CLAMP);
