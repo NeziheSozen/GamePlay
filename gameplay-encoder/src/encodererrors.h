@@ -84,7 +84,7 @@ ERRDEF(ERR_DIRECTORY_DOES_NOT_EXIST, 1026, "Directory does not exist", "The spec
 ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures: src=%s dest=%s - error: %s")
 
 ERRDEF(ERR_FILE_NOT_COPIED, 1028, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
-ERRDEF(ERR_CONVERT_JPG_PNG, 1029, "Error at conversion from jpg to png", "File could not be converted from jpg to png\njpg: %s\npng: %s")
+ERRDEF(ERR_CONVERT_JPG_PNG, 1029, "Error at conversion from jpg to png", "File could not be converted from jpg to png. jpg: %s png: %s")
 
 
 // WARNINGS
