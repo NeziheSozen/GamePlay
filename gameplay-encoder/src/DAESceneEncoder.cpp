@@ -1825,11 +1825,6 @@ Mesh* DAESceneEncoder::loadMesh(const domMesh* meshElement, const std::string& g
                         type += texCoordCount;
                         ++texCoordCount;
                     }
-					else if(type == NORMAL)
-					{
-						GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
-					}
-
                     DAEPolygonInput* polygonInput = new DAEPolygonInput();
                     domURIFragmentType& sourceURI = input->getSource();
                     sourceURI.resolveElement();
