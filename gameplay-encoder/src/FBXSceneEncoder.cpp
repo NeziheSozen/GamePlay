@@ -990,7 +990,10 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 	FbxProperty lPropertyNormalMap = fbxMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
 	if(lPropertyNormalMap.IsValid())
 	{
-		GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
+		if(lPropertyNormalMap.GetSrcObjectCount<FbxTexture>() > 0)
+		{
+			GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
+		}
 	}
 	
 	if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
