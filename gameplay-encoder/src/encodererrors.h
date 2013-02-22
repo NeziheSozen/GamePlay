@@ -43,7 +43,7 @@ void encoderErr2msg(int code, const char** name, const char** desc);
 ERROR_START
 
 // ERRORS
-ERRDEF(ERR_ONLY_PNG_SUPPORTED, 1001, "Only PNG Supported", "Encoder can handle only png's. Please use png's and export your file again (%s)")
+ERRDEF(ERR_CORRUPTED_PNG, 1001, "Corrupted PNG", "Corupted png-file detected: (%s)")
 ERRDEF(ERR_MATERIAL, 1002, "Error in Material", "Error occurred in Material: %s")
 
 ERRDEF(ERR_NO_TEXTURE_SUPPORT_IN_MATERIAL, 1003, "No <texture> Support", "Currently no support for <texture> in %s channel")
@@ -151,7 +151,8 @@ ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Laye
 
 ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024). Texture-Path: %s")
 ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2039, "Normal Maps not supported", "Normal maps are currently not supported")
-ERRDEF(WARN_TEXTURE_NOT_FOUND, 2040, "Texture-file not found", "filepath:%s - error: %s\n")
+ERRDEF(WARN_BUMPMAP_NOT_SUPPORTED, 2040, "Bump Maps not supported", "Bump maps are currently not supported")
+ERRDEF(WARN_TEXTURE_NOT_FOUND, 2041, "Texture-file not found", "filepath:%s - error: %s\n")
 
 // INOFS
 ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")

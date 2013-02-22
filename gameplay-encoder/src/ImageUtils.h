@@ -9,7 +9,7 @@ namespace gameplay
 class ImageUtils
 {
 public:
-	static int convertJpg2Png(const std::string& imgJpg, const std::string& imgPng);
+	static int convertTexture2Png(const std::string& imgSource, const std::string& imgDestinationPng);
 	static bool isPngFile(const char* path);
 	static int isPowerOfTwo(const char* path);
 	static int isPowerOfTwo(unsigned int x);

@@ -995,6 +995,16 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 			GP_WARNING(WARN_NORMALMAP_NOT_SUPPORTED, "");
 		}
 	}
+
+	FbxProperty lPropertyBumpMap = fbxMaterial->FindProperty(FbxSurfaceMaterial::sBump);
+	if(lPropertyBumpMap.IsValid())
+	{
+		if(lPropertyBumpMap.GetSrcObjectCount<FbxTexture>() > 0)
+		{
+			GP_WARNING(WARN_BUMPMAP_NOT_SUPPORTED, "");
+		}
+	}
+
 	
 	if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
 	{

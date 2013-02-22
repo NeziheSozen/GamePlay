@@ -6,14 +6,14 @@
 
 namespace gameplay
 {
-	int ImageUtils::convertJpg2Png(const std::string& imgJpg, const std::string& imgPng)
+	int ImageUtils::convertTexture2Png(const std::string& imgSource, const std::string& imgDestinationPng)
 	{
 #ifdef WIN32
-		std::string str_cmd = ".\\convert.exe \"" + imgJpg + "\" \"" + imgPng + "\"";
+		std::string str_cmd = ".\\convert.exe \"" + imgSource + "\" \"" + imgDestinationPng + "\"";
         return system(str_cmd.c_str());
 #else
-        std::string escapedSource(imgJpg);
-        std::string escapedDestination(imgPng);
+        std::string escapedSource(imgSource);
+        std::string escapedDestination(imgDestinationPng);
 
         FilepathUtils::escapeFilePath(escapedSource);
         FilepathUtils::escapeFilePath(escapedDestination);
@@ -27,11 +27,10 @@ namespace gameplay
 
 	bool ImageUtils::isPngFile(const char* path)
 	{
-        
 		FILE *fp = fopen(path, "rb");
 		if (!fp)
 		{
-			GP_WARNING(WARN_TEXTURE_NOT_FOUND, path, strerror(errno));
+			// GP_WARNING(WARN_TEXTURE_NOT_FOUND, path, strerror(errno));
 			return false;
 		}
     

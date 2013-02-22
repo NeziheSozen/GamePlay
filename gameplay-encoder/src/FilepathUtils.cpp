@@ -37,18 +37,44 @@ namespace gameplay
 		{
 			originalTexturePath = originalTexturePath.substr(7);
 		}
+		index = originalTexturePath.find("file:"); // in case of: "file://User/username/texture.png"
+		if (index != std::string::npos)
+		{
+			originalTexturePath = originalTexturePath.substr(5);
+			// in case of: "file:/C:/User/username/texture.png" then we would have at this point following path: "/C:/User/username/texture.png"
+			if(originalTexturePath.length() > 3 && originalTexturePath[2] == ':' && originalTexturePath[3] == '/')
+			{
+				originalTexturePath = originalTexturePath.substr(1);
+			}
+		}
+
 		resultPath = originalTexturePath;
-		if(originalTexturePath[0] == '.' && originalTexturePath[1] != '.')
+		if(originalTexturePath[0] == '.' && originalTexturePath[1] != '.') // e.g. "./texture.png"
 		{
 			resultPath = FilepathUtils::combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.') + 1) );
 			isRelativePath = true;
 		}
-		else if(originalTexturePath[0] == '.' && originalTexturePath[1] == '.')
+		else if(originalTexturePath[0] == '.' && originalTexturePath[1] == '.')  // e.g. "../asdf/texture.png"
 		{
 			resultPath = FilepathUtils::combineFileNameWithFilePath( originalModelPath, originalTexturePath.substr(originalTexturePath.find_first_of('.')) );
 			isRelativePath = true;
 		}
-	
+		else if(originalTexturePath[0] == '/' && originalTexturePath.find_last_of('/') == 0) // e.g. "/texture.png"
+		{
+			resultPath = FilepathUtils::combineFileNameWithFilePath( originalModelPath, originalTexturePath );
+			isRelativePath = true;
+		}
+		else if(originalTexturePath[0] != '.' && originalTexturePath[0] != '/') // e.g. "galaxy.fbm/body middle.tga"
+		{
+			int indexOfDoubleDot = originalTexturePath.find_first_of(':');
+			if( indexOfDoubleDot == std::string::npos )
+			{
+				resultPath = FilepathUtils::combineFileNameWithFilePath( originalModelPath, originalTexturePath );
+				isRelativePath = true;
+			}
+		}
+
+		// handle absolute paths
 		if (!isRelativePath) 
 		{
 			int lastSlashIndex = originalTexturePath.find_last_of("/");
@@ -59,31 +85,16 @@ namespace gameplay
 		}
         
         /* After this point, a valid path should be stored in 'resultPath' */
-
 		resultPath = FilepathUtils::uriDecode(resultPath);
-        
-        std::string expectedFilePath = resultPath.substr(0, resultPath.find_last_of(".") + 1);
-        expectedFilePath.append(fileExtension);
-        
+
 		// check if resultPath exists
+		std::string expectedFilePath = resultPath.substr(0, resultPath.find_last_of(".") + 1);
+        expectedFilePath.append(fileExtension);
 		FILE *fp = fopen(expectedFilePath.c_str(), "rb");
 		if(fp == NULL)
 		{
-			// this happens when we get a path like this: "/texture.png"
-			resultPath = FilepathUtils::combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(0));
-			resultPath = FilepathUtils::uriDecode(resultPath);
-			expectedFilePath = resultPath.substr(0, resultPath.find_last_of(".") + 1);
-			expectedFilePath.append(fileExtension);
-			FILE *fp2 = fopen(expectedFilePath.c_str(), "rb");
-			if(fp2 == NULL)
-			{
-				GP_ERROR(ERR_FILE_NOT_FOUND, originalTexturePath.c_str());
-				return "";
-			}
-			else
-			{
-				fclose(fp2);
-			}
+			GP_ERROR(ERR_FILE_NOT_FOUND, originalTexturePath.c_str());
+			return "";
 		}
 		else
 		{
@@ -198,57 +209,60 @@ namespace gameplay
         }
     }
 
-	bool FilepathUtils::setTexturePaths(std::string path, std::string filepath, Effect& effect)
+	bool FilepathUtils::setTexturePaths(std::string texturePath, std::string modelFilepath, Effect& effect)
 	{
-		FilepathUtils::convertToUNIXFilePath(path);
-		FilepathUtils::convertToUNIXFilePath(filepath);
+		// paths that contain '\' will be converted to paths with only '/'
+		FilepathUtils::convertToUNIXFilePath(texturePath);
+		FilepathUtils::convertToUNIXFilePath(modelFilepath);
 
-		int index = path.find_last_of('.') + 1;
-		std::string ext = path.substr(index);
+		// get the extension
+		int index = texturePath.find_last_of('.') + 1;
+		std::string ext = texturePath.substr(index);
 
-		const std::string& strNoPng(path);
-		const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
+		// convert texture path to a path with .png extension ignoring the original extension
+		const std::string& texturePathAsPng(texturePath.substr(0, texturePath.find_last_of('.')) + ".png");
 		bool isConverted2Png = false;
 
-		std::string fp(filepath);
-		int pos = fp.find_last_of('/');
-		fp = (pos == -1) ? fp : fp.substr(0, pos);
-		std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+		// get the model path without the model-filename
+		std::string modelPath(modelFilepath);
+		int pos = modelPath.find_last_of('/');
+		modelPath = (pos == -1) ? modelPath : modelPath.substr(0, pos);
 
+		// absoluteTexturePathPng: the converted and final texture path as png will be stored here
+		std::string absoluteTexturePathPng("");
+		std::string currentTexturePath(FilepathUtils::getAbsoluteTextureSourcePath(texturePath, modelPath, ext));
+
+		// handle non-png textures
 		if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
 		{
-			absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp, ext);
-			std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
-			
-			if(absTexPathPng.compare("") != 0 && absTexPathJpg.compare("") != 0)
+			// store the absolute png path
+			absoluteTexturePathPng = currentTexturePath.substr(0, currentTexturePath.find_last_of('.')) + ".png";
+			if(absoluteTexturePathPng.compare("") != 0 && currentTexturePath.compare("") != 0)
 			{
-				if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
+				// convert the texture to a png texture
+				if(ImageUtils::convertTexture2Png(currentTexturePath, absoluteTexturePathPng) != 0)
 				{
-					GP_ERROR(ERR_CONVERT_JPG_PNG, strNoPng.c_str(), strPng.c_str());
+					GP_ERROR(ERR_CONVERT_JPG_PNG, texturePath.c_str(), texturePathAsPng.c_str());
 					return false;
 				}
 				isConverted2Png = true;
-				GP_INFO(INFO_TEXTURE_CONVERTED2PNG, strNoPng.c_str(), strPng.c_str())
+				GP_INFO(INFO_TEXTURE_CONVERTED2PNG, texturePath.c_str(), texturePathAsPng.c_str())
 			}
-		}
-    
-		// set filepath of the png-texture
-		std::string textureFilepath;
-		if(isConverted2Png)
-		{
-			textureFilepath = std::string(strPng);
 		}
 		else
 		{
-			textureFilepath = path;
+			// store the absolute png path
+			absoluteTexturePathPng = currentTexturePath;
 		}
 
-		effect.setTextureFilename(absTexPathPng, fp);
-		effect.setTextureSourcePath(absTexPathPng);
+		// set the new absolute texture path (png) in the effect-object
+		effect.setTextureFilename(absoluteTexturePathPng, modelPath);
+		effect.setTextureSourcePath(absoluteTexturePathPng);
 
+		// sanity check - is the png file really a png file?
 		if(!effect.isPngFile())
 		{
-			GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+			GP_ERROR(ERR_CORRUPTED_PNG, texturePath.c_str());
 			return false;
 		}
         
