@@ -1,4 +1,6 @@
 #include "FilepathUtils.h"
+#include "ImageUtils.h"
+#include "EncoderArguments.h"
 
 namespace gameplay
 {
@@ -60,7 +62,7 @@ namespace gameplay
 
 		resultPath = FilepathUtils::uriDecode(resultPath);
         
-        std::string expectedFilePath = resultPath.substr(0, resultPath.find_last_of("."));
+        std::string expectedFilePath = resultPath.substr(0, resultPath.find_last_of(".") + 1);
         expectedFilePath.append(fileExtension);
         
 		// check if resultPath exists
@@ -69,13 +71,26 @@ namespace gameplay
 		{
 			// this happens when we get a path like this: "/texture.png"
 			resultPath = FilepathUtils::combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(0));
+			resultPath = FilepathUtils::uriDecode(resultPath);
+			expectedFilePath = resultPath.substr(0, resultPath.find_last_of(".") + 1);
+			expectedFilePath.append(fileExtension);
+			FILE *fp2 = fopen(expectedFilePath.c_str(), "rb");
+			if(fp2 == NULL)
+			{
+				GP_ERROR(ERR_FILE_NOT_FOUND, originalTexturePath.c_str());
+				return "";
+			}
+			else
+			{
+				fclose(fp2);
+			}
 		}
 		else
 		{
 			fclose(fp);
 		}
     
-		return FilepathUtils::uriDecode(resultPath);
+		return resultPath;
 	}
     
 	std::string FilepathUtils::combineFileNameWithFilePath(const std::string& filePath, const std::string& fileName)
@@ -169,9 +184,7 @@ namespace gameplay
     
     void FilepathUtils::convertToUNIXFilePath(std::string &filePath)
     {
-#ifndef WIN32
         FilepathUtils::replaceOccurencesOfStringWithString(filePath, "\\", "/");
-#endif
     }
     
     void FilepathUtils::replaceOccurencesOfStringWithString(std::string& input, const std::string& oldStr, const std::string& newStr)
@@ -184,4 +197,65 @@ namespace gameplay
             pos += newStr.length();
         }
     }
+
+	bool FilepathUtils::setTexturePaths(std::string path, std::string filepath, Effect& effect)
+	{
+		FilepathUtils::convertToUNIXFilePath(path);
+		FilepathUtils::convertToUNIXFilePath(filepath);
+
+		int index = path.find_last_of('.') + 1;
+		std::string ext = path.substr(index);
+
+		const std::string& strNoPng(path);
+		const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
+		bool isConverted2Png = false;
+
+		std::string fp(filepath);
+		int pos = fp.find_last_of('/');
+		fp = (pos == -1) ? fp : fp.substr(0, pos);
+		std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+
+		if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
+		{
+			absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp, ext);
+			std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+			
+			if(absTexPathPng.compare("") != 0 && absTexPathJpg.compare("") != 0)
+			{
+				if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
+				{
+					GP_ERROR(ERR_CONVERT_JPG_PNG, strNoPng.c_str(), strPng.c_str());
+					return false;
+				}
+				isConverted2Png = true;
+				GP_INFO(INFO_TEXTURE_CONVERTED2PNG, strNoPng.c_str(), strPng.c_str())
+			}
+		}
+    
+		// set filepath of the png-texture
+		std::string textureFilepath;
+		if(isConverted2Png)
+		{
+			textureFilepath = std::string(strPng);
+		}
+		else
+		{
+			textureFilepath = path;
+		}
+
+		effect.setTextureFilename(absTexPathPng, fp);
+		effect.setTextureSourcePath(absTexPathPng);
+
+		if(!effect.isPngFile())
+		{
+			GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
+			return false;
+		}
+        
+		if (EncoderArguments::getInstance()->textureOutputEnabled())
+		{
+			effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
+		}
+		return true;
+	}
 }

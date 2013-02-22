@@ -478,59 +478,6 @@ namespace gameplay
             return false;
         }
     }
-    
-	bool DAEMaterialEncoder::setTexturePaths(std::string path, std::string filepath, Effect& effect)
-	{
-		int index = path.find_last_of('.') + 1;
-		std::string ext = path.substr(index);
-		const std::string& strNoPng(path);
-		const std::string& strPng(path.substr(0, path.find_last_of('.')) + ".png");
-		bool isConverted2Png = false;
-
-		std::string fp(filepath);
-		int pos = fp.find_last_of('/');
-		fp = (pos == -1) ? fp : fp.substr(0, pos);
-		std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
-
-		if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
-		{
-			absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp);
-			std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
-			if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
-			{
-				GP_ERROR(ERR_CONVERT_JPG_PNG, strNoPng.c_str(), strPng.c_str());
-				return false;
-			}
-			isConverted2Png = true;
-			GP_INFO(INFO_TEXTURE_CONVERTED2PNG, strNoPng.c_str(), strPng.c_str())
-		}
-    
-		// set filepath of the png-texture
-		std::string textureFilepath;
-		if(isConverted2Png)
-		{
-			textureFilepath = std::string(strPng);
-		}
-		else
-		{
-			textureFilepath = path;
-		}
-
-		effect.setTextureFilename(absTexPathPng, fp);
-		effect.setTextureSourcePath(absTexPathPng);
-
-		if(!effect.isPngFile())
-		{
-			GP_ERROR(ERR_ONLY_PNG_SUPPORTED, path.c_str());
-			return false;
-		}
-        
-		if (EncoderArguments::getInstance()->textureOutputEnabled())
-		{
-			effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
-		}
-		return true;
-	}
 
     bool DAEMaterialEncoder::processTexture(domCommon_color_or_texture_type_complexType::domTexture *tex, Effect &effect)
     {
@@ -619,7 +566,7 @@ namespace gameplay
                     {
                         if(img->getInit_from() && img->getInit_from()->hasValue())
                         {
-							if(!setTexturePaths(img->getInit_from()->getValue().str(), 
+							if(!FilepathUtils::setTexturePaths(img->getInit_from()->getValue().str(), 
 												img->getInit_from()->getValue().originalStr(), 
 												effect))
 							{
@@ -658,7 +605,7 @@ namespace gameplay
                     return false;
                 }
 
-				if(!setTexturePaths(path, EncoderArguments::getInstance()->getFilePath(), effect))
+				if(!FilepathUtils::setTexturePaths(path, EncoderArguments::getInstance()->getFilePath(), effect))
 				{
 					return false;
 				}
