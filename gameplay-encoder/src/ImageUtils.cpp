@@ -20,9 +20,7 @@ namespace gameplay
         
         std::string str_cmd = "./convert " + escapedSource + " -colorspace sRGB " + escapedDestination;
         
-        int systemStatus = system(str_cmd.c_str());
-        
-        return systemStatus;
+        return system(str_cmd.c_str());
 #endif
         
 	}

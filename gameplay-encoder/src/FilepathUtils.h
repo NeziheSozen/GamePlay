@@ -9,7 +9,7 @@ namespace gameplay
 class FilepathUtils
 {
 public:
-	static std::string getAbsoluteTextureSourcePath(std::string originalTexturePath, std::string originalModelPath);
+	static std::string getAbsoluteTextureSourcePath(std::string originalTexturePath, std::string originalModelPath, std::string fileExtension = ".png");
 	static std::string combineFileNameWithFilePath(const std::string& filePath, const std::string& fileName);
 	static std::string uriDecode(const std::string & sSrc);
     static void escapeFilePath(std::string& filePath);

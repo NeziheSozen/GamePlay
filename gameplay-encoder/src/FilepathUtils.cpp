@@ -26,7 +26,7 @@ namespace gameplay
 		/* F */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1
 	};
 
-	std::string FilepathUtils::getAbsoluteTextureSourcePath(std::string originalTexturePath, std::string originalModelPath)
+	std::string FilepathUtils::getAbsoluteTextureSourcePath(std::string originalTexturePath, std::string originalModelPath, std::string fileExtension)
 	{
 		bool isRelativePath = false;
 		std::string resultPath("");
@@ -55,12 +55,17 @@ namespace gameplay
 				resultPath = FilepathUtils::combineFileNameWithFilePath(originalModelPath, originalTexturePath);
 			}
 		}
+        
+        /* After this point, a valid path should be stored in 'resultPath' */
 
 		resultPath = FilepathUtils::uriDecode(resultPath);
         
+        std::string expectedFilePath = resultPath.substr(0, resultPath.find_last_of("."));
+        expectedFilePath.append(fileExtension);
+        
 		// check if resultPath exists
-		FILE *fp = fopen(resultPath.c_str(), "rb");
-		if(fp == 0)
+		FILE *fp = fopen(expectedFilePath.c_str(), "rb");
+		if(fp == NULL)
 		{
 			// this happens when we get a path like this: "/texture.png"
 			resultPath = FilepathUtils::combineFileNameWithFilePath(originalModelPath, originalTexturePath.substr(0));
@@ -69,7 +74,7 @@ namespace gameplay
 		{
 			fclose(fp);
 		}
-        
+    
 		return FilepathUtils::uriDecode(resultPath);
 	}
     
@@ -92,7 +97,14 @@ namespace gameplay
 			// check fileName
 			if ( fileName[0] == '/' )
 			{
-				combinedFileName += fileName.substr(1);
+                
+                int overlapping = fileName.find(filePath);
+                if ( overlapping != std::string::npos ) {
+                    combinedFileName += fileName.substr(filePath.length()+1);
+                    
+                }else {
+                    combinedFileName += fileName.substr(1);
+                }
 			}
 			else
 			{

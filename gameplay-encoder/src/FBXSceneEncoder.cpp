@@ -1167,11 +1167,12 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
 	int pos = fp.find_last_of('/');
 	fp = (pos == -1) ? fp : fp.substr(0, pos);
 	std::string absTexPathPng(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
-
+    
 	if(ext.compare("PNG") != 0 && ext.compare("png") != 0)
 	{
-		absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp);
+		absTexPathPng = FilepathUtils::getAbsoluteTextureSourcePath(strPng, fp, ext);
 		std::string absTexPathJpg(FilepathUtils::getAbsoluteTextureSourcePath(path, fp));
+        
 		if(ImageUtils::convertJpg2Png(absTexPathJpg, absTexPathPng) != 0)
 		{
 			GP_ERROR(ERR_CONVERT_JPG_PNG, strNoPng.c_str(), strPng.c_str());
@@ -1343,7 +1344,7 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
 			}
 
 			// Add the vertex to the mesh if it hasn't already been added and find the vertex index.
-			unsigned int index;
+			unsigned int index = 0;
 			if (mesh->contains(vertex))
 			{
 				index = mesh->getVertexIndex(vertex);
@@ -1369,41 +1370,44 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
 	// Position
 	mesh->addVetexAttribute(POSITION, Vertex::POSITION_COUNT);
 
-	const Vertex& vertex = mesh->vertices[0];
-	// Normals
-	if (vertex.hasNormal)
-	{
-		mesh->addVetexAttribute(NORMAL, Vertex::NORMAL_COUNT);
-	}
-	// Tangents
-	if (vertex.hasTangent)
-	{
-		mesh->addVetexAttribute(TANGENT, Vertex::TANGENT_COUNT);
-	}
-	// Binormals
-	if (vertex.hasBinormal)
-	{
-		mesh->addVetexAttribute(BINORMAL, Vertex::BINORMAL_COUNT);
-	}
-	// Texture Coordinates
-	for (unsigned int i = 0; i < MAX_UV_SETS; ++i)
-	{
-		if (vertex.hasTexCoord[i])
-		{
-			mesh->addVetexAttribute(TEXCOORD0 + i, Vertex::TEXCOORD_COUNT);
-		}
-	}
-	// Diffuse Color
-	if (vertex.hasDiffuse)
-	{
-		mesh->addVetexAttribute(COLOR, Vertex::DIFFUSE_COUNT);
-	}
-	// Skinning BlendWeights BlendIndices
-	if (vertex.hasWeights)
-	{
-		mesh->addVetexAttribute(BLENDWEIGHTS, Vertex::BLEND_WEIGHTS_COUNT);
-		mesh->addVetexAttribute(BLENDINDICES, Vertex::BLEND_INDICES_COUNT);
-	}
+    int verticesCount = mesh->vertices.size();
+    if (verticesCount > 0) {
+        const Vertex& vertex = mesh->vertices[0];
+        // Normals
+        if (vertex.hasNormal)
+        {
+            mesh->addVetexAttribute(NORMAL, Vertex::NORMAL_COUNT);
+        }
+        // Tangents
+        if (vertex.hasTangent)
+        {
+            mesh->addVetexAttribute(TANGENT, Vertex::TANGENT_COUNT);
+        }
+        // Binormals
+        if (vertex.hasBinormal)
+        {
+            mesh->addVetexAttribute(BINORMAL, Vertex::BINORMAL_COUNT);
+        }
+        // Texture Coordinates
+        for (unsigned int i = 0; i < MAX_UV_SETS; ++i)
+        {
+            if (vertex.hasTexCoord[i])
+            {
+                mesh->addVetexAttribute(TEXCOORD0 + i, Vertex::TEXCOORD_COUNT);
+            }
+        }
+        // Diffuse Color
+        if (vertex.hasDiffuse)
+        {
+            mesh->addVetexAttribute(COLOR, Vertex::DIFFUSE_COUNT);
+        }
+        // Skinning BlendWeights BlendIndices
+        if (vertex.hasWeights)
+        {
+            mesh->addVetexAttribute(BLENDWEIGHTS, Vertex::BLEND_WEIGHTS_COUNT);
+            mesh->addVetexAttribute(BLENDINDICES, Vertex::BLEND_INDICES_COUNT);
+        }
+    }
 
 	_gamePlayFile.addMesh(mesh);
 	saveMesh(fbxMesh->GetUniqueID(), mesh);

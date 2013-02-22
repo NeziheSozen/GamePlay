@@ -255,7 +255,6 @@ void Effect::copyTexture()
 		BOOL b = CopyFile(source, dest,0);
 #else
         FilepathUtils::convertToUNIXFilePath(this->texSourcePath);
-        
         FilepathUtils::convertToUNIXFilePath(this->texDestinationPath);
         
         int result = copyfile(this->texSourcePath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);

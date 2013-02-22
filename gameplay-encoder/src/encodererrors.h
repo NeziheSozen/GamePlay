@@ -149,7 +149,7 @@ ERRDEF(WARN_MULTIPLE_MATERIALS_ASSIGNED_FOR_MESH, 2035, "Multiple Materials Assi
 ERRDEF(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, 2036, "No texture found", "Using first layered texture because no other texture was assigned to mesh '%s'.")
 ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Layered textures not supported", "Layered textures are generally not supported. Using only first texture for mesh '%s'.")
 
-ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024).\nTexture-Path: %s")
+ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024). Texture-Path: %s")
 ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2039, "Normal Maps not supported", "Normal maps are currently not supported")
 ERRDEF(WARN_TEXTURE_NOT_FOUND, 2040, "Texture-file not found", "filepath:%s - error: %s\n")
 
