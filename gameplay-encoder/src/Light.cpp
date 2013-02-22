@@ -36,7 +36,8 @@ float Light::computeRange(float constantAttenuation, float linearAttenuation, fl
 {
     if (constantAttenuation == 0.0f && linearAttenuation == 0.0f && quadraticAttenuation == 0.0f)
     {
-        return 0.0f;
+        // no attenuation -> return a high range
+        return 100000.0f;
     }
 
     // Constant Attenuation is currently not supported.
