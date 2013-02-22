@@ -72,6 +72,8 @@ public:
 
     int isPowerOfTwo();
     bool isPngFile();
+    void setUseSpecular(bool useSpecular);
+    bool hasUseSpecular();
     
 public:
     static std::string wrapStr[];
@@ -97,6 +99,7 @@ private:
     std::string _fragmentShader;
     std::string texSourcePath;
     std::string texDestinationPath;
+    bool useSpecular;
 };
 
 }

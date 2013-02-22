@@ -128,6 +128,7 @@ namespace gameplay
         
 		if(blinn)
         {
+            material->getEffect().setUseSpecular(true);
             if(!processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect()))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
@@ -189,6 +190,7 @@ namespace gameplay
         }
         else if(lambert)
         {
+            material->getEffect().setUseSpecular(false);
             if(!processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect()))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
@@ -222,6 +224,7 @@ namespace gameplay
         }
         else if(phong)
         {
+            material->getEffect().setUseSpecular(true);
             if(!processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect()))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
@@ -756,7 +759,7 @@ namespace gameplay
         {
             effect.setWrapS(Effect::REPEAT);
             effect.setWrapT(Effect::REPEAT);
-            effect.setMinFilter(Effect::NEAREST_MIPMAP_LINEAR);
+            effect.setMinFilter(Effect::LINEAR);
             effect.setMagFilter(Effect::LINEAR);
         }
         return true;

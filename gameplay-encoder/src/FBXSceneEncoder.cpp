@@ -998,7 +998,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 	
 	if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
 	{
-		
+        mat->getEffect().setUseSpecular(true);
 		// We found a Phong material.  Display its properties.
 		// Display the Ambient Color
 		lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Ambient;
@@ -1055,6 +1055,7 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 	}
 	else if(fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId) )
 	{
+        mat->getEffect().setUseSpecular(false);
 		// We found a Lambert material. Display its properties.
 		// Display the Ambient Color
 		lKFbxDouble3=((FbxSurfaceLambert *)fbxMaterial)->Ambient;

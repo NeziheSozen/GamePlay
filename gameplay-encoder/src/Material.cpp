@@ -43,8 +43,10 @@ void Material::writeText(FILE* file)
     if(_light != NULL)
     {
         fprintf(file, "\t\t\tu_inverseTransposeWorldViewMatrix = INVERSE_TRANSPOSE_WORLD_VIEW_MATRIX\n");
-        fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
-        fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+        if (this->getEffect().hasUseSpecular()) {
+            fprintf(file, "\t\t\tu_worldViewMatrix = WORLD_VIEW_MATRIX\n");
+            fprintf(file, "\t\t\tu_cameraPosition = CAMERA_WORLD_POSITION\n");
+        }
         
 //        switch (_light->getLightType()) {
 //            case Light::PointLight:

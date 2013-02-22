@@ -39,7 +39,8 @@ Effect::Effect(void) :
     hasTexture(false),
     alpha(1.0f),
     texSourcePath(""),
-    texDestinationPath("")
+    texDestinationPath(""),
+    useSpecular(false)
 {
 
 }
@@ -79,22 +80,29 @@ void Effect::writeEffect(FILE* file, Light* light)
     }
     else
     {
-        fprintf(file, "\t\t\tdefines = SPECULAR");
+        fprintf(file, "\t\t\tdefines = ");
+        if (this->useSpecular) {
+            fprintf(file, "SPECULAR;");
+        }
+        
         unsigned char lt = light->getLightType();
         if (lt == Light::PointLight)
         {
-            fprintf(file, ";POINT_LIGHT");
+            fprintf(file, "POINT_LIGHT");
         }
         else if (lt == Light::SpotLight)
         {
-            fprintf(file, ";SPOT_LIGHT");
+            fprintf(file, "SPOT_LIGHT");
         }
-//        else
-//        {
-//            // Light::DirectionalLight (already defined as default in shader)
-//        }
+        else
+        {
+            fprintf(file, "DIRECTIONAL_LIGHT");
+        }
+        fprintf(file, "\n");
 
-        fprintf(file, "\n\t\t\tu_specularExponent = %f\n", this->specularExponent);
+        if (this->useSpecular) {
+            fprintf(file, "\t\t\tu_specularExponent = %f\n", this->specularExponent);
+        }
         // fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
     }
 
@@ -144,6 +152,11 @@ void Effect::setDiffuse(Vector4 color)
 void Effect::setSpecular(Vector4 color)
 {
     this->specularColor = color;
+
+    if (this->specularColor.x == 0 && this->specularColor.y == 0 && this->specularColor.z == 0) {
+        // Special case for black specular color (as color is currently not supported)
+        this->useSpecular = false;
+    }
 }
 
 void Effect::setShininess(float shininess)
@@ -278,5 +291,13 @@ bool Effect::isPngFile() {
 
 int Effect::isPowerOfTwo(){
 	return ImageUtils::isPowerOfTwo(this->texSourcePath.c_str());
+}
+
+void Effect::setUseSpecular(bool useSpecular) {
+    this->useSpecular = useSpecular;
+}
+
+bool Effect::hasUseSpecular() {
+    return this->useSpecular;
 }
 }
