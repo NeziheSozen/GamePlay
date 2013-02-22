@@ -126,13 +126,23 @@ namespace gameplay
         domProfile_COMMON::domTechnique::domLambert *lambert = teq->getLambert();
         domProfile_COMMON::domTechnique::domPhong *phong = teq->getPhong();
         
-        bool error = false;
-        
-        if(blinn)
+		if(blinn)
         {
-            processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect());
-            processColorOrTextureType(blinn->getAmbient(), AMBIENT, material->getEffect());
-            error = !processColorOrTextureType(blinn->getDiffuse(), DIFFUSE, material->getEffect());
+            if(!processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
+			}
+
+            if(!processColorOrTextureType(blinn->getAmbient(), AMBIENT, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
+			}
+
+            if(!processColorOrTextureType(blinn->getDiffuse(), DIFFUSE, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
+			}
+
             processColorOrTextureType(blinn->getSpecular(), SPECULAR, material->getEffect(), blinn->getShininess());
             
             if (blinn->getTransparency()) {
@@ -152,18 +162,14 @@ namespace gameplay
              - getTransparent()
              - getIndex_of_refraction()
              */
-            
-            if(error)
-            {
-//                LOG(1, "error in material %s", material->getMaterialId().c_str());
-                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
-            }
         }
         else if(constant)
         {
-            error = !processColorOrTextureType(constant->getEmission(), EMISSION, material->getEffect());
-            
-            if (constant->getTransparency()) {
+           if(!processColorOrTextureType(constant->getEmission(), EMISSION, material->getEffect()))
+		   {
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
+		   }
+           if (constant->getTransparency()) {
                 domFloat f;
                 if(constant->getTransparency()->getFloat()){
                     material->getEffect().setAlpha(constant->getTransparency()->getFloat()->getValue());
@@ -180,18 +186,21 @@ namespace gameplay
              - getTransparent()
              - getIndex_of_refraction()
              */
-            
-            if(error)
-            {
-//                LOG(1, "error in material %s", material->getMaterialId().c_str());
-                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
-            }
         }
         else if(lambert)
         {
-            processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect());
-            processColorOrTextureType(lambert->getAmbient(), AMBIENT, material->getEffect());
-            error = error || !processColorOrTextureType(lambert->getDiffuse(), DIFFUSE, material->getEffect());
+            if(!processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
+			}
+            if(!processColorOrTextureType(lambert->getAmbient(), AMBIENT, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
+			}
+            if(!processColorOrTextureType(lambert->getDiffuse(), DIFFUSE, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
+			}
             
             if (lambert->getTransparency()) {
                 domFloat f;
@@ -210,19 +219,25 @@ namespace gameplay
              - getTransparent()
              - getIndex_of_refraction()
              */
-            
-            if(error)
-            {
-//                LOG(1, "error in material %s", material->getMaterialId().c_str());
-                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
-            }
         }
         else if(phong)
         {
-            processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect());
-            processColorOrTextureType(phong->getAmbient(), AMBIENT, material->getEffect());
-            error = !processColorOrTextureType(phong->getDiffuse(), DIFFUSE, material->getEffect());
-            processColorOrTextureType(phong->getSpecular(), SPECULAR, material->getEffect(), phong->getShininess());
+            if(!processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
+			}
+            if(!processColorOrTextureType(phong->getAmbient(), AMBIENT, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
+			}
+            if(!processColorOrTextureType(phong->getDiffuse(), DIFFUSE, material->getEffect()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
+			}
+            if(!processColorOrTextureType(phong->getSpecular(), SPECULAR, material->getEffect(), phong->getShininess()))
+			{
+				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "specular");
+			}
             
             if (phong->getTransparency()) {
                 domFloat f;
@@ -241,12 +256,6 @@ namespace gameplay
              - getTransparent()
              - getIndex_of_refraction()
              */
-            
-            if(error)
-            {
-//                LOG(1, "error in material %s", material->getMaterialId().c_str());
-                GP_ERROR(ERR_MATERIAL, material->getMaterialId().c_str());
-            }
         }
     }
     

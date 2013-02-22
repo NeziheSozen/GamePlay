@@ -159,5 +159,6 @@ ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
 ERRDEF(INFO_SAVE_DEBUG_FILE, 3002, "Saving debug file", "Saving debug file: %s")
 ERRDEF(INFO_SAVE_BINARY_FILE, 3003, "Saving binary file", "Saving binary file: %s")
 ERRDEF(INFO_TEXTURE_CONVERTED2PNG, 3004, "Texture was converted to png", "old: %s - new: %s\n")
+ERRDEF(INFO_PROP_NOT_SET_IN_MATERIAL, 3005, "The DAE-File does not contain a property", "The property '%s' cannot be found in the dae file. This could lead to undesired results.")
 
 ERROR_END
