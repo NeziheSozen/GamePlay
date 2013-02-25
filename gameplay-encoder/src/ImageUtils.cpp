@@ -17,8 +17,9 @@ namespace gameplay
 
         FilepathUtils::escapeFilePath(escapedSource);
         FilepathUtils::escapeFilePath(escapedDestination);
-        
-        std::string str_cmd = "./convert " + escapedSource + " -colorspace sRGB " + escapedDestination;
+
+//        std::string str_cmd = "./convert " + escapedSource + " -colorspace sRGB " + escapedDestination;
+        std::string str_cmd = "sips -s format png " + escapedSource + " --out " + escapedDestination;
         
         return system(str_cmd.c_str());
 #endif
