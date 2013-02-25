@@ -190,6 +190,7 @@ namespace gameplay
         FilepathUtils::replaceOccurencesOfStringWithString(filePath, "(", "\\(");
         FilepathUtils::replaceOccurencesOfStringWithString(filePath, ")", "\\)");
         FilepathUtils::replaceOccurencesOfStringWithString(filePath, "//", "/");
+        FilepathUtils::replaceOccurencesOfStringWithString(filePath, "'", "\\'");
     #endif
     }
     
