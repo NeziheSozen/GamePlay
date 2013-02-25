@@ -243,7 +243,7 @@ namespace gameplay
 				// convert the texture to a png texture
 				if(ImageUtils::convertTexture2Png(currentTexturePath, absoluteTexturePathPng) != 0)
 				{
-					GP_ERROR(ERR_CONVERT_JPG_PNG, texturePath.c_str(), texturePathAsPng.c_str());
+					GP_ERROR(ERR_CONVERT_TO_PNG, texturePath.c_str(), texturePathAsPng.c_str());
 					return false;
 				}
 				isConverted2Png = true;

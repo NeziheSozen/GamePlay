@@ -84,7 +84,7 @@ ERRDEF(ERR_DIRECTORY_DOES_NOT_EXIST, 1026, "Directory does not exist", "The spec
 ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures: src=%s dest=%s - error: %s")
 
 ERRDEF(ERR_FILE_NOT_COPIED, 1028, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
-ERRDEF(ERR_CONVERT_JPG_PNG, 1029, "Error at conversion from jpg to png", "File could not be converted from jpg to png. jpg: %s png: %s")
+ERRDEF(ERR_CONVERT_TO_PNG, 1029, "Error at converting texture to png", "File could not be converted to png. source: %s png: %s")
 
 
 // WARNINGS
@@ -145,11 +145,9 @@ ERRDEF(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, 2034, "Material not Assigned", "Mesh 
 
 ERRDEF(WARN_MULTIPLE_MATERIALS_ASSIGNED_FOR_MESH, 2035, "Multiple Materials Assigned", "Mesh '%s' has multiple materials assigned -> using first assigned material.")
 
-
-ERRDEF(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, 2036, "No texture found", "Using first layered texture because no other texture was assigned to mesh '%s'.")
 ERRDEF(WARN_LAYERED_TEXTURES_NOT_SUPPORTED_USING_FIRST_TEXTURE_ONLY, 2037, "Layered textures not supported", "Layered textures are generally not supported. Using only first texture for mesh '%s'.")
 
-ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures are used", "One of the textures has a non power of two width/height. Please change the size to power of two (eg. 512x512, 1024x1024). Texture-Path: %s")
+ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures used", "One of the textures has a non power of two width/height. While supported, performance might suffer when running on the device. Texture-Path: %s")
 ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2039, "Normal Maps not supported", "Normal maps are currently not supported")
 ERRDEF(WARN_BUMPMAP_NOT_SUPPORTED, 2040, "Bump Maps not supported", "Bump maps are currently not supported")
 ERRDEF(WARN_TEXTURE_NOT_FOUND, 2041, "Texture-file not found", "filepath:%s - error: %s\n")
@@ -161,5 +159,7 @@ ERRDEF(INFO_SAVE_DEBUG_FILE, 3002, "Saving debug file", "Saving debug file: %s")
 ERRDEF(INFO_SAVE_BINARY_FILE, 3003, "Saving binary file", "Saving binary file: %s")
 ERRDEF(INFO_TEXTURE_CONVERTED2PNG, 3004, "Texture was converted to png", "old: %s - new: %s\n")
 ERRDEF(INFO_PROP_NOT_SET_IN_MATERIAL, 3005, "The DAE-File does not contain a property", "The property '%s' cannot be found in the dae file. This could lead to undesired results.")
+ERRDEF(INFO_USING_FIRST_LAYERED_TEXTURE, 3006, "Using first layered texture", "Layered textures generally not suppported but only one texture assign, therfore using it for mesh '%s'.")
+
 
 ERROR_END

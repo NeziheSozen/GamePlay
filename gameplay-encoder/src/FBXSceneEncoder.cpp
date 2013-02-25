@@ -1149,7 +1149,7 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
 			fileTexture = layeredTexture->GetSrcObject<FbxFileTexture>(0);
 			this->addTextureToMaterial(fileTexture, mat);
 			
-			GP_WARNING(WARN_NO_TEXTURE_FOUND_USING_FIRST_LAYERED_ONE, meshPart->getId().c_str());
+			GP_INFO(INFO_USING_FIRST_LAYERED_TEXTURE, meshPart->getId().c_str());
 			
 		}else if ( layeredTextureCount > 1)
 		{
