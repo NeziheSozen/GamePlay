@@ -132,6 +132,7 @@
     <ProjectGuid>{9D69B743-4872-4DD1-8E30-0087C64298D7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>gameplay-encoder</RootNamespace>
+    <ProjectName>gameplay-encoder</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

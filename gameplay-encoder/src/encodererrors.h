@@ -86,6 +86,8 @@ ERRDEF(ERR_TEX_COPY, 1027, "Could not copy textures!", "Could not copy textures:
 ERRDEF(ERR_FILE_NOT_COPIED, 1028, "File not copied", "Error: %d. The specified file could not be copied into the destination directory: %s")
 ERRDEF(ERR_CONVERT_TO_PNG, 1029, "Error at converting texture to png", "File could not be converted to png. source: %s png: %s")
 
+ERRDEF(ERR_NO_CLAMP_FOR_NOP_USED, 1030, "Non-Power-Of-Two Texture wrap-mode is not CLAMP", "Non power of two texture must use texture mode CLAMP. Texture mode set to CLAMP automatically after the import.")
+
 
 // WARNINGS
 ERRDEF(WARN_DUPLICATE_KEYFRAMES, 2001, "Duplicate Keyframes", "Removed %ld duplicate keyframes from channel.\n")

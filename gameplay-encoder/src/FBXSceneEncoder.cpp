@@ -1175,6 +1175,10 @@ void FBXSceneEncoder::addTextureToMaterial(FbxFileTexture* fbxFileTexture, const
 		mat->getEffect().setMinFilter(Effect::LINEAR);
 		mat->getEffect().setMagFilter(Effect::LINEAR);
 		GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, mat->getEffect().getTextureSourcePath().c_str());
+		if(fbxFileTexture->GetWrapModeU() != fbxsdk_2013_3::FbxTexture::eClamp || fbxFileTexture->GetWrapModeV() != fbxsdk_2013_3::FbxTexture::eClamp)
+		{
+			GP_ERROR(ERR_NO_CLAMP_FOR_NOP_USED, "");
+		}
 	}
 	else
 	{

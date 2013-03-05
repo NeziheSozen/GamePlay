@@ -629,6 +629,15 @@ namespace gameplay
                 effect.setMinFilter(Effect::LINEAR);
                 effect.setMagFilter(Effect::LINEAR);
                 GP_WARNING(WARN_TEXTURES_NONPOWER_OF_2, effect.getTextureSourcePath().c_str());
+
+				if(sampler->getWrap_s() && (sampler->getWrap_s()->getValue() == FX_SAMPLER_WRAP_COMMON_WRAP || sampler->getWrap_s()->getValue() == FX_SAMPLER_WRAP_COMMON_MIRROR))
+				{
+					GP_ERROR(ERR_NO_CLAMP_FOR_NOP_USED, "");
+				}
+				if(sampler->getWrap_t() && (sampler->getWrap_t()->getValue() == FX_SAMPLER_WRAP_COMMON_WRAP || sampler->getWrap_t()->getValue() == FX_SAMPLER_WRAP_COMMON_MIRROR))
+				{
+					GP_ERROR(ERR_NO_CLAMP_FOR_NOP_USED, "");
+				}
             }
             else
             {
@@ -636,7 +645,7 @@ namespace gameplay
                 if (sampler->getWrap_s())
                 {
                     gameplay::Effect::Wrap wrap;
-                    switch( sampler->getWrap_t()->getValue() )
+                    switch( sampler->getWrap_s()->getValue() )
                     {
                         case FX_SAMPLER_WRAP_COMMON_WRAP:
                         case FX_SAMPLER_WRAP_COMMON_MIRROR:
