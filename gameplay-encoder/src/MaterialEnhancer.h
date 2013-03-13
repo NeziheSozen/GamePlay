@@ -30,6 +30,7 @@ private:
 private:
     Light* getClosestLightFromSibling(Node* node);
     Light* getClosestLight(Node* node);
+    Node* getFirstNode(Node* node);
 };
 
 }

@@ -102,7 +102,8 @@ Light* MaterialEnhancer::getClosestLight(Node* node)
     }
     else
     {
-        light = getClosestLightFromSibling(node);
+        Node* firstNode = getFirstNode(node);
+        light = getClosestLightFromSibling(firstNode);
         if (light)
         {
             return light;
@@ -119,7 +120,8 @@ Light* MaterialEnhancer::getClosestLight(Node* node)
                 }
                 else
                 {
-                    light = getClosestLightFromSibling(parent);
+                    Node* firstParentNode = getFirstNode(parent);
+                    light = getClosestLightFromSibling(firstParentNode);
                     if (light)
                     {
                         return light;
@@ -137,5 +139,14 @@ Light* MaterialEnhancer::getClosestLight(Node* node)
         }
     }
     return NULL;
+}
+    
+Node* MaterialEnhancer::getFirstNode(Node* node)
+{
+    Node* firstNode = node;
+    while (firstNode->getPreviousSibling()) {
+        firstNode = firstNode->getPreviousSibling();
+    }
+    return firstNode;
 }
 }
