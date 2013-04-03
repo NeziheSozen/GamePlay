@@ -33,11 +33,16 @@ public:
     std::string getMaterialId();
     void setLight(Light* light);
     Light* getLight();
+    void setSkin(bool hasSkin);
+    void setNumberOfJoints(int num);
+
 private:
     std::list<MaterialParameter> _parameters;
     Effect* _effect;
     std::string materialId;
     Light* _light;
+    bool hasSkin;
+    int numberOfJoints;
 };
 
 }

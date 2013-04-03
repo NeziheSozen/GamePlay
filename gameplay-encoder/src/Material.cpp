@@ -6,7 +6,7 @@
 namespace gameplay
 {
 
-Material::Material(void) : _light(NULL)
+Material::Material(void) : _light(NULL), hasSkin(false), numberOfJoints(-1)
 {
     _effect = new Effect();
 }
@@ -66,7 +66,7 @@ void Material::writeText(FILE* file)
 //        }
         
     }
-    _effect->writeEffect(file, _light);
+    _effect->writeEffect(file, _light, this->hasSkin, this->numberOfJoints);
     fprintf(file, "\t\t}\n");
     fprintf(file, "\t}\n");
     fprintf(file, "}\n\n");
@@ -92,4 +92,15 @@ Light* Material::getLight()
 {
     return _light;
 }
+
+void Material::setSkin(bool hasSkin)
+{
+    this->hasSkin = hasSkin;
+}
+
+void Material::setNumberOfJoints(int num)
+{
+    this->numberOfJoints = num;
+}
+    
 }

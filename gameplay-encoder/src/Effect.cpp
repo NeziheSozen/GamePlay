@@ -70,8 +70,11 @@ void Effect::writeText(FILE* file)
 {
 }
 
-void Effect::writeEffect(FILE* file, Light* light)
+void Effect::writeEffect(FILE* file, Light* light, bool hasSkin, int numberOfJoints)
 {
+    std::vector<std::string> defines;
+    
+    
     copyTexture();
     std::string unlit = "";
     if(light == NULL)
@@ -80,30 +83,62 @@ void Effect::writeEffect(FILE* file, Light* light)
     }
     else
     {
-        fprintf(file, "\t\t\tdefines = ");
         if (this->useSpecular) {
-            fprintf(file, "SPECULAR;");
+            defines.push_back("SPECULAR");
         }
         
         unsigned char lt = light->getLightType();
         if (lt == Light::PointLight)
         {
-            fprintf(file, "POINT_LIGHT");
+            defines.push_back("POINT_LIGHT");
         }
         else if (lt == Light::SpotLight)
         {
-            fprintf(file, "SPOT_LIGHT");
+            defines.push_back("SPOT_LIGHT");
         }
         else
         {
-            fprintf(file, "DIRECTIONAL_LIGHT");
+            defines.push_back("DIRECTIONAL_LIGHT");
         }
-        fprintf(file, "\n");
-
+        
         if (this->useSpecular) {
             fprintf(file, "\t\t\tu_specularExponent = %f\n", this->specularExponent);
         }
         // fprintf(file, "\t\t\tu_modulateAlpha = %f\n\n", this->alpha);
+    }
+    
+    // TODO: skinning:
+    // defines = SKINNING;SKINNING_JOINT_COUNT 3
+    // u_matrixPalette = MATRIX_PALETTE
+    if(hasSkin)
+    {
+        fprintf(file, "\t\t\tu_matrixPalette = MATRIX_PALETTE\n");
+        defines.push_back("SKINNING");
+        
+        if(numberOfJoints != -1)
+        {
+            char buffer [50];
+            sprintf (buffer, "SKINNING_JOINT_COUNT %d", numberOfJoints);
+            defines.push_back(buffer);
+        }
+    }
+    
+    // write defines
+    if(defines.size() > 0)
+    {
+        // write first item because there shouldnt be a ';' at the end
+        fprintf(file, "\t\t\tdefines = ");
+        std::string currentItem(defines.back());
+        fprintf(file, currentItem.c_str());
+        defines.pop_back();
+        while (!defines.empty())
+        {
+            fprintf(file, ";");
+            currentItem = defines.back();
+            fprintf(file, currentItem.c_str());
+            defines.pop_back();
+        }
+        fprintf(file, "\n");
     }
 
     if(this->hasTexture)

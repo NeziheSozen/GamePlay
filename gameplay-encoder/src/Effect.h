@@ -49,7 +49,7 @@ public:
     virtual void writeBinary(FILE* file);
     virtual void writeText(FILE* file);
 
-    void writeEffect(FILE* file, Light* light = NULL);
+    void writeEffect(FILE* file, Light* light = NULL, bool hasSkin = false, int numberOfJoints = -1);
 
     void setAmbient(Vector4 color);
     void setDiffuse(Vector4 color);

@@ -1006,6 +1006,26 @@ void FBXSceneEncoder::loadSkin(FbxMesh* fbxMesh, Model* model)
             skin->setJoints(joints);
             skin->setBindPoses(bindPoses);
             model->setSkin(skin);
+            if(model->getMesh())
+            {
+                const int matCount = fbxMesh->GetNode()->GetMaterialCount();
+                int meshPartSize = (matCount > 0) ? matCount : 1;
+                FbxNode* fbxNodeSkin = fbxMesh->GetNode();
+                for (int i = 0; i < meshPartSize; i++)
+                {
+                    FbxSurfaceMaterial* material = fbxNodeSkin->GetMaterial(i);
+                    if (material) {
+                        char uniqueId[70];
+                        sprintf(uniqueId, "%llu", material->GetUniqueID());
+                        std::string materialId = std::string(uniqueId);
+                        Material* mat = getMaterial(materialId);
+                        if(mat != NULL) {
+                            // set number of joints
+                            mat->setNumberOfJoints(joints.size());
+                        }
+                    }
+                }
+            }
             break;
         }
     }
@@ -1303,6 +1323,27 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
     // Find the blend weights and blend indices if this mesh is skinned.
     std::vector<std::vector<Vector2> > weights;
     bool hasSkin = loadBlendWeights(fbxMesh, weights);
+    
+    // set skinning in material
+    if(hasSkin)
+    {
+        const int matCount = fbxMesh->GetNode()->GetMaterialCount();
+        meshPartSize = (matCount > 0) ? matCount : 1;
+        FbxNode* fbxNodeSkin = fbxMesh->GetNode();
+        for (int i = 0; i < meshPartSize; i++)
+        {
+            FbxSurfaceMaterial* material = fbxNodeSkin->GetMaterial(i);
+            if (material) {
+                char uniqueId[70];
+                sprintf(uniqueId, "%llu", material->GetUniqueID());
+                std::string materialId = std::string(uniqueId);
+                Material* mat = getMaterial(materialId);
+                if(mat != NULL) {
+                    mat->setSkin(true);
+                }
+            }
+        }
+    }
     
     // Get list of uv sets for mesh
     FbxStringList uvSetNameList;
