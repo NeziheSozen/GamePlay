@@ -179,6 +179,16 @@ const std::vector<std::string>& EncoderArguments::getGroupAnimationNodeId() cons
     return _groupAnimationNodeId;
 }
 
+void EncoderArguments::addGroupAnimationNode(std::string nodeId)
+{
+    _groupAnimationNodeId.push_back(nodeId);
+}
+
+void EncoderArguments::addGroupAnimationAnimationNode(std::string animationId)
+{
+    _groupAnimationAnimationId.push_back(animationId);
+}
+
 const std::vector<std::string>& EncoderArguments::getGroupAnimationAnimationId() const
 {
     return _groupAnimationAnimationId;

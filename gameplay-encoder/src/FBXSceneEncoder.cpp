@@ -11,6 +11,7 @@
 #include "MaterialEnhancer.h"
 #include "ImageUtils.h"
 #include "FilepathUtils.h"
+
 using namespace gameplay;
 
 static IdStore idStore;
@@ -249,6 +250,26 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
 
     print("Loading Scene.");
     loadScene(fbxScene);
+    
+    // add grouped animations
+    Scene* scene = _gamePlayFile.getScene();
+    if(scene)
+    {
+        std::list<Node*> allNodes = scene->getSceneNodes();
+        for (std::list<Node*>::iterator it = allNodes.begin(); it != allNodes.end(); ++it)
+        {
+            Node* node = ((Node*)(*it));
+            if(node->getParent() == NULL)
+            {
+                _autoGroupAnimations = true;
+                std::stringstream ss;
+                ss << node->getId() << "_animation";
+                EncoderArguments::getInstance()->addGroupAnimationNode(node->getId());
+                EncoderArguments::getInstance()->addGroupAnimationAnimationNode(ss.str());
+            }
+        }
+    }
+    
     print("Loading animations.");
     loadAnimations(fbxScene, arguments);
     sdkManager->Destroy();

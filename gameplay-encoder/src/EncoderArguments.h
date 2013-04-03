@@ -179,6 +179,9 @@ public:
 
     // TODO: change to enum - int is a bit ugly
     int groupAnimations() const;
+    
+    void addGroupAnimationNode(std::string nodeId);
+    void addGroupAnimationAnimationNode(std::string animationId);
 private:
 
     /**
