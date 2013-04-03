@@ -226,34 +226,14 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
     importer->Import(fbxScene);
     importer->Destroy();
 
-    // Determine if animations should be grouped.
-    if (arguments.getGroupAnimationAnimationId().empty() && isGroupAnimationPossible(fbxScene))
-    {
-        int hasToGroupAnimations = arguments.groupAnimations();
-        switch(hasToGroupAnimations)
-        {
-            case 0:
-                _autoGroupAnimations = false;
-                break;
-            case 1:
-                _autoGroupAnimations = true;
-                break;
-            case -1:
-            default:
-                if (promptUserGroupAnimations())
-                {
-                    _autoGroupAnimations = true;
-                }
-                break;
-        }
-    }
-
     print("Loading Scene.");
     loadScene(fbxScene);
     
+    // Determine if animations should be grouped.
+    _autoGroupAnimations = (EncoderArguments::getInstance()->groupAnimations() == 1 ? true : false);
     // add grouped animations
     Scene* scene = _gamePlayFile.getScene();
-    if(scene)
+    if(scene && _autoGroupAnimations)
     {
         std::list<Node*> allNodes = scene->getSceneNodes();
         for (std::list<Node*>::iterator it = allNodes.begin(); it != allNodes.end(); ++it)
@@ -267,6 +247,14 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
                 EncoderArguments::getInstance()->addGroupAnimationNode(node->getId());
                 EncoderArguments::getInstance()->addGroupAnimationAnimationNode(ss.str());
             }
+        }
+    }
+    
+    if (EncoderArguments::getInstance()->getGroupAnimationAnimationId().empty() && isGroupAnimationPossible(fbxScene))
+    {
+        if (EncoderArguments::getInstance()->groupAnimations() == -1 && promptUserGroupAnimations())
+        {
+            _autoGroupAnimations = true;
         }
     }
     
