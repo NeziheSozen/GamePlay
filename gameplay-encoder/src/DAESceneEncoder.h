@@ -122,8 +122,8 @@ private:
     Model* loadSkin(const domSkin* skinElement);
     Model* loadGeometry(const domGeometry* geometry, const domBind_materialRef bindMaterial);
 
-    void loadSkeleton(domNode* rootNode, MeshSkin* skin);
-    void loadSkeleton(domInstance_controller::domSkeleton* skeletonElement, MeshSkin* skin);
+    void loadSkeleton(domNode* rootNode, Model* model);
+    void loadSkeleton(domInstance_controller::domSkeleton* skeletonElement, Model* model);
     
     /**
      * Loads interpolation curve data from the given source into the animation.

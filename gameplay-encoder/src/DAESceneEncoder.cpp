@@ -1097,6 +1097,8 @@ void DAESceneEncoder::loadMaterialMapping(const domBind_materialRef bindMaterial
                             }
                             else
                             {
+                                material->setSkin(true);
+                                material->setNumberOfJoints(model->getSkin()->getJoints().size());
                                 model->getSkin()->getMesh()->addInstanceMaterial(symbolName, material);
                             }
                         }else
@@ -1182,7 +1184,7 @@ void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
                         domNode* rootJoint = getRootJointNode(skinElement);
                         if (rootJoint)
                         {
-                            loadSkeleton(rootJoint, model->getSkin());
+                            loadSkeleton(rootJoint, model);
                             node->setModel(model);
                         }
                     }
@@ -1191,7 +1193,7 @@ void DAESceneEncoder::loadControllerInstance(const domNode* n, Node* node)
                         // Load the skeleton for this skin
                         domInstance_controller::domSkeletonRef skeleton = getSkeleton(instanceControllerRef);
                         assert(skeleton);
-                        loadSkeleton(skeleton, model->getSkin());
+                        loadSkeleton(skeleton, model);
                         node->setModel(model);
                     }
                 }
@@ -1399,17 +1401,19 @@ Light* DAESceneEncoder::loadLight(const domLight* lightRef)
 }
 
 
-void DAESceneEncoder::loadSkeleton(domInstance_controller::domSkeleton* skeletonElement, MeshSkin* skin)
+void DAESceneEncoder::loadSkeleton(domInstance_controller::domSkeleton* skeletonElement, Model* model)
 {
     xsAnyURI skeletonUri = skeletonElement->getValue();
     daeString skeletonId = skeletonUri.getID();
     daeSIDResolver resolver(skeletonUri.getElement(), skeletonId);
     domNode* rootNode = daeSafeCast<domNode>(resolver.getElement());
-    loadSkeleton(rootNode, skin);
+    loadSkeleton(rootNode, model);
 }
 
-void DAESceneEncoder::loadSkeleton(domNode* rootNode, MeshSkin* skin)
+void DAESceneEncoder::loadSkeleton(domNode* rootNode, Model* model)
 {
+    MeshSkin* skin = model->getSkin();
+    
     // Get the lookup scene id (sid) and joint index.
     std::string id(idStore.getId(rootNode->getName(), rootNode->getId()));
 
