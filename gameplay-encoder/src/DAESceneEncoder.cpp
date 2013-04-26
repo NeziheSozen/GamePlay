@@ -626,6 +626,7 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
         std::string prop;
         channelTarget.getPropertyName(i, &prop);
         daeElement* attributeElement = channelTarget.getTargetAttribute(i);
+        GP_ERROR(ERR_DAE_ANIMATION_NOT_SUPPORTED, "");
         if (attributeElement)
         {
             daeInt type = attributeElement->typeID();

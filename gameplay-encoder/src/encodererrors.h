@@ -88,6 +88,7 @@ ERRDEF(ERR_CONVERT_TO_PNG, 1029, "Error at converting texture to png", "File cou
 
 ERRDEF(ERR_NO_CLAMP_FOR_NOP_USED, 1030, "Non-Power-Of-Two Texture wrap-mode is not CLAMP", "Non power of two texture must use texture mode CLAMP. Texture mode set to CLAMP automatically after the import.")
 
+ERRDEF(ERR_DAE_ANIMATION_NOT_SUPPORTED, 1031, "DAE-Animations not supported", "Animations from a dae-file are currently not supported. Export your animations to an fbx-file and try again.")
 
 // WARNINGS
 ERRDEF(WARN_DUPLICATE_KEYFRAMES, 2001, "Duplicate Keyframes", "Removed %ld duplicate keyframes from channel.\n")
