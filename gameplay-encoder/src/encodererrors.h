@@ -97,9 +97,9 @@ ERRDEF(WARN_DELETE_RANGE, 2002, "Delete Range", "Deleting Range: %s")
 
 
 
-ERRDEF(WARN_TRANSFORM_ROTATE_NOT_SUPPORTED, 2005, "Could not apply rotation", "Node %s: \"Rotate\" transform found but not supported.\n Use \"Bake Transform\" options when exporting")
-ERRDEF(WARN_TRANSFORM_SCALE_NOT_SUPPORTED, 2006, "Could not apply scaling", "Node %s: \"Scale\" transform found but not supported.\n Use \"Bake Transform\" options when exporting")
-ERRDEF(WARN_TRANSFORM_TRANSLATE_NOT_SUPPORTED, 2007, "Could not apply translation", "Node %s: \"Translate\" transform found but not supported.\n Use \"Bake Transform\" options when exporting")
+ERRDEF(WARN_TRANSFORM_ROTATE_NOT_SUPPORTED, 2005, "Could not apply rotation", "Node %s: \"Rotate\" transform found but not supported. Use \"Bake Transform\" options when exporting")
+ERRDEF(WARN_TRANSFORM_SCALE_NOT_SUPPORTED, 2006, "Could not apply scaling", "Node %s: \"Scale\" transform found but not supported. Use \"Bake Transform\" options when exporting")
+ERRDEF(WARN_TRANSFORM_TRANSLATE_NOT_SUPPORTED, 2007, "Could not apply translation", "Node %s: \"Translate\" transform found but not supported. Use \"Bake Transform\" options when exporting")
 
 ERRDEF(WARN_TRANSFORM_NOT_SUPPORTED, 2008, "Transform not supported", "%s transform found but not supported")
 

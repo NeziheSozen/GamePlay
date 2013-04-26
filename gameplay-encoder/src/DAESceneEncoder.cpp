@@ -626,13 +626,11 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
         std::string prop;
         channelTarget.getPropertyName(i, &prop);
         daeElement* attributeElement = channelTarget.getTargetAttribute(i);
-        GP_ERROR(ERR_DAE_ANIMATION_NOT_SUPPORTED, "");
         if (attributeElement)
         {
             daeInt type = attributeElement->typeID();
             if (type == domRotate::ID())
             {
-//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Rotate", TRANSFORM_MESSAGE);
                 GP_WARNING(WARN_TRANSFORM_ROTATE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
@@ -674,7 +672,6 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             }
             else if (type == domScale::ID())
             {
-//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Scale", TRANSFORM_MESSAGE);
                 GP_WARNING(WARN_TRANSFORM_SCALE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
@@ -700,7 +697,6 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             }
             else if (type == domTranslate::ID())
             {
-//                LOG(1, TRANSFORM_WARNING_FORMAT, targetId, "Translate", TRANSFORM_MESSAGE);
                 GP_WARNING(WARN_TRANSFORM_TRANSLATE_NOT_SUPPORTED, targetId);
                 return false;
                 /*
@@ -766,6 +762,9 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
                 }
                 animationChannel->setKeyValues(floats);
             }
+        }
+        else {
+            GP_ERROR(ERR_DAE_ANIMATION_NOT_SUPPORTED, "");
         }
     }
     animationChannel->setTargetAttribute(targetProperty);
