@@ -764,7 +764,7 @@ bool DAESceneEncoder::loadTarget(const domChannelRef& channelRef, AnimationChann
             }
         }
         else {
-            GP_ERROR(ERR_DAE_ANIMATION_NOT_SUPPORTED, "");
+            GP_ERROR(ERR_DAE_CHANNEL_CORRUPTED, "");
         }
     }
     animationChannel->setTargetAttribute(targetProperty);
