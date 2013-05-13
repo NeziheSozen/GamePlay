@@ -1183,11 +1183,8 @@ void FBXSceneEncoder::assignTexturesToMaterialFromFBXPropertyForMeshPart(const M
     
     int lTextureCount = property.GetSrcObjectCount<FbxFileTexture>();
     FbxFileTexture* fileTexture = NULL;
-    if ( 0 == lTextureCount )
-    {
-        GP_WARNING(WARN_NO_MATERIAL_ASSIGNED_FOR_MESH, meshPart->getId().c_str());
-    }
-    else if ( 1 == lTextureCount )
+
+    if ( 1 == lTextureCount )
     {
         
         fileTexture = property.GetSrcObject<FbxFileTexture>(0);
