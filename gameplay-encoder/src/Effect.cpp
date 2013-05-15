@@ -161,12 +161,21 @@ void Effect::writeEffect(FILE* file, Light* light, bool hasSkin, int numberOfJoi
     {
         fprintf(file, "\t\t\tvertexShader = shaders/colored%s.vert\n", unlit.c_str());
         fprintf(file, "\t\t\tfragmentShader = shaders/colored%s.frag\n\n", unlit.c_str());
-            fprintf(file, "\t\t\tu_diffuseColor = %f, %f, %f, %f\n",
+        fprintf(file, "\t\t\tu_diffuseColor = %f, %f, %f, %f\n",
             this->diffuseColor.x,
             this->diffuseColor.y,
             this->diffuseColor.z,
             this->diffuseColor.w);
     }
+
+    if(this->useSpecular) {
+        fprintf(file, "\t\t\tu_specularColor = %f, %f, %f, %f\n",
+                this->specularColor.x,
+                this->specularColor.y,
+                this->specularColor.z,
+                this->specularColor.w);
+    }
+
     fprintf(file, "\t\t\trenderState\n");
     fprintf(file, "\t\t\t{\n");
     fprintf(file, "\t\t\t\tcullFace = false\n");
