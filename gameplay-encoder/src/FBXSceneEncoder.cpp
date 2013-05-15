@@ -1410,7 +1410,11 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
             {
                 index = mesh->addVertex(vertex);
             }
-            meshParts[meshPartIndex]->addIndex(index);
+
+            if (meshPartIndex < 0) meshPartIndex = 0;
+
+            MeshPart* p = meshParts.at(meshPartIndex);
+            p->addIndex(index);
             vertexIndex++;
         }
     }
