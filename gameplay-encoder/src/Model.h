@@ -33,11 +33,14 @@ public:
     MeshSkin* getSkin();
     void setSkin(MeshSkin* skin);
 
+    void addTag(const std::string& tag);
+
 private:
 
     Mesh* _mesh;
     MeshSkin* _meshSkin;
     std::list<Material*> _materials;
+    std::list<std::string> _tags;
 };
 
 }

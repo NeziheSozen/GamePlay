@@ -20,6 +20,8 @@ public:
     static void replaceOccurencesOfStringWithString(std::string& input, const std::string& oldStr, const std::string& newStr);
 
 	static bool setTexturePaths(std::string path, std::string filepath, Effect& effect);
+
+    static bool hasTransparentPixels(const std::string& pathToPng, bool& valid);
 };
 
 }

@@ -59,7 +59,7 @@ public:
     void setWrapT(Wrap wrapT);
     void setMinFilter(Filter minFilter);
     void setMagFilter(Filter magFilter);
-    void setTextureFilename(std::string path, std::string gpbOutputPath);
+    void setTextureFilename(std::string path, std::string gpbOutputPath, bool hasAlpha);
     void setAlpha(float alpha);
 
     void setTextureSourcePath(std::string path);
@@ -74,6 +74,7 @@ public:
     bool isPngFile();
     void setUseSpecular(bool useSpecular);
     bool hasUseSpecular();
+    bool isTransparent();
     
 public:
     static std::string wrapStr[];
@@ -100,6 +101,7 @@ private:
     std::string texSourcePath;
     std::string texDestinationPath;
     bool useSpecular;
+    bool transparentTexture;
 };
 
 }

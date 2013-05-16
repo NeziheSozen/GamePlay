@@ -2,6 +2,14 @@
 #include "ImageUtils.h"
 #include "EncoderArguments.h"
 
+#include <fstream>
+
+static void readStream(png_structp png, png_bytep data, png_size_t length)
+{
+    std::ifstream* stream = reinterpret_cast<std::ifstream *>(png_get_io_ptr(png));
+    stream->read((char *) data, (int)length);
+}
+
 namespace gameplay
 {
 	const char HEX2DEC[256] =
@@ -256,21 +264,120 @@ namespace gameplay
 			absoluteTexturePathPng = currentTexturePath;
 		}
 
-		// set the new absolute texture path (png) in the effect-object
-		effect.setTextureFilename(absoluteTexturePathPng, modelPath);
-		effect.setTextureSourcePath(absoluteTexturePathPng);
+        bool validPngFile;
+        bool hasTransparency = hasTransparentPixels(absoluteTexturePathPng, validPngFile);
 
-		// sanity check - is the png file really a png file?
-		if(!effect.isPngFile())
+        // sanity check - is the png file really a png file?
+		if(!validPngFile)
 		{
 			GP_ERROR(ERR_CORRUPTED_PNG, texturePath.c_str());
 			return false;
 		}
-        
+
+        // set the new absolute texture path (png) in the effect-object
+		effect.setTextureFilename(absoluteTexturePathPng, modelPath, hasTransparency);
+		effect.setTextureSourcePath(absoluteTexturePathPng);
+
 		if (EncoderArguments::getInstance()->textureOutputEnabled())
 		{
 			effect.setTexDestinationPath(EncoderArguments::getInstance()->getTextureOutputPath());
 		}
 		return true;
 	}
+
+    bool FilepathUtils::hasTransparentPixels(const std::string& pathToPng, bool& valid) {
+        valid = false; // let's be pesimistic
+
+        std::ifstream pngFile(pathToPng.c_str());
+        if (!pngFile.good()) { // can't read file
+            return false;
+        }
+
+        // Initialize png read struct (last three parameters use stderr+longjump if NULL).
+        png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        if (png == NULL) // cannot create struct
+        {
+            return false;
+        }
+
+        // Initialize info struct.
+        png_infop info = png_create_info_struct(png);
+        if (info == NULL) // cannot create info structure
+        {
+            png_destroy_read_struct(&png, NULL, NULL);
+            return false;
+        }
+
+        // Set up error handling (required without using custom error handlers above).
+        if (setjmp(png_jmpbuf(png))) // cannot set error handler
+        {
+            png_destroy_read_struct(&png, &info, NULL);
+            return false;
+        }
+        
+        // Initialize file io.
+        png_set_read_fn(png, (png_voidp)&pngFile, readStream);
+
+        png_read_info(png,info);
+
+        png_byte colorType = png_get_color_type(png, info);
+        png_uint_32 bitdepth   = png_get_bit_depth(png, info);
+        
+        if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
+            png_set_gray_to_rgb(png);
+            if (bitdepth != 8) {
+                png_set_expand_gray_1_2_4_to_8(png);
+                bitdepth = 8;
+            }
+        }
+
+        if (bitdepth > 8) {
+            png_set_strip_16(png); // transform 16bit per channel -> 8bit
+        }
+
+        if (bitdepth < 8) {
+            png_set_packing(png); // transform 1,2,4 bit per channel -> 8bit
+        }
+
+        if (colorType != PNG_COLOR_TYPE_RGBA) {
+            png_set_expand(png); // combine palette, trns -> RGB / RGBA
+            png_set_filler(png, 0xff, PNG_FILLER_AFTER); // add alpha channel if missing
+        }
+
+        png_read_update_info(png, info);
+        size_t stride = png_get_rowbytes(png, info);
+
+        // Allocate image data.
+        png_uint_32 height = png_get_image_height(png, info);
+        png_uint_32 width = png_get_image_width(png, info);
+        unsigned char* bufptr = new unsigned char[height * stride];
+
+        png_bytep *row_pointers = new png_bytep[height * sizeof(png_bytep)];
+
+        for (int i = 0; i < height; i++) {
+            row_pointers[i] = bufptr + i * stride;
+        }
+        png_read_image(png, row_pointers);
+
+        // Clean up.
+        png_read_end(png,0);
+        delete[] row_pointers;
+        png_destroy_read_struct(&png, &info, NULL);
+
+        valid = true;
+
+        // for checking ignore a 1 pixel border
+        for (int i = 1; i < height-1; ++i) {
+            for (int j = 1; j < width-1; ++j) {
+                unsigned char alpha = bufptr[(i*width + j)*4 + 3];
+                if (alpha != 255) {
+                    delete[] bufptr;
+                    return true;
+                }
+            }
+        }
+
+        delete[] bufptr;
+        return false;
+    }
 }

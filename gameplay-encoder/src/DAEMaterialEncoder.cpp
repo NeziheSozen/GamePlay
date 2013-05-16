@@ -129,22 +129,24 @@ namespace gameplay
 		if(blinn)
         {
             material->getEffect().setUseSpecular(true);
-            if(!processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect()))
+            float transparency = getTransparentValue(blinn->getTransparent());
+            
+            if(!processColorOrTextureType(blinn->getEmission(), EMISSION, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
 			}
 
-            if(!processColorOrTextureType(blinn->getAmbient(), AMBIENT, material->getEffect()))
+            if(!processColorOrTextureType(blinn->getAmbient(), AMBIENT, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
 			}
 
-            if(!processColorOrTextureType(blinn->getDiffuse(), DIFFUSE, material->getEffect()))
+            if(!processColorOrTextureType(blinn->getDiffuse(), DIFFUSE, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
 			}
 
-            processColorOrTextureType(blinn->getSpecular(), SPECULAR, material->getEffect(), blinn->getShininess());
+            processColorOrTextureType(blinn->getSpecular(), SPECULAR, material->getEffect(), transparency, blinn->getShininess());
             
             if (blinn->getTransparency()) {
                 domFloat f;
@@ -166,7 +168,7 @@ namespace gameplay
         }
         else if(constant)
         {
-           if(!processColorOrTextureType(constant->getEmission(), EMISSION, material->getEffect()))
+           if(!processColorOrTextureType(constant->getEmission(), EMISSION, material->getEffect(), 1.0f))
 		   {
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
 		   }
@@ -191,15 +193,17 @@ namespace gameplay
         else if(lambert)
         {
             material->getEffect().setUseSpecular(false);
-            if(!processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect()))
+            float transparency = getTransparentValue(lambert->getTransparent());
+            
+            if(!processColorOrTextureType(lambert->getEmission(), EMISSION, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
 			}
-            if(!processColorOrTextureType(lambert->getAmbient(), AMBIENT, material->getEffect()))
+            if(!processColorOrTextureType(lambert->getAmbient(), AMBIENT, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
 			}
-            if(!processColorOrTextureType(lambert->getDiffuse(), DIFFUSE, material->getEffect()))
+            if(!processColorOrTextureType(lambert->getDiffuse(), DIFFUSE, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
 			}
@@ -225,19 +229,21 @@ namespace gameplay
         else if(phong)
         {
             material->getEffect().setUseSpecular(true);
-            if(!processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect()))
+            float transparency = getTransparentValue(phong->getTransparent());
+            
+            if(!processColorOrTextureType(phong->getEmission(), EMISSION, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "emission");
 			}
-            if(!processColorOrTextureType(phong->getAmbient(), AMBIENT, material->getEffect()))
+            if(!processColorOrTextureType(phong->getAmbient(), AMBIENT, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "ambient");
 			}
-            if(!processColorOrTextureType(phong->getDiffuse(), DIFFUSE, material->getEffect()))
+            if(!processColorOrTextureType(phong->getDiffuse(), DIFFUSE, material->getEffect(), transparency))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "diffuse");
 			}
-            if(!processColorOrTextureType(phong->getSpecular(), SPECULAR, material->getEffect(), phong->getShininess()))
+            if(!processColorOrTextureType(phong->getSpecular(), SPECULAR, material->getEffect(), transparency, phong->getShininess()))
 			{
 				GP_INFO(INFO_PROP_NOT_SET_IN_MATERIAL, "specular");
 			}
@@ -266,6 +272,7 @@ namespace gameplay
     bool DAEMaterialEncoder::processColorOrTextureType(domCommon_color_or_texture_type *cot,
                                                        DAEMaterial channel,
                                                        Effect &effect,
+                                                       float transparency,
                                                        domCommon_float_or_param_type *fop)
     {
         if (!cot) {
@@ -306,7 +313,7 @@ namespace gameplay
             if (cot->getColor())
             {
                 domFloat4 &f4 = cot->getColor()->getValue();
-                effect.setDiffuse(Vector4(f4[0], f4[1], f4[2], f4[3]));
+                effect.setDiffuse(Vector4(f4[0], f4[1], f4[2], transparency));
                 retVal = true;
             }
             else if (cot->getParam())
@@ -314,7 +321,7 @@ namespace gameplay
                 domFloat4 f4;
                 if (getFloat4Param(cot->getParam()->getRef(), f4))
                 {
-                    effect.setDiffuse(Vector4(f4[0], f4[1], f4[2], f4[3]));
+                    effect.setDiffuse(Vector4(f4[0], f4[1], f4[2], transparency));
                     retVal = true;
                 }
             }
@@ -772,5 +779,27 @@ namespace gameplay
             effect.setMagFilter(Effect::LINEAR);
         }
         return true;
+    }
+
+    float DAEMaterialEncoder::getTransparentValue(domCommon_transparent_typeRef transparent)
+    {
+        if (!transparent) return 1.0f;
+
+        if(transparent->getColor())
+        {
+            domFloat4 &f4 = transparent->getColor()->getValue();
+            return 1.f-f4[0];
+        }
+
+        if (transparent->getParam())
+        {
+            domFloat4 f4;
+            if (getFloat4Param(transparent->getParam()->getRef(), f4))
+            {
+                return 1.f-f4[0];
+            }
+        }
+        
+        return 1.0f;
     }
 }

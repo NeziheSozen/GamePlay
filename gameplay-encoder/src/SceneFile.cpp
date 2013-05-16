@@ -76,18 +76,16 @@ void SceneFile::writeFile(FILE* file){
                     }
 
                     fprintf(file, "%s#%s\n", materialName.c_str(),material->getMaterialId().c_str());
-//                    fprintf(file, "%s%s#%s\n", fp.c_str(), materialName.c_str(),material->getMaterialId().c_str());
                     count++;
 
-//                    LOG(1,"symbol: %s material: %s\n", symbolname.c_str(), material.getMaterialId().c_str());
+                    if (mesh->isTransparent())
+                    {
+                        fprintf(file, "        tags\n        {\n            transparent\n        }\n");
+                    }
                 }
                 fprintf(file, "    }\n\n");
             }
         }
-//        else
-//        {
-//            LOG(1,"no Material: %s\n", (*i)->getId().c_str());
-//        }
     }
     
     fprintf(file, "}\n");

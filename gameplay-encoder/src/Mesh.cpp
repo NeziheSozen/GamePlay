@@ -242,4 +242,15 @@ Material* Mesh::getMaterial(std::string symbol)
     }
 }
 
+bool Mesh::isTransparent()
+{
+    // for each MeshPart
+    for (std::vector<MeshPart*>::iterator i = parts.begin(); i != parts.end(); ++i)
+    {
+        Material* m = getMaterial((*i)->getMaterialSymbolName());
+        if (m->getEffect().isTransparent()) return true;
+    }
+    return false;
+}
+
 }

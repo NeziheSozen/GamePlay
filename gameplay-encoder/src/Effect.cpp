@@ -40,7 +40,8 @@ Effect::Effect(void) :
     alpha(1.0f),
     texSourcePath(""),
     texDestinationPath(""),
-    useSpecular(false)
+    useSpecular(false),
+    transparentTexture(false)
 {
 
 }
@@ -180,6 +181,13 @@ void Effect::writeEffect(FILE* file, Light* light, bool hasSkin, int numberOfJoi
     fprintf(file, "\t\t\t{\n");
     fprintf(file, "\t\t\t\tcullFace = false\n");
     fprintf(file, "\t\t\t\tdepthTest = true\n");
+
+    if (this->isTransparent()) {
+        fprintf(file, "\t\t\t\tblend = true\n");
+		fprintf(file, "\t\t\t\tsrcBlend = SRC_ALPHA\n");
+        fprintf(file, "\t\t\t\tdstBlend = ONE_MINUS_SRC_ALPHA\n");
+    }
+    
     fprintf(file, "\t\t\t}\n");
 }
 
@@ -228,7 +236,7 @@ void Effect::setMagFilter(Filter magFilter)
     this->magFilter = magFilter;
 }
 
-void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
+void Effect::setTextureFilename(std::string path, std::string gpbOutputPath, bool hasAlpha)
 {
     size_t index1 = path.find_last_of('\\');
     size_t index2 = path.find_last_of('/');
@@ -263,6 +271,7 @@ void Effect::setTextureFilename(std::string path, std::string gpbOutputPath)
 		index = -1; // index is set to -1 because the substring is taken from 0 then (index+1)
 	}
     this->texFilename = "tex/" + path.substr(index + 1);
+    this->transparentTexture = hasAlpha;
     //this->texFilename = gpbOutputPath + "/tex/" + path.substr(path.find_last_of('/') + 1);
     this->hasTexture = true;
 }
@@ -343,5 +352,16 @@ void Effect::setUseSpecular(bool useSpecular) {
 
 bool Effect::hasUseSpecular() {
     return this->useSpecular;
+}
+
+bool Effect::isTransparent()
+{
+    if (this->hasTexture) {
+        return this->transparentTexture;
+    } else {
+        return this->diffuseColor.w < 1.0f;
+    }
+
+    return false;
 }
 }

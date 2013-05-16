@@ -213,6 +213,8 @@ private:
      * @param mat The Material which gets the 
      */
     void addTextureToMaterial(FbxFileTexture* fbxFileTexture, const Material* mat);
+
+    FbxDouble getAlpha(FbxDouble transparencyFactor, FbxPropertyT<FbxDouble3> transparencyColor);
     
 private:
 

@@ -1040,6 +1040,22 @@ void FBXSceneEncoder::loadSkin(FbxMesh* fbxMesh, Model* model)
     }
 }
 
+FbxDouble FBXSceneEncoder::getAlpha(FbxDouble transparencyFactor, FbxPropertyT<FbxDouble3> transparencyColor) {
+    if (transparencyFactor == 1.0) { // from Maya .fbx
+        if (transparencyColor.Get()[0] >= DBL_MIN) {
+            return 1.0-transparencyColor.Get()[0];
+        } else {
+            return 1.0;
+        }
+    } else { // from 3dsmax .fbx
+        if (transparencyFactor >= DBL_MIN) {
+            return 1.0 - transparencyFactor;
+        } else {
+            return 1.0;
+        }
+    }
+}
+
 void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMaterial* fbxMaterial)
 {
     char uniqueId[70];
@@ -1096,9 +1112,10 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
             
             this->assignTexturesToMaterialFromFBXPropertyForMeshPart(mat, lProperty, meshPart);
         }
-        
+
+        FbxDouble alpha = this->getAlpha(((FbxSurfacePhong *)fbxMaterial)->TransparencyFactor, ((FbxSurfacePhong *)fbxMaterial)->TransparentColor);
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Diffuse;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2], alpha);
         //LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
         mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
@@ -1153,9 +1170,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
             this->assignTexturesToMaterialFromFBXPropertyForMeshPart(mat, lProperty, meshPart);
         }
 
+        FbxDouble alpha = this->getAlpha(((FbxSurfaceLambert *)fbxMaterial)->TransparencyFactor, ((FbxSurfaceLambert *)fbxMaterial)->TransparentColor);
+
         // Display the Diffuse Color
         lKFbxDouble3 =((FbxSurfaceLambert *)fbxMaterial)->Diffuse;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
+        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2], alpha);
 //        LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
         mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 

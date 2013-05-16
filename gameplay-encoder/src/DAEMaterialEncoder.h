@@ -55,11 +55,13 @@ namespace gameplay
         bool processColorOrTextureType(domCommon_color_or_texture_type *cot,
                                        DAEMaterial channel,
                                        Effect &effect,
+                                       float transparency,
                                        domCommon_float_or_param_type *fop = NULL);
         
         bool getFloat4Param(xsNCName Reference, domFloat4 &f4);
         bool getFloatParam(xsNCName Reference, domFloat &f) const;
         bool processTexture(domCommon_color_or_texture_type_complexType::domTexture *tex, Effect &effect);
+        float getTransparentValue(domCommon_transparent_typeRef transparent);
 
     private:
         domInstance_effectRef currentInstance_effect;

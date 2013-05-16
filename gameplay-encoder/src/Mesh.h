@@ -66,6 +66,8 @@ public:
     void addInstanceMaterial(std::string symbol, Material* material);
     Material* getMaterial(std::string symbol);
 
+    bool isTransparent();
+
     Model* model;
     std::vector<Vertex> vertices;
     std::vector<MeshPart*> parts;
