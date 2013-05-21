@@ -236,7 +236,6 @@ Material* Mesh::getMaterial(std::string symbol)
     }
     else
     {
-//        LOG(1,"Symbol not found: %s\n", symbol.c_str());
         GP_WARNING(WARN_SYMBOL_NOT_FOUND, symbol.c_str());
         return NULL;
     }

@@ -292,7 +292,6 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         }
     }
 
-    // TODO create scenefile
     if (arguments.sceneOutputEnabled())
     {
         SceneFile* sceneFile = new SceneFile(_gamePlayFile);
@@ -310,22 +309,18 @@ void FBXSceneEncoder::write(const std::string& filepath, EncoderArguments& argum
         {
             std::string path = outputFilePath.substr(0, pos);
             path.append(".xml");
-//            LOG(1, "Saving debug file: %s\n", path.c_str());
             GP_INFO(INFO_SAVE_DEBUG_FILE, path.c_str());
             if (!_gamePlayFile.saveText(path))
             {
-//                LOG(1, "Error writing text file: %s\n", path.c_str());
                 GP_ERROR(ERR_WRITING_TEXT_FILE, path.c_str());
             }
         }
     }
     else
     {
-//        LOG(1, "Saving binary file: %s\n", outputFilePath.c_str());
         GP_INFO(INFO_SAVE_BINARY_FILE, outputFilePath.c_str());
         if (!_gamePlayFile.saveBinary(outputFilePath))
         {
-//            LOG(1, "Error writing binary file: %s\n", outputFilePath.c_str());
             GP_ERROR(ERR_WRITING_BINARY_FILE, outputFilePath.c_str());
         }
     }
@@ -801,7 +796,7 @@ void FBXSceneEncoder::loadBindShapes(FbxScene* fbxScene)
                 ss << fbxNode->GetUniqueID();
                 const std::string& id(idStore.getId(fbxNode->GetName(), ss.str()).c_str());
                 Node* node = _gamePlayFile.getNode(id.c_str());
-                assert(node && node->getModel());
+                // assert(node && node->getModel());
 
                 Model* model = node->getModel();
                 if (model && model->getSkin())
@@ -956,7 +951,7 @@ void FBXSceneEncoder::loadModel(FbxNode* fbxNode, Node* node)
     {
         return;
     }
-    if (fbxMesh->IsTriangleMesh())
+    if (fbxMesh->IsTriangleMesh() && fbxMesh->GetPolygonCount())
     {
         Mesh* mesh = loadMesh(fbxMesh);
         Model* model = new Model();
@@ -1054,6 +1049,36 @@ FbxDouble FBXSceneEncoder::getAlpha(FbxDouble transparencyFactor, FbxPropertyT<F
             return 1.0;
         }
     }
+}
+
+void FBXSceneEncoder::loadDefaultMaterial(Mesh* mesh, MeshPart* meshPart)
+{
+    std::string materialId = std::string("__encoder_default_material__");
+
+    Material* mat = getMaterial(materialId);
+    meshPart->setMaterialSymbolName(materialId);
+    if(mat == NULL) {
+        mat = new Material();
+        mat->setMaterialId(materialId);
+
+        _materials.push_back(mat);
+    }
+    mesh->addInstanceMaterial(materialId, mat);
+
+    FbxPropertyT<FbxDouble3> lKFbxDouble3;
+    FbxPropertyT<FbxDouble> lKFbxDouble1;
+    FbxColor theColor;
+
+    
+    mat->getEffect().setUseSpecular(false);
+    // Ambient Color
+    mat->getEffect().setAmbient(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
+
+    // Diffuse Color
+    mat->getEffect().setDiffuse(Vector4(.5f, .5f, .5f, 1.0f));
+
+    // Opacity
+    mat->getEffect().setAlpha(1.0);
 }
 
 void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMaterial* fbxMaterial)
@@ -1342,6 +1367,9 @@ Mesh* FBXSceneEncoder::loadMesh(FbxMesh* fbxMesh)
         FbxSurfaceMaterial* material = fbxNode->GetMaterial(i);
         if (material) {
             loadMaterial(mesh, meshPart, material);
+        } else {
+            GP_WARNING(WARN_USING_DEFAULT_MATERIAL, "");
+            loadDefaultMaterial(mesh, meshPart);
         }
     }
 
@@ -2108,7 +2136,6 @@ void appendKeyFrame(FbxNode* fbxNode, AnimationChannel* channel, float time, con
 
         default:
         {
-//            LOG(1, "Warning: Invalid animatoin target (%d) attribute for node: %s.\n", channel->getTargetAttribute(), fbxNode->GetName());
             GP_WARNING(WARN_INVALID_ANIMATION_TARGET, channel->getTargetAttribute(), fbxNode->GetName());
         }
         return;

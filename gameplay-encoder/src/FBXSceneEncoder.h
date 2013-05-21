@@ -146,6 +146,8 @@ private:
     
     void loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMaterial* fbxMaterial);
 
+    void loadDefaultMaterial(Mesh* mesh, MeshPart* meshPart);
+
     /**
      * Loads the FbxMesh and returns a GamePlay mesh.
      * If the fbxMesh has already been loaded then the same instance of mesh will be returned.

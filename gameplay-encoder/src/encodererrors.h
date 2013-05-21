@@ -154,6 +154,7 @@ ERRDEF(WARN_TEXTURES_NONPOWER_OF_2, 2038, "Non power of two textures used", "One
 ERRDEF(WARN_NORMALMAP_NOT_SUPPORTED, 2039, "Normal Maps not supported", "Normal maps are currently not supported")
 ERRDEF(WARN_BUMPMAP_NOT_SUPPORTED, 2040, "Bump Maps not supported", "Bump maps are currently not supported")
 ERRDEF(WARN_TEXTURE_NOT_FOUND, 2041, "Texture-file not found", "filepath:%s - error: %s\n")
+ERRDEF(WARN_USING_DEFAULT_MATERIAL, 2042, "No Material Assiged. Using default material.", "No material was connected to a certain mesh/meshpart. A grey default material was created and assigned instead.")
 
 // INOFS
 ERRDEF(INFO_LOG, 3001, "Generic info", "log: %s")
