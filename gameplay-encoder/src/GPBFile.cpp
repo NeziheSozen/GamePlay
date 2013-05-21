@@ -355,6 +355,7 @@ void GPBFile::adjust()
 
 void GPBFile::groupMeshSkinAnimations()
 {
+    int animCount = 1;
     for (std::list<Node*>::iterator it = _nodes.begin(); it != _nodes.end(); ++it)
     {
         if (Model* model = (*it)->getModel())
@@ -365,12 +366,17 @@ void GPBFile::groupMeshSkinAnimations()
                 Node* commonAncestor = getCommonNodeAncestor(joints);
                 if (commonAncestor)
                 {
+                    char buff[25];
+                    sprintf(buff, "%d%s", animCount, "_animation");
+                    std::string newAnimationId = buff;
+                    
                     // group the animation channels that target this common ancestor and its child nodes
                     Animation* animation = new Animation();
-                    animation->setId("animations");
+                    animation->setId(newAnimationId.c_str());
 
                     moveAnimationChannels(commonAncestor, animation);
                     _animations.add(animation);
+                    animCount++;
                 }
             }
         }
