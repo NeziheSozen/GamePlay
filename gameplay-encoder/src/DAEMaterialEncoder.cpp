@@ -602,7 +602,7 @@ namespace gameplay
             dImg->getInit_from()->getValue().validate();
             if ( std::string( dImg->getInit_from()->getValue().getProtocol() ) == std::string( "file" ) )
             {
-                std::string path =  dImg->getInit_from()->getValue().pathDir()+
+                std::string path = dImg->getInit_from()->getValue().pathDir() +
                 dImg->getInit_from()->getValue().pathFile();
                 
                 std::string filePath = dImg->getInit_from()->getValue().originalStr();
@@ -615,7 +615,7 @@ namespace gameplay
                     return false;
                 }
 
-				if(!FilepathUtils::setTexturePaths(path, EncoderArguments::getInstance()->getFilePath(), effect))
+				if(!FilepathUtils::setTexturePaths(filePath, EncoderArguments::getInstance()->getFilePath(), effect))
 				{
 					return false;
 				}
