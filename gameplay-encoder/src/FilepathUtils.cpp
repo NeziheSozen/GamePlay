@@ -288,7 +288,7 @@ namespace gameplay
     bool FilepathUtils::hasTransparentPixels(const std::string& pathToPng, bool& valid) {
         valid = false; // let's be pesimistic
 
-        std::ifstream pngFile(pathToPng.c_str());
+		std::ifstream pngFile(pathToPng.c_str(), std::ios::in | std::ios::binary);
         if (!pngFile.good()) { // can't read file
             return false;
         }
