@@ -40,12 +40,6 @@ float Light::computeRange(float constantAttenuation, float linearAttenuation, fl
         return 100000.0f;
     }
 
-    // Constant Attenuation is currently not supported.
-    if (constantAttenuation == 1.0f)
-    {
-        return 1.0f;
-    }
-
     const float step = 0.01f;
     float range = 0.01f;
     float att = 1.0f;
