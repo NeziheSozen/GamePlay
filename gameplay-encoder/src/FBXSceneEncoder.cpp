@@ -874,7 +874,19 @@ void FBXSceneEncoder::loadLight(FbxNode* fbxNode, Node* node)
     }
 
     FbxDouble3 color = fbxLight->Color.Get();
-    light->setColor((float)color[0], (float)color[1], (float)color[2]);
+    float intensity = (float)fbxLight->Intensity.Get();
+
+    if(intensity > 0.0f)
+    {
+        intensity = intensity / 100.0f;
+    }
+    else {
+        intensity = 0.0f;
+    }
+
+    light->setColor((float)(color[0] * intensity),
+                    (float)(color[1] * intensity),
+                    (float)(color[2] * intensity));
     
     switch (fbxLight->LightType.Get())
     {
@@ -1126,8 +1138,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         // We found a Phong material.  Display its properties.
         // Display the Ambient Color
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Ambient;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
-        // LOG(1, "            Ambient: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        FbxDouble ambientFactor = (((FbxSurfacePhong *) fbxMaterial)->AmbientFactor).Get();
+        theColor.Set(lKFbxDouble3.Get()[0] * ambientFactor,
+                     lKFbxDouble3.Get()[1] * ambientFactor,
+                     lKFbxDouble3.Get()[2] * ambientFactor);
+        
         mat->getEffect().setAmbient(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
         // Display the Diffuse Color
@@ -1140,29 +1155,30 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 
         FbxDouble alpha = this->getAlpha(((FbxSurfacePhong *)fbxMaterial)->TransparencyFactor, ((FbxSurfacePhong *)fbxMaterial)->TransparentColor);
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Diffuse;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2], alpha);
-        //LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        FbxDouble diffuseFactor = (((FbxSurfacePhong *) fbxMaterial)->DiffuseFactor).Get();
+        theColor.Set(lKFbxDouble3.Get()[0] * diffuseFactor,
+                     lKFbxDouble3.Get()[1] * diffuseFactor,
+                     lKFbxDouble3.Get()[2] * diffuseFactor,
+                     alpha);
+        
         mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
         // Display the Specular Color (unique to Phong materials)
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Specular;
         theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
-//        LOG(1, "            Specular: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
         mat->getEffect().setSpecular(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
         // TODO: Display the Emissive Color
         lKFbxDouble3 =((FbxSurfacePhong *) fbxMaterial)->Emissive;
         theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
-//        LOG(1, "            Emissive: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
 
         //Opacity is Transparency factor now
         lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->TransparencyFactor;
-//        LOG(1, "            Opacity: %f\n", 1.0-lKFbxDouble1.Get());
         mat->getEffect().setAlpha(lKFbxDouble1.Get());
 
         // Display the Shininess
         lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->Shininess;
-//        LOG(1, "            Shininess: %f\n", lKFbxDouble1.Get());
+        
         float shininess = lKFbxDouble1.Get();
         if(shininess < 1.0)
         {
@@ -1176,7 +1192,6 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 
         // TODO: Display the Reflectivity
         lKFbxDouble1 =((FbxSurfacePhong *) fbxMaterial)->ReflectionFactor;
-//        LOG(1, "            Reflectivity: %f\n", lKFbxDouble1.Get());
     }
     else if(fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId) )
     {
@@ -1184,8 +1199,11 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
         // We found a Lambert material. Display its properties.
         // Display the Ambient Color
         lKFbxDouble3=((FbxSurfaceLambert *)fbxMaterial)->Ambient;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
-//        LOG(1, "            Ambient: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        FbxDouble ambientFactor = (((FbxSurfaceLambert *) fbxMaterial)->AmbientFactor).Get();
+        theColor.Set(lKFbxDouble3.Get()[0] * ambientFactor,
+                     lKFbxDouble3.Get()[1] * ambientFactor,
+                     lKFbxDouble3.Get()[2] * ambientFactor);
+
         mat->getEffect().setAmbient(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
         // Display the Diffuse Color
@@ -1199,14 +1217,17 @@ void FBXSceneEncoder::loadMaterial(Mesh* mesh, MeshPart* meshPart, FbxSurfaceMat
 
         // Display the Diffuse Color
         lKFbxDouble3 =((FbxSurfaceLambert *)fbxMaterial)->Diffuse;
-        theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2], alpha);
-//        LOG(1, "            Diffuse: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
+        FbxDouble diffuseFactor = (((FbxSurfaceLambert *) fbxMaterial)->DiffuseFactor).Get();
+        theColor.Set(lKFbxDouble3.Get()[0] * diffuseFactor,
+                     lKFbxDouble3.Get()[1] * diffuseFactor,
+                     lKFbxDouble3.Get()[2] * diffuseFactor,
+                     alpha);
+        
         mat->getEffect().setDiffuse(Vector4(theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha));
 
         // TODO: Display the Emissive
         lKFbxDouble3 =((FbxSurfaceLambert *)fbxMaterial)->Emissive;
         theColor.Set(lKFbxDouble3.Get()[0], lKFbxDouble3.Get()[1], lKFbxDouble3.Get()[2]);
-//        LOG(1, "            Emissive: %f, %f, %f, %f\n", theColor.mRed, theColor.mGreen, theColor.mBlue, theColor.mAlpha);
 
         // Display the Opacity
         lKFbxDouble1 =((FbxSurfaceLambert *)fbxMaterial)->TransparencyFactor;
