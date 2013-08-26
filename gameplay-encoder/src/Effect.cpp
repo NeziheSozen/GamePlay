@@ -10,8 +10,8 @@
 #include <iostream>
 #include <Windows.h>
 #else
-#include <copyfile.h>
-#include <errno.h>
+// #include <copyfile.h>
+// #include <errno.h>
 #endif
 namespace gameplay
 {
@@ -322,12 +322,18 @@ void Effect::copyTexture()
 #else
         FilepathUtils::convertToUNIXFilePath(this->texSourcePath);
         FilepathUtils::convertToUNIXFilePath(this->texDestinationPath);
+
+        std::ifstream src(this->texSourcePath.c_str(), std::ios::binary);
+        std::ofstream dst(this->texDestinationPath.c_str(), std::ios::binary);
+        dst << src.rdbuf();
         
+/*
         int result = copyfile(this->texSourcePath.c_str(), this->texDestinationPath.c_str(), NULL, COPYFILE_DATA);
 
         if (result == -1) {
             GP_ERROR(ERR_TEX_COPY, this->texSourcePath.c_str(), this->texDestinationPath.c_str(), strerror(errno));
         }
+ */
 #endif
     }
 }
