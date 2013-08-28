@@ -1,22 +1,27 @@
+cmake_minimum_required(VERSION 2.8)
+
+set(ARCH_DIR "x64")
 
 include_directories( 
-    ${CMAKE_SOURCE_DIR}/external-deps/zlib/include
-    ${CMAKE_SOURCE_DIR}/external-deps/libpng/include
-    ${CMAKE_SOURCE_DIR}/external-deps/freetype2/include
-    ${CMAKE_SOURCE_DIR}/external-deps/collada-dom/include
-    ${CMAKE_SOURCE_DIR}/external-deps/collada-dom/include/1.4
+    ${CMAKE_SOURCE_DIR}/../external-deps/zlib/include
+    ${CMAKE_SOURCE_DIR}/../external-deps/libpng/include
+    ${CMAKE_SOURCE_DIR}/../external-deps/freetype2/include
+    ${CMAKE_SOURCE_DIR}/../external-deps/collada-dom/include
+    ${CMAKE_SOURCE_DIR}/../external-deps/collada-dom/include/1.4
     /usr/include/libxml2
     /usr/include
 )
 
 add_definitions(-D_DEBUG)
 add_definitions(-D__linux__ -DNO_BOOST -DNO_ZAE)
+add_definitions(-DUSE_FBX)
 
 link_directories(
-    ${CMAKE_SOURCE_DIR}/external-deps/zlib/lib/linux/${ARCH_DIR}
-    ${CMAKE_SOURCE_DIR}/external-deps/libpng/lib/linux/${ARCH_DIR}
-    ${CMAKE_SOURCE_DIR}/external-deps/freetype2/lib/linux/${ARCH_DIR}
-    ${CMAKE_SOURCE_DIR}/external-deps/collada-dom/lib/linux/${ARCH_DIR}
+    ${CMAKE_SOURCE_DIR}/../external-deps/zlib/lib/linux/${ARCH_DIR}
+    ${CMAKE_SOURCE_DIR}/../external-deps/libpng/lib/linux/${ARCH_DIR}
+    ${CMAKE_SOURCE_DIR}/../external-deps/freetype2/lib/linux/${ARCH_DIR}
+    ${CMAKE_SOURCE_DIR}/../external-deps/collada-dom/lib/linux/${ARCH_DIR}
+    /usr/lib/gcc4/${ARCH_DIR}
     /usr/lib
 )
 
@@ -31,9 +36,9 @@ set(APP_LIBRARIES
     pthread
 ) 
 
-add_definitions(-lstdc++ -lcollada14dom -lpcre -lpcrecpp -lxml2 -lpng -lz -lfreetype -lpthread)
+add_definitions(-lstdc++ -lcollada14dom -lpcre -lpcrecpp -lxml2 -lpng -lz -lfreetype -lpthread -lfbxsdk-2013.3-static)
 
-set( APP_NAME gameplay-encoder )
+set( APP_NAME encoder )
 
 set(APP_SRC
 	src/AnimationChannel.cpp
@@ -53,6 +58,8 @@ set(APP_SRC
 	src/Curve.inl
 	src/DAEChannelTarget.cpp
 	src/DAEChannelTarget.h
+	src/DAEMaterialEncoder.cpp
+	src/DAEMaterialEncoder.h
 	src/DAEOptimizer.cpp
 	src/DAEOptimizer.h
 	src/DAESceneEncoder.cpp
@@ -63,10 +70,14 @@ set(APP_SRC
 	src/Effect.h
 	src/EncoderArguments.cpp
 	src/EncoderArguments.h
+	src/encodererrors.cpp
+	src/encodererrors.h
 	src/FBXSceneEncoder.cpp
 	src/FBXSceneEncoder.h
 	src/FileIO.cpp
 	src/FileIO.h
+	src/FilepathUtils.cpp
+	src/FilepathUtils.h
 	src/Font.cpp
 	src/Font.h
 	src/Glyph.cpp
@@ -77,12 +88,18 @@ set(APP_SRC
 	src/GPBFile.h
 	src/Heightmap.cpp
 	src/Heightmap.h
+	src/IdStore.cpp
+	src/IdStore.h
 	src/Image.cpp
 	src/Image.h
+	src/ImageUtils.cpp
+	src/ImageUtils.h
 	src/Light.cpp
 	src/Light.h
 	src/main.cpp
 	src/Material.cpp
+	src/MaterialEnhancer.cpp
+	src/MaterialEnhancer.h
 	src/Material.h
 	src/MaterialParameter.cpp
 	src/MaterialParameter.h
@@ -112,6 +129,8 @@ set(APP_SRC
 	src/ReferenceTable.cpp
 	src/ReferenceTable.h
 	src/Scene.cpp
+	src/SceneFile.cpp
+	src/SceneFile.h
 	src/Scene.h
 	src/StringUtil.cpp
 	src/StringUtil.h
