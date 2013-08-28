@@ -33,7 +33,7 @@ fi
 
 # create .wt3
 cd "$ROOT_MODEL_PATH"
-zip -r "./$OUT_FILENAME" "$ROOT_MODEL_PATH/model"
+zip -r "./$OUT_FILENAME" "./model"
 rm -Rf ./model
 mv "$OUT_FILENAME" "$OUT_FILEPATH"
 
