@@ -24,8 +24,17 @@ if [ ! -d "$ROOT_MODEL_PATH/model/tex" ]; then
 fi
 
 # encode 3d-model
-"$EXEC_PATH/encoder" -gy -tex "$ROOT_MODEL_PATH/model/tex" -m "$ROOT_MODEL_PATH/model/model.material" -scene "$ROOT_MODEL_PATH/model/model.scene" "$MODEL_FILEPATH" "$ROOT_MODEL_PATH/model/model.gpb"
+export LOG=$( (`"$EXEC_PATH/encoder" -gy -tex "$ROOT_MODEL_PATH/model/tex" -m "$ROOT_MODEL_PATH/model/model.material" -scene "$ROOT_MODEL_PATH/model/model.scene" "$MODEL_FILEPATH" "$ROOT_MODEL_PATH/model/model.gpb"`) 2>&1)
+
 cp "$EXEC_PATH/version" "$ROOT_MODEL_PATH/model"
+
+if grep -q Error <<< $LOG; then
+	cd "$ROOT_MODEL_PATH"
+	rm -Rf ./model
+	cd "$ORIG_PATH"
+	echo "$LOG"
+	exit 1
+fi
 
 if [ ! -d "$OUT_PATH" ]; then
 	mkdir -p "$OUT_PATH"
@@ -33,9 +42,9 @@ fi
 
 # create .wt3
 cd "$ROOT_MODEL_PATH"
-zip -r "./$OUT_FILENAME" "./model"
+zip -q -r "./$OUT_FILENAME" "./model"
 rm -Rf ./model
 mv "$OUT_FILENAME" "$OUT_FILEPATH"
 
 cd "$ORIG_PATH"
-echo "**** encoding finished"
+exit 0
