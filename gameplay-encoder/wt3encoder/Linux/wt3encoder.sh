@@ -21,7 +21,7 @@ do
    case $OPTION in
    		h) 	usage
 		   	exit 1;;
-   		i) IN_ARG=`basename $OPTARG`;;
+   		i) IN_ARG="$OPTARG";;
 		o) OUT_ARG="$OPTARG";;
 		\?)	usage
 		     exit 1;;
@@ -54,17 +54,21 @@ if [ ! -d "$ROOT_MODEL_PATH/model/tex" ]; then
 fi
 
 # encode 3d-model
-export LOG=$( (`"$EXEC_PATH/encoder" -gy -tex "$ROOT_MODEL_PATH/model/tex" -m "$ROOT_MODEL_PATH/model/model.material" -scene "$ROOT_MODEL_PATH/model/model.scene" "$MODEL_FILEPATH" "$ROOT_MODEL_PATH/model/model.gpb"`) 2>&1)
+{ "$EXEC_PATH/encoder" -gy -tex "$ROOT_MODEL_PATH/model/tex" -m "$ROOT_MODEL_PATH/model/model.material" -scene "$ROOT_MODEL_PATH/model/model.scene" "$MODEL_FILEPATH" "$ROOT_MODEL_PATH/model/model.gpb" 2>&1; } > wt3encoder_tmpfile.tmp
 
-cp "$EXEC_PATH/version" "$ROOT_MODEL_PATH/model"
+LOG=`cat wt3encoder_tmpfile.tmp`
+rm -Rf wt3encoder_tmpfile.tmp
 
-if grep -q Error <<< $LOG; then
+if echo "$LOG" | egrep -q Error ; then
+	echo "ERROR OCCURED"
 	cd "$ROOT_MODEL_PATH"
 	rm -Rf ./model
 	cd "$ORIG_PATH"
 	echo "$LOG"
 	exit 1
 fi
+
+cp "$EXEC_PATH/version" "$ROOT_MODEL_PATH/model"
 
 if [ ! -d "$OUT_PATH" ]; then
 	mkdir -p "$OUT_PATH"
