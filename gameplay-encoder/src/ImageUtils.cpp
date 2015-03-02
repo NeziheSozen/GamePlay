@@ -1,6 +1,7 @@
 #include "ImageUtils.h"
 #include "FilepathUtils.h"
 #include <png.h>
+#include <zlib.h>
 #include <errno.h>
 
 
